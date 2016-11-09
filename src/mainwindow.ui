@@ -14,8 +14,8 @@
    <string>Analizator charakterystyk</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>../build-analizator-charakterystyk-Desktop-Debug/drawing.ico</normaloff>../build-analizator-charakterystyk-Desktop-Debug/drawing.ico</iconset>
+   <iconset resource="../resources/icons.qrc">
+    <normaloff>:/icons/transducer-plot.png</normaloff>:/icons/transducer-plot.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
@@ -132,6 +132,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../resources/icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

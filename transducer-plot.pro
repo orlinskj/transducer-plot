@@ -27,7 +27,6 @@ SOURCES += \
     src/plotqt.cpp
 
 HEADERS  += \
-    mainwindow.h \
     ../../../../usr/include/qcustomplot.h \
     src/dataset.h \
     src/filereader.h \
@@ -50,3 +49,6 @@ DEPENDPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
 unix|win32: LIBS += -lboost_system -lboost_filesystem
 
 DISTFILES +=
+
+RESOURCES += \
+    resources/icons.qrc

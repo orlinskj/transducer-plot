@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
                      SLOT(fileOpen()) );
 
     QStandardItem *parentItem = model.invisibleRootItem();
-    QStandardItem *item = new QStandardItem("Wykres 1");
+    QStandardItem *item = new QStandardItem(QIcon(":/icons/v-chart.png"), "Wykres 1");
     parentItem->appendRow(item);
 
     current_plot_qindex = item->index();
@@ -105,8 +105,8 @@ void MainWindow::addDataSet(DataSet&& dataset)
     // dodajemy do obiektu zbioru danych wartości
     items.clear();
     QStandardItem* sets_item = new QStandardItem("Zbiory danych");
-    QStandardItem* func_item = new QStandardItem("Odwzorowania");
-    items = { sets_item, func_item };
+    QStandardItem* params_item = new QStandardItem("Prametry zastępcze");
+    items = { sets_item, params_item };
     item->appendColumn(items);
 
     items.clear();

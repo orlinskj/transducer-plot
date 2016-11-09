@@ -12,7 +12,7 @@ namespace ac{
 
 using namespace std;
 
-// Stores all data from input file - all measured series of values
+// Stores all measured series of values
 class DataSet {
 
 public:

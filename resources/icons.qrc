@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/v-chart.png</file>
+        <file>icons/transducer-plot.png</file>
+    </qresource>
+</RCC>
