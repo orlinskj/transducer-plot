@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>icons/v-chart.png</file>
         <file>icons/transducer-plot.png</file>
+        <file>icons/v-rlc.png</file>
+        <file>icons/v-set.png</file>
     </qresource>
 </RCC>

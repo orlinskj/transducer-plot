@@ -12,9 +12,10 @@ class PlotQt : public Plot
 {
 public:
     PlotQt(QCustomPlot* p);
+    PlotQt(const PlotQt& p);
 
     void addFunction(const Function& f);
-    QCustomPlot* getPlot();
+
 
 private:
 

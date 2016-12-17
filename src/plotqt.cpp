@@ -2,11 +2,7 @@
 
 using namespace ac;
 
-PlotQt::PlotQt(QCustomPlot* p) :
-    plot(p)
-{
 
-}
 
 void PlotQt::addFunction(const Function& f)
 {

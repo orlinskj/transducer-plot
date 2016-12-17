@@ -1,35 +1,27 @@
-#include "functionqt.h"
+#include "function.h"
 
 using namespace std;
 using namespace ac;
 
-FunctionQt::FunctionQt(const DataSet& ds, const Series* domain, const Series* codomain, PlotQt* plot) :
-    Function(ds, domain, codomain),
-    plot(plot)
+Function::Function(const DataSet &ds, const Series* domain, const Series* codomain, Plot* plot) :
+    dataset(ds),
+    domain(domain),
+    codomain(codomain)
 {
-    set();
+
 }
 
-FunctionQt::FunctionQt(Function&& f, PlotQt* plot) :
-    Function(move(f)),
-    plot(plot)
+const Series& Function::getDomain()
 {
-    set();
+    return *domain;
 }
 
-FunctionQt::FunctionQt(const Function& f, PlotQt* plot) :
-    Function(f),
-    plot(plot)
+const Series& Function::getCodomain()
 {
-    set();
+    return *codomain;
 }
 
-FunctionQt::~FunctionQt()
-{
-    unset();
-}
-
-void FunctionQt::set()
+/*void Function::set()
 {
     QCustomPlot* plot = this->plot->getPlot();
     graph = plot->addGraph();
@@ -54,14 +46,4 @@ void FunctionQt::set()
     plot->yAxis->setRange(*(range_y.first), *(range_y.second));
 
     plot->replot();
-}
-
-void FunctionQt::unset()
-{
-    if (graph)
-    {
-        QCustomPlot* plot = this->plot->getPlot();
-        plot->removeGraph(graph);
-        graph = nullptr;
-    }
-}
+}*/

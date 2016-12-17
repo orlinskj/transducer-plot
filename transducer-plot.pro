@@ -17,25 +17,26 @@ QMAKE_CXXFLAGS += -std=c++11
 
 
 SOURCES += \
-    src/dataset.cpp \
     src/filereader.cpp \
     src/function.cpp \
-    src/functionqt.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
     src/plot.cpp \
-    src/plotqt.cpp
+    src/treeview.cpp \
+    src/unit.cpp \
+    src/transducer.cpp \
+    src/plotqt.cpp \
+    src/set.inl
 
 HEADERS  += \
     ../../../../usr/include/qcustomplot.h \
-    src/dataset.h \
-    src/filereader.h \
-    src/function.h \
-    src/functionqt.h \
     src/mainwindow.h \
     src/plot.h \
-    src/plotqt.h \
-    src/series.h
+    src/treeview.h \
+    src/set.h \
+    src/unit.h \
+    src/transducer.h \
+    src/plotqt.h
 
 FORMS    += src/mainwindow.ui
 

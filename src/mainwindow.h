@@ -10,10 +10,10 @@
 #include <sstream>
 #include <utility>
 
-#include "dataset.h"
+#include "transducer.h"
 #include "filereader.h"
 #include "plot.h"
-#include "functionqt.h"
+#include "treeview.h"
 
 using namespace std;
 using namespace ac;
@@ -33,8 +33,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    QCustomPlot* getPlotHandle();
+    QCustomPlot* getPlotWidget();
     void configPlot();
+    void addChart(bool set_current);
     void addDataSet(DataSet&& dataset);
     void addFunction(const Function& func);
 
@@ -44,15 +45,12 @@ public slots:
     void testSlot();
 
 private:
+    void initSignals();
+
     Ui::MainWindow *ui;
 
     // Current plot
     QPersistentModelIndex current_plot_qindex;
-
-    // All plots
-    vector<unique_ptr<PlotQt> > plots;
-    // Current plot pointer
-    PlotQt* current_plot;
 
     // Characteristics model
     QStandardItemModel model;

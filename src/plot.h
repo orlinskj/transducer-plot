@@ -7,11 +7,13 @@
 #include <algorithm>
 #include <tuple>
 #include <memory>
-#include "dataset.h"
+#include "transducer.h"
 #include "function.h"
 
 namespace ac
 {
+
+class Function;
 
 using namespace std;
 
@@ -22,14 +24,19 @@ using namespace std;
 class Plot
 {
 public:
-    virtual void addDataSet(DataSet &&dataset);
+    Plot();
+    Plot(const Plot& p);
+    Plot(QCustomPlot* p);
+    virtual DataSet* addDataSet(DataSet &&dataset);
     virtual void addFunction(const Function& f);
+    QCustomPlot* getPlot();
 
 protected:
     vector<DataSet> sets;
     vector<unique_ptr<Function>> functions;
     string name;
 
+    QCustomPlot* plot;
 };
 
 }

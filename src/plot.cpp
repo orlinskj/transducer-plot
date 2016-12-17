@@ -3,12 +3,16 @@
 using namespace std;
 using namespace ac;
 
+Plot::Plot() : plot(nullptr) {}
+Plot::Plot(QCustomPlot* p) : plot(p) {}
+Plot::Plot(const Plot &p) : plot(p.plot) {}
+
 void Plot::addFunction(const Function& f)
 {
    functions.push_back( unique_ptr<Function>(new Function(f)) );
 }
 
-void Plot::addDataSet(DataSet&& dataset)
+DataSet* Plot::addDataSet(DataSet&& dataset)
 {
     auto series = dataset.getSeries();
     bool added = false;
@@ -33,15 +37,23 @@ void Plot::addDataSet(DataSet&& dataset)
         if (ft!=series.end())
         {
             added = true;
-            this->addFunction(Function(dataset, domain, codomain));
+            this->addFunction(Function(dataset, domain, codomain, this));
             break;
         }
     }
 
     if (!added && series.size()>1)
     {
-        this->addFunction(Function(dataset, &(series.at(0)), &(series.at(1))));
+        this->addFunction(Function(dataset, &(series.at(0)), &(series.at(1)), this));
     }
 
     sets.push_back(std::move(dataset));
+
+    return &(*(sets.rbegin()));
 }
+
+QCustomPlot* Plot::getPlot()
+{
+    return plot;
+}
+
