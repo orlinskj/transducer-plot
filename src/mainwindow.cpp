@@ -1,100 +1,75 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-/*PlotQtPtrWrapper::PlotQtPtrWrapper(PlotQt* p)
-{
-    ptr.reset(p);
-}
+#include <memory>
+#include <sstream>
+#include <utility>
 
-PlotQtPtrWrapper::PlotQtPtrWrapper(const PlotQtPtrWrapper& p)
-{
-    PlotQt* plot = new PlotQt(*(p.ptr.get()));
-    ptr.reset(plot);
-}*/
+#include <QFileDialog>
 
-Q_DECLARE_METATYPE(DataSet*)
-Q_DECLARE_METATYPE(Plot)
-Q_DECLARE_METATYPE(Plot*)
-Q_DECLARE_SMART_POINTER_METATYPE(std::unique_ptr)
-Q_DECLARE_METATYPE(std::unique_ptr<Plot>)
+#include "view/transducerdelegate.h"
+#include "view/plotitemsdelegate.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui_(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+    ui_->setupUi(this);
 
-    QObject::connect(ui->actionFileOpen,
+    QObject::connect(ui_->actionFileOpen,
                      SIGNAL(triggered()),
                      this,
-                     SLOT(fileOpen()) );
+                     SLOT(file_open()) );
 
     // adding first empty chart to a tree view and make it current plot
-    addChart(true);
+    add_chart();
+    setup_view();
 
-    ui->treeView->setHeaderHidden(true);
-    ui->treeView->setModel(&model);
-    ui->treeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui_->plotView->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(ui->treeView,
+    QObject::connect(ui_->plotView,
                      SIGNAL(customContextMenuRequested(const QPoint &)),
                      this,
-                     SLOT(onTreeViewContextMenu(const QPoint &)));
+                     SLOT(on_tree_view_context_menu(const QPoint &)));
+
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    delete ui_;
 }
 
-QCustomPlot* MainWindow::getPlotWidget()
+void MainWindow::setup_view()
 {
-    return ui->plot;
+    ui_->transducerView->setModel(&transducer_model_);
+    ui_->transducerView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui_->transducerView->setItemDelegate(new ac::TransducerDelegate);
+
+    ui_->plotView->setModel(&plot_model_);
+    ui_->plotView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui_->plotView->setHeaderHidden(true);
+    ui_->plotView->setItemDelegate(new ac::PlotItemsDelegate);
 }
 
-void MainWindow::testSlot()
+void MainWindow::test_slot()
 {
 
 }
 
-void MainWindow::onTreeViewContextMenu(const QPoint& point)
+void MainWindow::on_tree_view_context_menu(const QPoint& point)
 {
-    QModelIndex index = ui->treeView->indexAt(point);
+    QModelIndex index = ui_->plotView->indexAt(point);
 
     QMenu* context_menu = new QMenu;
 
     if (index.isValid()) {
-        switch (index.data(ac::TreeView::ItemRole).toInt()) {
-        case static_cast<int>(ac::TreeView::Item::Set):
-            context_menu->addAction(tr("Ustaw jako dziedzinę"), this, SLOT(testSlot()));
-            context_menu->addAction(tr("Ustaw jako przeciwdziedzinę"), this, SLOT(testSlot()));
-            break;
-
-        case static_cast<int>(ac::TreeView::Item::Chart):
-            context_menu->addAction(tr("Dodaj zbiór danych..."), this, SLOT(testSlot()));
-            context_menu->addAction(tr("Usuń wykres"), this, SLOT(testSlot()));
-            break;
-
-        case static_cast<int>(ac::TreeView::Item::DataSet):
-            //auto ptr = index.data(ac::TreeView::PointerRole).value<DataSet*>();
-            context_menu->addAction(tr("Usuń"));
-            break;
-
-        default:
-            delete context_menu;
-            context_menu = nullptr;
-            break;
-
-        }
-
         if (context_menu)
-            context_menu->exec(ui->treeView->mapToGlobal(point));
+            context_menu->exec(ui_->plotView->mapToGlobal(point));
     }
 }
 
 
-void MainWindow::fileOpen()
+void MainWindow::file_open()
 {
     QString filename = QFileDialog::getOpenFileName(
                 this,
@@ -106,104 +81,39 @@ void MainWindow::fileOpen()
     {
         int status;
         FileReader file_reader;
-        unique_ptr<DataSet> dataset = file_reader.read(filename.toLocal8Bit(),
+        std::shared_ptr<Transducer> transducer = file_reader.read(filename.toLocal8Bit(),
                                                        &status);
-
-        if (dataset)
+        if (transducer)
         {
-            this->addDataSet(std::move(*dataset));
-            ui->statusBar->showMessage(tr("Wczytano plik ")+filename);
-
-            stringstream ss;
-            ss << "Ilość grafów: " << ui->plot->graphCount();
-            ui->label->setText( ss.str().c_str() );
+            this->add_transducer(transducer);
+            ui_->statusBar->showMessage(tr("Wczytano plik ")+filename);
         }
         else
         {
-            ui->statusBar->showMessage(
+            ui_->statusBar->showMessage(
                         tr("Nie udało się wczytać pliku ")+filename);
         }
     }
 
 }
 
-void MainWindow::addDataSet(DataSet&& dataset)
+void MainWindow::add_transducer(std::shared_ptr<Transducer> transducer)
 {
-    // dodajemy do wykresu obiekt zbioru danych
-    auto plot_item = model.itemFromIndex(current_plot_qindex);
-    auto item = ac::TreeView::createItem(ac::TreeView::Item::DataSet, dataset.getName().c_str());
-    QList<QStandardItem*> items = { item };
-    plot_item->appendRow(items);
-
-    // dodajemy do obiektu zbioru danych wartości
-    items.clear();
-    auto sets_item = ac::TreeView::createItem(ac::TreeView::Item::SetContainer);
-    auto params_item = ac::TreeView::createItem(ac::TreeView::Item::AlternativeModelContainer);
-    items = { sets_item, params_item };
-    item->appendColumn(items);
-
-    items.clear();
-    auto serial_item = ac::TreeView::createItem(ac::TreeView::Item::AlternativeModelSerial);
-    auto parallel_item = ac::TreeView::createItem(ac::TreeView::Item::AlternativeModelParallel);
-    items = { serial_item, parallel_item };
-    params_item->appendColumn(items);
-
-    items.clear();
-
-    auto series = dataset.getSeries();
-    for(auto it=series.begin(); it!=series.end(); it++)
-    {
-        items.append(new QStandardItem(it->getLabel().c_str()));
-    }
-    sets_item->appendColumn(items);
-
-    if (current_plot_qindex.isValid())
-    {
-        Plot* current_plot = current_plot_qindex.data(TreeView::PointerRole).value<Plot*>();
-        auto dataset_ptr = current_plot->addDataSet(std::move(dataset));
-        item->data(TreeView::PointerRole) = QVariant::fromValue(dataset_ptr);
-    }
-
+    QStandardItem* item = new QStandardItem(transducer->get_name().c_str());
+    QVariant var = QVariant::fromValue<std::shared_ptr<Transducer>>(transducer);
+    item->setData(var);
+    transducer_model_.appendRow(item);
 }
 
-void MainWindow::addChart(bool set_current)
+void MainWindow::add_chart()
 {
-    auto root = model.invisibleRootItem();
-    auto item = ac::TreeView::createItem(ac::TreeView::Item::Chart);
-    root->appendRow(item);
-    auto index = item->index();
-    index.data(TreeView::PointerRole) =
-            QVariant::fromValue(std::unique_ptr<Plot>(new Plot(this->getPlotWidget())));
-
-    if (set_current)
-        current_plot_qindex = index;
+    auto plot = std::make_shared<ac::Plot>(Plot("Wykres"));
+    QStandardItem* item = new QStandardItem(plot->get_name().c_str());
+    item->setData(QVariant::fromValue(plot));
+    plot_model_.appendRow(item);
 }
 
-void MainWindow::configPlot()
+void MainWindow::add_function(const Function& func)
 {
-    QCustomPlot* plot = getPlotWidget();
 
-    plot->setInteraction(QCP::iRangeDrag, true);
-    plot->setInteraction(QCP::iRangeZoom, true);
-
-    plot->xAxis->setLabel("x");
-    plot->yAxis->setLabel("y");
-
-    // set axes ranges, so we see all data:
-    plot->xAxis->setRange(-1, 1);
-    plot->yAxis->setRange(-1, 1);
-
-    plot->yAxis->setScaleType(QCPAxis::ScaleType::stLogarithmic);
-    plot->setInteraction(QCP::iSelectPlottables, true);
-
-    plot->replot();
-}
-
-void MainWindow::addFunction(const Function& func)
-{
-    if (current_plot_qindex.isValid())
-    {
-        Plot* cp = current_plot_qindex.data(TreeView::PointerRole).value<Plot*>();
-        cp->addFunction(func);
-    }
 }

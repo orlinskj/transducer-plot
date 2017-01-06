@@ -5,12 +5,13 @@
 #include <string>
 #include <tuple>
 
-#include "unit.h"
+#include "../unit.h"
 
 namespace ac{
 
+
 template<typename T> class Set_t;
-typedef Set_t<double> Set;
+using Set = Set_t<double>;
 
 template <typename T>
 class Set_t {
@@ -18,19 +19,20 @@ public:
 
     using value_type = T;
 
-    Set_t(vector<T>&& values, Unit unit);
+    Set_t(std::vector<T>&& values, Unit unit);
 
-    const vector<T>& get_values() const;
+    const std::vector<T>& get_values() const;
     const Unit& get_unit() const;
 
 private:
-    Unit m_unit;
-    vector<T> m_values;
+    Unit unit_;
+    std::vector<T> values_;
 
     // min and max values: { value, index }
-    std::tuple<T,size_t> m_min;
-    std::tuple<T,size_t> m_max;
+    std::tuple<T,size_t> min_;
+    std::tuple<T,size_t> max_;
 };
+
 
 }   // namespace ac
 

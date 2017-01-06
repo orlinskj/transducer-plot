@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -17,26 +17,27 @@ QMAKE_CXXFLAGS += -std=c++11
 
 
 SOURCES += \
-    src/filereader.cpp \
-    src/function.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
-    src/plot.cpp \
-    src/treeview.cpp \
     src/unit.cpp \
-    src/transducer.cpp \
-    src/plotqt.cpp \
-    src/set.inl
+    src/model/function.cpp \
+    src/model/set.inl \
+    src/model/transducer.cpp \
+    src/model/plot.cpp \
+    src/io/filereader.cpp \
+    src/view/transducerdelegate.cpp \
+    src/view/plotitemsdelegate.cpp \
 
 HEADERS  += \
-    ../../../../usr/include/qcustomplot.h \
     src/mainwindow.h \
-    src/plot.h \
-    src/treeview.h \
-    src/set.h \
     src/unit.h \
-    src/transducer.h \
-    src/plotqt.h
+    src/model/function.h \
+    src/model/set.h \
+    src/model/transducer.h \
+    src/model/plot.h \
+    src/io/filereader.h \
+    src/view/transducerdelegate.h \
+    src/view/plotitemsdelegate.h \
 
 FORMS    += src/mainwindow.ui
 

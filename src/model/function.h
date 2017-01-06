@@ -3,26 +3,32 @@
 
 #include "transducer.h"
 #include "set.h"
-#include "plot.h"
 
-namespace ac
-{
+namespace ac{
 
 class Function {
 
 public:
-    Function(const DataSet& dataset, const Set* domain, const Set* codomain);
+    static constexpr int Role = Qt::UserRole + 1;
 
-    const Set& get_domain();
-    const Set& get_codomain();
+    Function();
+    Function(Transducer* transducer, Set* domain, Set* codomain);
+
+    const Set* get_domain();
+    const Set* get_codomain();
+    const Transducer *get_transducer();
+
+    bool operator==(const Function& f) const;
 
 protected:
-    const DataSet& _dataset;
-    const Set* _domain;
-    const Set* _codomain;
+    const Transducer* transducer_;
+    const Set* domain_;
+    const Set* codomain_;
 };
 
-}
 
+}   // namespace ac
+
+Q_DECLARE_METATYPE(ac::Function)
 
 #endif // FUNCTION_H

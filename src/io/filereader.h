@@ -5,12 +5,11 @@
 #include <fstream>
 #include <string>
 #include <cstring>
-#include <locale>
-#include <algorithm>
+#include <memory>
 #include <boost/filesystem/path.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include "dataset.h"
+#include "../model/transducer.h"
 
 namespace ac {
 
@@ -18,13 +17,13 @@ namespace ac {
     using namespace boost::filesystem;
     using namespace boost::algorithm;
 
-    // Reads data from file into DataSet instance.
+    // Reads data from file into Transducer instance.
     class FileReader{
 
     public:
         virtual ~FileReader();
 
-        virtual unique_ptr<DataSet> read(const char* filepath, int* status);
+        virtual std::shared_ptr<Transducer> read(const char* filepath, int* status);
     };
 
 }

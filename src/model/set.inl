@@ -1,21 +1,20 @@
-using namespace std;
 using namespace ac;
 
 template <typename T>
-Series_t<T>::Series_t(vector<T>&& values, const string& label) :
-    values(values), label(label)
+Set_t<T>::Set_t(std::vector<T>&& values, Unit unit) :
+    unit_(unit), values_(values)
 {
 
 }
 
 template <typename T>
-const string& Series_t<T>::getLabel() const
+const Unit& Set_t<T>::get_unit() const
 {
-    return label;
+    return unit_;
 }
 
 template <typename T>
-const vector<T>& Series_t<T>::getValues() const
+const std::vector<T>& Set_t<T>::get_values() const
 {
-    return values;
+    return values_;
 }

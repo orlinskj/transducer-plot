@@ -3,34 +3,34 @@
 using namespace ac;
 using namespace std;
 
-DataSet::DataSet(const string &name,
-                 const string &source,
+Transducer::Transducer(const std::string &name,
+                 const std::string &source,
                  Description &&description,
-                 vector<Series> &&series) :
-    name(name),
-    source(source),
-    description(description),
-    series(series)
+                 std::vector<Set> &&sets) :
+    name_(name),
+    source_(source),
+    description_(description),
+    sets_(sets)
 {
 
 }
 
-const string& DataSet::getName() const
+const string& Transducer::get_name() const
 {
-    return name;
+    return name_;
 }
 
-const string& DataSet::getSource() const
+const string& Transducer::get_source() const
 {
-    return source;
+    return source_;
 }
 
-const DataSet::Description& DataSet::getDescription() const
+const Transducer::Description& Transducer::get_description() const
 {
-    return description;
+    return description_;
 }
 
-const vector<Series>& DataSet::getSeries() const
+const std::vector<Set>& Transducer::get_sets() const
 {
-    return series;
+    return sets_;
 }

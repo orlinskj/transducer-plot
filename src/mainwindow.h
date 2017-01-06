@@ -3,20 +3,17 @@
 
 #include <QMainWindow>
 #include <QObject>
-#include <qcustomplot.h>
-#include <vector>
-#include <string>
-#include <memory>
-#include <sstream>
-#include <utility>
+#include <QStandardItemModel>
+#include <QChart>
+#include <QChartView>
 
-#include "transducer.h"
-#include "filereader.h"
-#include "plot.h"
-#include "treeview.h"
+#include "model/transducer.h"
+#include "io/filereader.h"
+#include "model/plot.h"
 
 using namespace std;
 using namespace ac;
+using namespace QtCharts;
 
 namespace Ui {
 
@@ -33,27 +30,28 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    QCustomPlot* getPlotWidget();
-    void configPlot();
-    void addChart(bool set_current);
-    void addDataSet(DataSet&& dataset);
-    void addFunction(const Function& func);
+    void add_chart();
+    void add_transducer(std::shared_ptr<Transducer> transducer);
+    void add_function(const Function& func);
 
 public slots:
-    void fileOpen();
-    void onTreeViewContextMenu(const QPoint &point);
-    void testSlot();
+    void file_open();
+    void on_tree_view_context_menu(const QPoint &point);
+    void test_slot();
 
 private:
-    void initSignals();
+    void init_signals();
+    void setup_view();
 
-    Ui::MainWindow *ui;
+    Ui::MainWindow *ui_;
 
-    // Current plot
-    QPersistentModelIndex current_plot_qindex;
+    // Transducer model - stores all transducers
+    QStandardItemModel transducer_model_;
 
-    // Characteristics model
-    QStandardItemModel model;
+    // Plot model - stores plots and their functions
+    QStandardItemModel plot_model_;
+
+    QChartView charView;
 };
 
 

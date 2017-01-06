@@ -1,5 +1,7 @@
 #include "filereader.h"
 
+#include <locale>
+
 using namespace ac;
 
 FileReader::~FileReader()
@@ -7,7 +9,7 @@ FileReader::~FileReader()
 
 }
 
-unique_ptr<DataSet> FileReader::read(const char* file_path, int *status)
+std::shared_ptr<Transducer> FileReader::read(const char* file_path, int *status)
 {
     ifstream file_stream(file_path);
 
@@ -23,9 +25,9 @@ unique_ptr<DataSet> FileReader::read(const char* file_path, int *status)
     string source = file_path;
     string name = path(file_path).stem().generic_string();
 
-    vector<string> labels;
-    vector<vector<Series::value_type>> values;
-    DataSet::Description description;
+    std::vector<Unit> units;
+    vector<vector<Set::value_type>> values;
+    Transducer::Description description;
 
     string line_buffer = "";
     size_t pos;
@@ -77,8 +79,12 @@ unique_ptr<DataSet> FileReader::read(const char* file_path, int *status)
 
                 if( !is_first_data_line_readed)
                 {
-                    labels.push_back( string(token) );
-                    values.push_back( vector<Series::value_type>(0) );
+                    Unit u = Unit::get_unit_by_symbol(std::string(token));
+                    if (u == Unit::None)
+                        u = Unit("",std::string(token),"");
+
+                    units.push_back(u);
+                    values.push_back( vector<Set::value_type>(0) );
 
                     if (token_pos >= line_buffer.length())
                     {
@@ -104,17 +110,14 @@ unique_ptr<DataSet> FileReader::read(const char* file_path, int *status)
         }
     }
 
-    vector<Series> series;
+    vector<Set> sets;
 
-    auto v_it = values.begin();
-    for (auto l_it=labels.begin(); l_it!=labels.end(); l_it++, v_it++)
+    auto vit = values.begin();
+    for (auto uit=units.begin(); uit!=units.end() && vit!=values.end(); uit++, vit++)
     {
-        if (v_it < values.end())
-        {
-            series.push_back(Series(std::move(*v_it), std::move(*l_it)));
-        }
+        sets.push_back(Set(std::move(*vit), *uit));
     }
 
-    return unique_ptr<DataSet>(new DataSet(name,source,
-                                           std::move(description),std::move(series)));
+    return std::make_shared<Transducer>(
+                Transducer(name,source,std::move(description),std::move(sets)));
 }
