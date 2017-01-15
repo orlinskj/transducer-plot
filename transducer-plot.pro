@@ -27,6 +27,9 @@ SOURCES += \
     src/io/filereader.cpp \
     src/view/transducerdelegate.cpp \
     src/view/plotitemsdelegate.cpp \
+    src/view/plotpresenter.cpp \
+    src/model/plotstoreitemmodel.cpp \
+    src/model/plotstoreitem.cpp
 
 HEADERS  += \
     src/mainwindow.h \
@@ -38,6 +41,9 @@ HEADERS  += \
     src/io/filereader.h \
     src/view/transducerdelegate.h \
     src/view/plotitemsdelegate.h \
+    src/view/plotpresenter.h \
+    src/model/plotstoreitemmodel.h \
+    src/model/plotstoreitem.h
 
 FORMS    += src/mainwindow.ui
 
@@ -53,4 +59,4 @@ unix|win32: LIBS += -lboost_system -lboost_filesystem
 DISTFILES +=
 
 RESOURCES += \
-    resources/icons.qrc
+    resources/resources.qrc

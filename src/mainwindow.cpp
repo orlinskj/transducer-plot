@@ -6,6 +6,10 @@
 #include <utility>
 
 #include <QFileDialog>
+#include <QLineSeries>
+#include <QPushButton>
+#include <QBoxLayout>
+#include <QGraphicsLayout>
 
 #include "view/transducerdelegate.h"
 #include "view/plotitemsdelegate.h"
@@ -16,22 +20,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui_->setupUi(this);
 
-    QObject::connect(ui_->actionFileOpen,
-                     SIGNAL(triggered()),
-                     this,
-                     SLOT(file_open()) );
-
-    // adding first empty chart to a tree view and make it current plot
-    add_chart();
     setup_view();
-
-    ui_->plotView->setContextMenuPolicy(Qt::CustomContextMenu);
-
-    QObject::connect(ui_->plotView,
-                     SIGNAL(customContextMenuRequested(const QPoint &)),
-                     this,
-                     SLOT(on_tree_view_context_menu(const QPoint &)));
-
+    seed();
+    init_signals();
 }
 
 MainWindow::~MainWindow()
@@ -41,22 +32,50 @@ MainWindow::~MainWindow()
 
 void MainWindow::setup_view()
 {
+    // transducer view configuration
     ui_->transducerView->setModel(&transducer_model_);
     ui_->transducerView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui_->transducerView->setItemDelegate(new ac::TransducerDelegate);
+    ui_->transducerView->setDragEnabled(true);
 
-    ui_->plotView->setModel(&plot_model_);
+    ui_->plotView->setModel(&plot_store_);
     ui_->plotView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui_->plotView->setHeaderHidden(true);
     ui_->plotView->setItemDelegate(new ac::PlotItemsDelegate);
+
+    ui_->plotView->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    // frame for chart view configuration
+    QBoxLayout* layout = new QBoxLayout(QBoxLayout::Direction::LeftToRight);
+    layout->setContentsMargins(0,0,0,0);
+    ui_->frame->setLayout(layout);
+
+    // plot presenter configuration
+    plot_presenter_ = ac::PlotPresenter(ui_->frame);
+
 }
 
-void MainWindow::test_slot()
+void MainWindow::init_signals()
+{
+    QObject::connect(ui_->actionFileOpen, SIGNAL(triggered()),
+                     this, SLOT(slot_file_open()) );
+
+    QObject::connect(ui_->plotView, SIGNAL(customContextMenuRequested(const QPoint &)),
+                     this, SLOT(slot_on_tree_view_context_menu(const QPoint &)));
+
+    QObject::connect(ui_->plotAddButton, SIGNAL(clicked()),
+                     this, SLOT(slot_add_new_plot()));
+
+    QObject::connect(ui_->plotRemoveButton, SIGNAL(clicked()),
+                     this, SLOT(slot_remove_plot()));
+}
+
+void MainWindow::slot_test()
 {
 
 }
 
-void MainWindow::on_tree_view_context_menu(const QPoint& point)
+void MainWindow::slot_on_tree_view_context_menu(const QPoint& point)
 {
     QModelIndex index = ui_->plotView->indexAt(point);
 
@@ -69,7 +88,7 @@ void MainWindow::on_tree_view_context_menu(const QPoint& point)
 }
 
 
-void MainWindow::file_open()
+void MainWindow::slot_file_open()
 {
     QString filename = QFileDialog::getOpenFileName(
                 this,
@@ -105,15 +124,39 @@ void MainWindow::add_transducer(std::shared_ptr<Transducer> transducer)
     transducer_model_.appendRow(item);
 }
 
-void MainWindow::add_chart()
+void MainWindow::seed()
 {
-    auto plot = std::make_shared<ac::Plot>(Plot("Wykres"));
-    QStandardItem* item = new QStandardItem(plot->get_name().c_str());
-    item->setData(QVariant::fromValue(plot));
-    plot_model_.appendRow(item);
+    /*QLineSeries *series = new QLineSeries();
+    series->append(0, 6);
+    series->append(2, 4);
+    series->append(3, 8);
+    series->append(7, 4);
+    series->append(10, 5);
+    *series << QPointF(11, 1) << QPointF(13, 3) << QPointF(17, 6) << QPointF(18, 3) << QPointF(20, 2);
+
+    QChart *chart = new QChart();
+    chart->legend()->hide();
+    chart->addSeries(series);
+    chart->createDefaultAxes();
+    chart->setTitle("Simple line chart example");
+    chart->layout()->setContentsMargins(0,0,0,0);
+
+    chartView->setChart(chart);*/
 }
 
-void MainWindow::add_function(const Function& func)
+void MainWindow::slot_add_new_plot()
 {
+    plot_store_.add_plot();
+}
 
+void MainWindow::slot_remove_plot()
+{
+    auto selection = ui_->plotView->selectionModel();
+    auto selected = selection->selectedIndexes();
+
+    if(selected.length() == 1)
+    {
+        auto plot = selected.at(0).data(ac::PlotStoreItem::Role).value<ac::Plot_ptr>();
+        plot_store_.remove_plot(plot.get());
+    }
 }

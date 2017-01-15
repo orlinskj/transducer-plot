@@ -5,21 +5,23 @@
 #include <memory>
 
 #include "function.h"
+#include "plotstoreitem.h"
 
 namespace ac
 {
 
 class Function;
+class Plot;
 
-using namespace std;
+using Plot_ptr = std::shared_ptr<Plot>;
 
 // Representation of plot.
 // One plot can have multiple functions binded to it.
 // Attached function is displayed on plot.
-class Plot
+class Plot : public PlotStoreItem
 {
 public:
-    static constexpr int Role = Qt::UserRole + 1;
+    static Plot_ptr make_ptr(Plot&& plot);
 
     Plot();
     Plot(const std::string& name);
@@ -27,14 +29,18 @@ public:
     virtual bool remove_function(const Function& f);
     virtual bool find_function(const Function& f) const;
 
+    int function_count() const;
+    const Function& function_at(int index) const;
+
+    void set_name(const std::string& name);
     const std::string& get_name() const;
+
+    std::string to_string() const override;
 
 protected:
     std::vector<Function> functions_;
     std::string name_;
 };
-
-using Plot_ptr = std::shared_ptr<Plot>;
 
 }
 

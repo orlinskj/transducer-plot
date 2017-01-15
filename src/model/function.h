@@ -1,22 +1,29 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
 
+#include <string>
+
+#include "plotstoreitem.h"
 #include "transducer.h"
 #include "set.h"
 
 namespace ac{
 
-class Function {
+class Plot;
+
+class Function : public PlotStoreItem {
 
 public:
-    static constexpr int Role = Qt::UserRole + 1;
 
     Function();
-    Function(Transducer* transducer, Set* domain, Set* codomain);
+    Function(Transducer* transducer, Set* domain, Set* codomain, Plot* plot);
 
-    const Set* get_domain();
-    const Set* get_codomain();
-    const Transducer *get_transducer();
+    std::string to_string() const override;
+    const Set* get_domain() const;
+    const Set* get_codomain() const;
+    const Transducer *get_transducer() const;
+
+    const Plot* get_plot() const;
 
     bool operator==(const Function& f) const;
 
@@ -24,6 +31,8 @@ protected:
     const Transducer* transducer_;
     const Set* domain_;
     const Set* codomain_;
+
+    const Plot* plot_;
 };
 
 

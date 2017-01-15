@@ -4,5 +4,6 @@
         <file>icons/transducer-plot.png</file>
         <file>icons/v-rlc.png</file>
         <file>icons/v-set.png</file>
+        <file>glyphicons/glyphicons-433-plus.png</file>
     </qresource>
 </RCC>
