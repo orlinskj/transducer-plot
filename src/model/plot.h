@@ -11,9 +11,6 @@ namespace ac
 {
 
 class Function;
-class Plot;
-
-using Plot_ptr = std::shared_ptr<Plot>;
 
 // Representation of plot.
 // One plot can have multiple functions binded to it.
@@ -21,8 +18,6 @@ using Plot_ptr = std::shared_ptr<Plot>;
 class Plot : public PlotStoreItem
 {
 public:
-    static Plot_ptr make_ptr(Plot&& plot);
-
     Plot();
     Plot(const std::string& name);
     virtual void add_function(const Function& f);
@@ -44,7 +39,7 @@ protected:
 
 }
 
-Q_DECLARE_METATYPE(ac::Plot_ptr)
+Q_DECLARE_METATYPE(ac::Plot*)
 
 
 #endif // PLOT_H

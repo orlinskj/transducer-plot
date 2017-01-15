@@ -7,9 +7,9 @@ void ac::PlotItemsDelegate::paint(QPainter *painter,
                                const QStyleOptionViewItem &option,
                                const QModelIndex &index) const
 {
-    if (index.data(ac::PlotStoreItem::Role).canConvert<ac::Plot_ptr>())
+    if (index.data(ac::PlotStoreItem::Role).canConvert<ac::Plot*>())
     {
-        ac::Plot_ptr plot = index.data(ac::PlotStoreItem::Role).value<ac::Plot_ptr>();
+        auto plot = index.data(ac::PlotStoreItem::Role).value<ac::Plot*>();
 
         painter->setPen(option.palette.text().color());
 
@@ -31,7 +31,7 @@ void ac::PlotItemsDelegate::paint(QPainter *painter,
         painter->setFont(option.font);
         painter->drawText(option.rect,Qt::AlignLeft, plot->get_name().c_str());
     }
-    else if (index.data(ac::PlotStoreItem::Role).canConvert<ac::Function>())
+    else if (index.data(ac::PlotStoreItem::Role).canConvert<ac::Function*>())
     {
 
     }

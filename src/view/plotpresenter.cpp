@@ -22,7 +22,7 @@ ac::PlotPresenter::PlotPresenter(QWidget* widget)
     view_->setContentsMargins(0,0,0,0);
 }
 
-void ac::PlotPresenter::show_plot(Plot_ptr plot)
+void ac::PlotPresenter::show_plot(Plot *plot)
 {
 
 }

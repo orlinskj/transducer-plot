@@ -5,11 +5,6 @@
 ac::Plot::Plot() {}
 ac::Plot::Plot(const std::string& name) : name_(name) { }
 
-ac::Plot_ptr ac::Plot::make_ptr(ac::Plot &&plot)
-{
-    return std::make_shared<ac::Plot>(plot);
-}
-
 void ac::Plot::add_function(const ac::Function& f)
 {
     functions_.push_back(f);
@@ -41,6 +36,11 @@ bool ac::Plot::find_function(const ac::Function& f) const
 const std::string& ac::Plot::get_name() const
 {
     return name_;
+}
+
+void ac::Plot::set_name(const std::string& name)
+{
+    name_ = name;
 }
 
 int ac::Plot::function_count() const

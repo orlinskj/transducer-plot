@@ -156,7 +156,7 @@ void MainWindow::slot_remove_plot()
 
     if(selected.length() == 1)
     {
-        auto plot = selected.at(0).data(ac::PlotStoreItem::Role).value<ac::Plot_ptr>();
-        plot_store_.remove_plot(plot.get());
+        auto plot = selected.at(0).data(ac::PlotStoreItem::Role).value<ac::Plot*>();
+        plot_store_.remove_plot(plot);
     }
 }

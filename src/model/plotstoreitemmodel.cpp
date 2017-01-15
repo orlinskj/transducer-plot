@@ -8,19 +8,27 @@ ac::PlotStoreItemModel::PlotStoreItemModel()
 
 }
 
-ac::Plot* ac::PlotStoreItemModel::add_plot()
+ac::PlotStoreItemModel::~PlotStoreItemModel()
 {
-    layoutAboutToBeChanged();
-    plots_.push_back(ac::Plot::make_ptr(Plot("Wykres")));
-    return plots_.rbegin()->get();
-    layoutChanged();
+    for (auto&& plot : plots_)
+    {
+        delete plot;
+    }
 }
 
-std::vector<Plot_ptr>::const_iterator ac::PlotStoreItemModel::get_plot_iter(const Plot* plot) const
+ac::Plot* ac::PlotStoreItemModel::add_plot()
+{
+    beginInsertRows(QModelIndex(),rowCount(),rowCount());
+    plots_.push_back(new Plot("Wykres"));
+    endInsertRows();
+    return *(plots_.rbegin());
+}
+
+std::vector<Plot*>::const_iterator ac::PlotStoreItemModel::get_plot_iter(const Plot* plot) const
 {
     for(auto it=plots_.cbegin(); it != plots_.cend(); it++)
     {
-        if (it->get() == plot)
+        if (*it == plot)
             return it;
     }
 
@@ -33,7 +41,10 @@ void ac::PlotStoreItemModel::remove_plot(Plot* plot)
 
     if (it != plots_.cend())
     {
+        int row = it-plots_.cbegin();
+        beginRemoveRows(QModelIndex(), row, row);
         plots_.erase(it);
+        endRemoveRows();
     }
 }
 
@@ -45,13 +56,9 @@ QModelIndex ac::PlotStoreItemModel::index(int row, int column, const QModelIndex
     if (parent == QModelIndex())
     {
         if (row >= 0 && row < int(plots_.size()) )
-        {
-            /// TODO check this
-            return this->createIndex(row, 0, (void*)&(plots_[row]) );
-        }
-        else{
+            return this->createIndex(row, 0, (void*)plots_[row]);
+        else
             return QModelIndex();
-        }
     }
     else
     {
@@ -71,7 +78,7 @@ QModelIndex ac::PlotStoreItemModel::parent(const QModelIndex &child) const
 {
     auto item_ptr = static_cast<ac::PlotStoreItem*>(child.internalPointer());
 
-    if (dynamic_cast<Plot_ptr*>(item_ptr))
+    if (dynamic_cast<Plot*>(item_ptr))
     {
         return QModelIndex();
     }
@@ -89,8 +96,16 @@ QModelIndex ac::PlotStoreItemModel::parent(const QModelIndex &child) const
 
 int ac::PlotStoreItemModel::rowCount(const QModelIndex &parent) const
 {
+    if (parent == QModelIndex())
+        return plots_.size();
+    else
+    {
+        auto plot = dynamic_cast<ac::Plot*>((ac::PlotStoreItem*)parent.internalPointer());
+        if (plot)
+            return plot->function_count();
 
-    return plots_.size();
+        return 0;
+    }
 }
 
 int ac::PlotStoreItemModel::columnCount(const QModelIndex &parent) const
@@ -108,13 +123,13 @@ QVariant ac::PlotStoreItemModel::data(const QModelIndex &index, int role) const
     }
     else if (role == ac::PlotStoreItem::Role)
     {
-        auto plot = dynamic_cast<ac::Plot_ptr*>(item_ptr);
+        auto plot = dynamic_cast<ac::Plot*>(item_ptr);
         if (plot)
-            return QVariant::fromValue(*plot);
+            return QVariant::fromValue(plot);
 
         auto func = dynamic_cast<ac::Function*>(item_ptr);
         if(func)
-            return QVariant::fromValue(*func);
+            return QVariant::fromValue(func);
 
         return QVariant();
     }

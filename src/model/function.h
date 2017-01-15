@@ -38,6 +38,6 @@ protected:
 
 }   // namespace ac
 
-Q_DECLARE_METATYPE(ac::Function)
+Q_DECLARE_METATYPE(ac::Function*)
 
 #endif // FUNCTION_H

@@ -3,7 +3,11 @@
 using namespace std;
 using namespace ac;
 
-Function::Function() : transducer_(nullptr), domain_(nullptr), codomain_(nullptr)
+Function::Function() :
+    transducer_(nullptr),
+    domain_(nullptr),
+    codomain_(nullptr),
+    plot_(nullptr)
 {
 
 }

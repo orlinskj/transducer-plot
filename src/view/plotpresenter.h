@@ -15,7 +15,7 @@ public:
     // widget should have added some layout to expand the chart view
     PlotPresenter(QWidget* widget = nullptr);
 
-    void show_plot(Plot_ptr plot);
+    void show_plot(Plot* plot);
 
     QChartView* view_;
 };
