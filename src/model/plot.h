@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "function.h"
-#include "plotstoreitem.h"
+#include "treemodel/treenodeitem.h"
 
 namespace ac
 {
@@ -15,7 +15,7 @@ class Function;
 // Representation of plot.
 // One plot can have multiple functions binded to it.
 // Binded functions are displayed on plot.
-class Plot : public PlotStoreItem
+class Plot : public TreeNodeItem
 {
 public:
     Plot();

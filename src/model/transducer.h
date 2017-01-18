@@ -24,6 +24,8 @@ public:
     Transducer(const std::string& name, const std::string& source,
             Description&& description, std::vector<Set>&& sets);
 
+    //Transducer(Transducer&& t);
+
     const std::string& get_source() const;
     const std::string& get_name() const;
 

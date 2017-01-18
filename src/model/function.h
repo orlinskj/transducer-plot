@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "plotstoreitem.h"
+#include "treemodel/treenodeitem.h"
 #include "transducer.h"
 #include "set.h"
 
@@ -11,7 +11,7 @@ namespace ac{
 
 class Plot;
 
-class Function : public PlotStoreItem {
+class Function : public TreeNodeItem {
 
 public:
 

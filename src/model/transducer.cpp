@@ -11,9 +11,15 @@ Transducer::Transducer(const std::string &name,
     source_(source),
     description_(description),
     sets_(sets)
+{ }
+
+/*Transducer::Transducer(Transducer &&t) :
+    name_(t.name_),
+    source_(t.source_),
+    description_(description_)
 {
 
-}
+}*/
 
 const string& Transducer::get_name() const
 {

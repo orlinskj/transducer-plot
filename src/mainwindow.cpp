@@ -12,7 +12,10 @@
 #include <QGraphicsLayout>
 
 #include "view/transducerdelegate.h"
-#include "view/plotitemsdelegate.h"
+//#include "view/plotitemsdelegate.h"
+#include "model/treemodel/treenodeitem.h"
+
+#include "functiondialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -72,6 +75,8 @@ void MainWindow::init_signals()
     QObject::connect(ui_->functionAddButton, SIGNAL(clicked()),
                      this, SLOT(slot_add_function()));
 
+    QObject::connect(ui_->functionRemoveButton, SIGNAL(clicked()),
+                     this, SLOT(slot_remove_function()));
 }
 
 void MainWindow::slot_test()
@@ -150,7 +155,7 @@ void MainWindow::seed()
 
 void MainWindow::slot_add_new_plot()
 {
-    plot_store_.add_plot(new ac::Plot());
+    plot_store_.append(new ac::Plot());
 }
 
 void MainWindow::slot_remove_plot()
@@ -160,25 +165,40 @@ void MainWindow::slot_remove_plot()
 
     if(selected.length() == 1)
     {
-        auto plot = selected.at(0).data(ac::PlotStoreItem::Role).value<ac::Plot*>();
-        plot_store_.remove_plot(plot);
+        auto item = selected.at(0).data(TreeItemModel::Role).value<TreeNodeItem*>();
+        if (auto plot = dynamic_cast<ac::Plot*>(item))
+            plot->kill();
     }
 }
 
 void MainWindow::slot_add_function()
+{
+    /*auto selection = ui_->plotView->selectionModel();
+    auto selected = selection->selectedIndexes();
+
+    if(selected.length() == 1)
+    {
+        auto index = selected.at(0);
+        auto item = index.data(TreeItemModel::Role).value<TreeNodeItem*>();
+        if (auto func = dynamic_cast<ac::Function*>(item))
+            func->parent()->append(new ac::Function());
+        else if(auto plot = dynamic_cast<ac::Plot*>(item))
+            plot->append(new ac::Function());
+    }*/
+
+    auto dialog = new FunctionDialog();
+    dialog->show();
+}
+
+void MainWindow::slot_remove_function()
 {
     auto selection = ui_->plotView->selectionModel();
     auto selected = selection->selectedIndexes();
 
     if(selected.length() == 1)
     {
-        auto index = selected.at(0);
-        auto plot = index.data(ac::PlotStoreItem::Role).value<ac::Plot*>();
-        plot_store_.add_function(plot, new ac::Function());
+        auto item = selected.at(0).data(TreeItemModel::Role).value<TreeNodeItem*>();
+        if (auto func = dynamic_cast<ac::Function*>(item))
+            func->kill();
     }
-}
-
-void MainWindow::slot_remove_function()
-{
-
 }

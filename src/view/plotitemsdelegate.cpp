@@ -9,7 +9,7 @@ void ac::PlotItemsDelegate::paint(QPainter *painter,
                                const QStyleOptionViewItem &option,
                                const QModelIndex &index) const
 {
-    if (index.data(ac::PlotStoreItem::Role).canConvert<ac::Plot*>())
+    /*if (index.data(ac::PlotStoreItem::Role).canConvert<ac::Plot*>())
     {
         auto plot = index.data(ac::PlotStoreItem::Role).value<ac::Plot*>();
 
@@ -35,14 +35,14 @@ void ac::PlotItemsDelegate::paint(QPainter *painter,
     else if (index.data(ac::PlotStoreItem::Role).canConvert<ac::Function*>())
     {
         QStyledItemDelegate::paint(painter, option, index);
-    }
+    }*/
     //QStyledItemDelegate::paint(painter, option, index);
 }
 
 QSize ac::PlotItemsDelegate::sizeHint(const QStyleOptionViewItem &option,
                                      const QModelIndex &index) const
 {
-    if (index.data(ac::PlotStoreItem::Role).canConvert<Plot*>())
+    /*if (index.data(ac::PlotStoreItem::Role).canConvert<Plot*>())
     {
         auto plot = index.data(ac::PlotStoreItem::Role).value<Plot*>();
 
@@ -56,7 +56,7 @@ QSize ac::PlotItemsDelegate::sizeHint(const QStyleOptionViewItem &option,
         {
             return QStyledItemDelegate::sizeHint(option,index);
         }
-    }
+    }*/
 
     return QStyledItemDelegate::sizeHint(option,index);
 }

@@ -6,23 +6,28 @@
 
 #include "treenodeitem.h"
 
-class TreeItemModel : public QAbstractItemModel
+class TreeItemModel : public QAbstractItemModel, public TreeNodeItem
 {
 public:
     static constexpr int Role = Qt::UserRole + 6729432;
 
-    TreeItemModel();
+    TreeItemModel(QObject* parent = nullptr);
     virtual ~TreeItemModel();
-    TreeNodeItem* root() const;
+    //TreeNodeItem* root() const;
 
-    QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    QModelIndex parent(const QModelIndex &child) const override;
-    int rowCount(const QModelIndex &parent) const override;
-    int columnCount(const QModelIndex &parent) const override;
+    virtual QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex &index, int role) const override;
+    virtual QModelIndex parent(const QModelIndex &child) const override;
+    virtual int rowCount(const QModelIndex &parent) const override;
+    virtual int columnCount(const QModelIndex &parent) const override;
 
-protected:
-    TreeNodeItemPtr root_;
+    void emit_begin_insert_rows(int first, int last, std::vector<int>* tree);
+    void emit_end_insert_rows();
+    void emit_begin_remove_rows(int first, int last, std::vector<int>* tree);
+    void emit_end_remove_rows();
+
+/*protected:
+    TreeNodeItemPtr root_;*/
 };
 
 Q_DECLARE_METATYPE(TreeNodeItem*)

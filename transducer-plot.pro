@@ -29,10 +29,12 @@ SOURCES += \
     src/view/plotitemsdelegate.cpp \
     src/view/plotpresenter.cpp \
     src/model/plotstoreitemmodel.cpp \
-    src/model/plotstoreitem.cpp \
     src/model/treemodel/treeitem.inl \
     src/model/treemodel/treeitemmodel.cpp \
-    src/model/treemodel/treenodeitem.cpp
+    src/model/treemodel/treenodeitem.cpp \
+    src/functiondialog.cpp \
+    src/model/transduceradapteritem.cpp \
+    src/model/setadapteritem.cpp
 
 HEADERS  += \
     src/mainwindow.h \
@@ -46,12 +48,15 @@ HEADERS  += \
     src/view/plotitemsdelegate.h \
     src/view/plotpresenter.h \
     src/model/plotstoreitemmodel.h \
-    src/model/plotstoreitem.h \
     src/model/treemodel/treeitem.h \
     src/model/treemodel/treeitemmodel.h \
-    src/model/treemodel/treenodeitem.h
+    src/model/treemodel/treenodeitem.h \
+    src/functiondialog.h \
+    src/model/transduceradapteritem.h \
+    src/model/setadapteritem.h
 
-FORMS    += src/mainwindow.ui
+FORMS    += src/mainwindow.ui \
+    src/functiondialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/release/ -lqcustomplot
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/debug/ -lqcustomplot

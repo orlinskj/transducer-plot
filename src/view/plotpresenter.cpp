@@ -2,6 +2,7 @@
 
 #include <QGraphicsLayout>
 #include <QBoxLayout>
+#include <QStyle>
 
 ac::PlotPresenter::PlotPresenter(QWidget* widget)
 {
