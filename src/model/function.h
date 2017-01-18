@@ -16,7 +16,7 @@ class Function : public PlotStoreItem {
 public:
 
     Function();
-    Function(Transducer* transducer, Set* domain, Set* codomain, Plot* plot);
+    Function(Transducer* transducer, Set* domain, Set* codomain, Plot* plot = nullptr);
 
     std::string to_string() const override;
     const Set* get_domain() const;
@@ -24,6 +24,8 @@ public:
     const Transducer *get_transducer() const;
 
     const Plot* get_plot() const;
+
+    void set_plot(const Plot* plot);
 
     bool operator==(const Function& f) const;
 

@@ -40,6 +40,9 @@ private slots:
     void slot_add_new_plot();
     void slot_remove_plot();
 
+    void slot_add_function();
+    void slot_remove_function();
+
     void slot_file_open();
     void slot_on_tree_view_context_menu(const QPoint &point);
     void slot_test();

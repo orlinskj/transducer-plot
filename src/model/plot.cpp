@@ -1,16 +1,25 @@
 #include "plot.h"
 
 #include <algorithm>
+#include "plotstoreitemmodel.h"
 
-ac::Plot::Plot() {}
+ac::Plot::Plot() : name_("Wykres") {}
 ac::Plot::Plot(const std::string& name) : name_(name) { }
 
-void ac::Plot::add_function(const ac::Function& f)
+ac::Plot::~Plot()
 {
-    functions_.push_back(f);
+    for (auto it=functions_.cbegin(); it!=functions_.cend(); it++)
+        delete *it;
 }
 
-bool ac::Plot::remove_function(const ac::Function& f)
+Function* ac::Plot::add_function(Function *f)
+{
+    f->set_plot(this);
+    functions_.push_back(f);
+    return functions_.back();
+}
+
+bool ac::Plot::remove_function(const ac::Function* f)
 {
     auto it = std::find(functions_.begin(), functions_.end(), f);
     if (it != functions_.end())
@@ -24,7 +33,7 @@ bool ac::Plot::remove_function(const ac::Function& f)
     }
 }
 
-bool ac::Plot::find_function(const ac::Function& f) const
+bool ac::Plot::find_function(const Function *f) const
 {
     auto it = std::find(functions_.begin(), functions_.end(), f);
     if (it != functions_.end())
@@ -48,7 +57,7 @@ int ac::Plot::function_count() const
     return functions_.size();
 }
 
-const ac::Function& ac::Plot::function_at(int index) const
+const ac::Function* ac::Plot::function_at(int index) const
 {
     return functions_.at(index);
 }
@@ -56,4 +65,15 @@ const ac::Function& ac::Plot::function_at(int index) const
 std::string ac::Plot::to_string() const
 {
     return get_name();
+}
+
+int ac::Plot::function_row(const Function *f) const
+{
+    for (auto it=functions_.cbegin(); it!=functions_.cend(); it++)
+    {
+        if (*it == f)
+            return int(it-functions_.cbegin());
+    }
+
+    return -1;
 }

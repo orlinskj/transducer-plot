@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = transducer-plot
 TEMPLATE = app
 
-CONFIG += c++11
+CONFIG += c++11 console
 
 QMAKE_CXXFLAGS += -std=c++11
 
@@ -29,7 +29,10 @@ SOURCES += \
     src/view/plotitemsdelegate.cpp \
     src/view/plotpresenter.cpp \
     src/model/plotstoreitemmodel.cpp \
-    src/model/plotstoreitem.cpp
+    src/model/plotstoreitem.cpp \
+    src/model/treemodel/treeitem.inl \
+    src/model/treemodel/treeitemmodel.cpp \
+    src/model/treemodel/treenodeitem.cpp
 
 HEADERS  += \
     src/mainwindow.h \
@@ -43,7 +46,10 @@ HEADERS  += \
     src/view/plotitemsdelegate.h \
     src/view/plotpresenter.h \
     src/model/plotstoreitemmodel.h \
-    src/model/plotstoreitem.h
+    src/model/plotstoreitem.h \
+    src/model/treemodel/treeitem.h \
+    src/model/treemodel/treeitemmodel.h \
+    src/model/treemodel/treenodeitem.h
 
 FORMS    += src/mainwindow.ui
 

@@ -3,7 +3,8 @@
 #include <memory>
 #include <QModelIndex>
 
-ac::PlotStoreItemModel::PlotStoreItemModel()
+ac::PlotStoreItemModel::PlotStoreItemModel(QObject* parent) :
+    parent_(parent)
 {
 
 }
@@ -16,36 +17,46 @@ ac::PlotStoreItemModel::~PlotStoreItemModel()
     }
 }
 
-ac::Plot* ac::PlotStoreItemModel::add_plot()
+ac::Plot* ac::PlotStoreItemModel::add_plot(ac::Plot* plot)
 {
     beginInsertRows(QModelIndex(),rowCount(),rowCount());
-    plots_.push_back(new Plot("Wykres"));
+    plots_.push_back(plot);
     endInsertRows();
     return *(plots_.rbegin());
 }
 
-std::vector<Plot*>::const_iterator ac::PlotStoreItemModel::get_plot_iter(const Plot* plot) const
+int ac::PlotStoreItemModel::plot_row(const Plot *plot) const
 {
-    for(auto it=plots_.cbegin(); it != plots_.cend(); it++)
+    for (auto it=plots_.cbegin(); it!=plots_.cend(); it++)
     {
         if (*it == plot)
-            return it;
+            return int(it-plots_.cbegin());
     }
 
-    return plots_.cend();
+    return -1;
 }
 
 void ac::PlotStoreItemModel::remove_plot(Plot* plot)
 {
-    auto it = get_plot_iter(plot);
-
-    if (it != plots_.cend())
+    for (auto it=plots_.cbegin(); it!=plots_.cend(); it++)
     {
-        int row = it-plots_.cbegin();
-        beginRemoveRows(QModelIndex(), row, row);
-        plots_.erase(it);
-        endRemoveRows();
+        if (*it == plot)
+        {
+            int row = int(it-plots_.cbegin());
+            beginRemoveRows(QModelIndex(), row, row);
+            plots_.erase(it);
+            endRemoveRows();
+            break;
+        }
     }
+}
+
+ac::Function* ac::PlotStoreItemModel::add_function(Plot* plot, Function* func)
+{
+    beginInsertRows(index(plot), plot->function_count(), plot->function_count());
+    plot->add_function(func);
+    endInsertRows();
+    return func;
 }
 
 
@@ -55,7 +66,7 @@ QModelIndex ac::PlotStoreItemModel::index(int row, int column, const QModelIndex
 {
     if (parent == QModelIndex())
     {
-        if (row >= 0 && row < int(plots_.size()) )
+        if (row >= 0 && row < int(plots_.size()) && !column )
             return this->createIndex(row, 0, (void*)plots_[row]);
         else
             return QModelIndex();
@@ -65,12 +76,30 @@ QModelIndex ac::PlotStoreItemModel::index(int row, int column, const QModelIndex
         auto plot = static_cast<Plot*>(parent.internalPointer());
         if (row >= 0 && row < plot->function_count())
         {
-            return this->createIndex(row, 0, (void*)&(plot->function_at(row)));
+            return this->createIndex(row, 0, (void*)plot->function_at(row));
         }
         else
         {
             return QModelIndex();
         }
+    }
+}
+
+bool ac::PlotStoreItemModel::hasChildren(const QModelIndex &parent) const
+{
+    if (parent == QModelIndex())
+    {
+        return bool(plots_.size());
+    }
+    else
+    {
+        auto item_ptr = static_cast<ac::PlotStoreItem*>(parent.internalPointer());
+
+        auto plot = dynamic_cast<ac::Plot*>(item_ptr);
+        if (plot)
+            return bool(plot->function_count());
+
+        return false;
     }
 }
 
@@ -84,9 +113,8 @@ QModelIndex ac::PlotStoreItemModel::parent(const QModelIndex &child) const
     }
     else if (auto func_ptr = dynamic_cast<Function*>(item_ptr))
     {
-        auto it = get_plot_iter(func_ptr->get_plot());
-        int row = it-plots_.cbegin();
-        return createIndex(row,0,(void*)&(*it));
+        int row = plot_row(func_ptr->get_plot());
+        return createIndex(row,0,(void*)func_ptr);
     }
     else
     {
@@ -110,7 +138,16 @@ int ac::PlotStoreItemModel::rowCount(const QModelIndex &parent) const
 
 int ac::PlotStoreItemModel::columnCount(const QModelIndex &parent) const
 {
-    return plots_.size() ? 1 : 0;
+    if (parent == QModelIndex())
+        return plots_.size() ? 1 : 0;
+    else
+    {
+        auto plot = dynamic_cast<ac::Plot*>((ac::PlotStoreItem*)parent.internalPointer());
+        if (plot)
+            return plot->function_count() ? 1 : 0;
+
+        return 0;
+    }
 }
 
 QVariant ac::PlotStoreItemModel::data(const QModelIndex &index, int role) const
@@ -136,4 +173,14 @@ QVariant ac::PlotStoreItemModel::data(const QModelIndex &index, int role) const
     else
         return QVariant();
 
+}
+
+QModelIndex ac::PlotStoreItemModel::index(Plot *plot) const
+{
+    return createIndex(plot_row(plot),0,(void*)plot);
+}
+
+QModelIndex ac::PlotStoreItemModel::index(Function* func) const
+{
+    return createIndex(func->get_plot()->function_row(func),0,(void*)func);
 }

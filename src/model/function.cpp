@@ -46,6 +46,11 @@ const ac::Plot* ac::Function::get_plot() const
     return plot_;
 }
 
+void ac::Function::set_plot(const ac::Plot* plot)
+{
+    plot_ = plot;
+}
+
 std::string ac::Function::to_string() const
 {
     return std::string("Funkcja");

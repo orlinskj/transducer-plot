@@ -41,7 +41,7 @@ void MainWindow::setup_view()
     ui_->plotView->setModel(&plot_store_);
     ui_->plotView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui_->plotView->setHeaderHidden(true);
-    ui_->plotView->setItemDelegate(new ac::PlotItemsDelegate);
+    //ui_->plotView->setItemDelegate(new ac::PlotItemsDelegate);
 
     ui_->plotView->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -68,6 +68,10 @@ void MainWindow::init_signals()
 
     QObject::connect(ui_->plotRemoveButton, SIGNAL(clicked()),
                      this, SLOT(slot_remove_plot()));
+
+    QObject::connect(ui_->functionAddButton, SIGNAL(clicked()),
+                     this, SLOT(slot_add_function()));
+
 }
 
 void MainWindow::slot_test()
@@ -146,7 +150,7 @@ void MainWindow::seed()
 
 void MainWindow::slot_add_new_plot()
 {
-    plot_store_.add_plot();
+    plot_store_.add_plot(new ac::Plot());
 }
 
 void MainWindow::slot_remove_plot()
@@ -159,4 +163,22 @@ void MainWindow::slot_remove_plot()
         auto plot = selected.at(0).data(ac::PlotStoreItem::Role).value<ac::Plot*>();
         plot_store_.remove_plot(plot);
     }
+}
+
+void MainWindow::slot_add_function()
+{
+    auto selection = ui_->plotView->selectionModel();
+    auto selected = selection->selectedIndexes();
+
+    if(selected.length() == 1)
+    {
+        auto index = selected.at(0);
+        auto plot = index.data(ac::PlotStoreItem::Role).value<ac::Plot*>();
+        plot_store_.add_function(plot, new ac::Function());
+    }
+}
+
+void MainWindow::slot_remove_function()
+{
+
 }
