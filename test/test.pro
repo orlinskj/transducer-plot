@@ -3,8 +3,12 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 
 SOURCES +=  main.cpp \
-            ../src/model/*.cpp
+            ../src/unit.cpp \
+            ../src/model/*.cpp \
+            ../src/model/treemodel/*.cpp
 
-HEADERS +=  ../src/model/*.h
+HEADERS +=  ../src/unit.h \
+            ../src/model/*.h \
+            ../src/model/treemodel/*.h
 
 QT  += core gui charts

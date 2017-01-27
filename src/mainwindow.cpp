@@ -13,7 +13,8 @@
 
 #include "view/transducerdelegate.h"
 //#include "view/plotitemsdelegate.h"
-#include "model/treemodel/treenodeitem.h"
+#include "model/treemodel/treeitem.h"
+#include "model/transduceradapteritem.h"
 
 #include "functiondialog.h"
 
@@ -25,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setup_view();
     seed();
+    create_menus();
     init_signals();
 }
 
@@ -54,7 +56,8 @@ void MainWindow::setup_view()
     ui_->frame->setLayout(layout);
 
     // plot presenter configuration
-    plot_presenter_ = ac::PlotPresenter(ui_->frame);
+    plot_presenter_ = new ac::PlotPresenter(ui_->frame);
+    plot_presenter_->view()->setContextMenuPolicy(Qt::CustomContextMenu);
 
 }
 
@@ -65,6 +68,9 @@ void MainWindow::init_signals()
 
     QObject::connect(ui_->plotView, SIGNAL(customContextMenuRequested(const QPoint &)),
                      this, SLOT(slot_on_tree_view_context_menu(const QPoint &)));
+
+    QObject::connect(plot_presenter_->view(), SIGNAL(customContextMenuRequested(const QPoint&)),
+                     this, SLOT(slot_on_plot_view_context_menu(QPoint)));
 
     QObject::connect(ui_->plotAddButton, SIGNAL(clicked()),
                      this, SLOT(slot_add_new_plot()));
@@ -79,21 +85,20 @@ void MainWindow::init_signals()
                      this, SLOT(slot_remove_function()));
 }
 
-void MainWindow::slot_test()
-{
-
-}
-
 void MainWindow::slot_on_tree_view_context_menu(const QPoint& point)
 {
     QModelIndex index = ui_->plotView->indexAt(point);
 
-    QMenu* context_menu = new QMenu;
-
     if (index.isValid()) {
-        if (context_menu)
-            context_menu->exec(ui_->plotView->mapToGlobal(point));
+        auto tree_item = index.data(TreeItemModel::Role).value<TreeItem*>();
+        if (auto plot = dynamic_cast<ac::Plot*>(tree_item))
+            plot_menu_.exec(ui_->plotView->mapToGlobal(point));
     }
+}
+
+void MainWindow::slot_on_plot_view_context_menu(const QPoint& point)
+{
+    plot_view_menu_.exec(plot_presenter_->view()->mapToGlobal(point));
 }
 
 
@@ -109,7 +114,7 @@ void MainWindow::slot_file_open()
     {
         int status;
         FileReader file_reader;
-        std::shared_ptr<Transducer> transducer = file_reader.read(filename.toLocal8Bit(),
+        auto transducer = file_reader.read(filename.toLocal8Bit(),
                                                        &status);
         if (transducer)
         {
@@ -125,32 +130,21 @@ void MainWindow::slot_file_open()
 
 }
 
-void MainWindow::add_transducer(std::shared_ptr<Transducer> transducer)
+void MainWindow::add_transducer(ac::Transducer* transducer)
 {
-    QStandardItem* item = new QStandardItem(transducer->get_name().c_str());
-    QVariant var = QVariant::fromValue<std::shared_ptr<Transducer>>(transducer);
-    item->setData(var);
-    transducer_model_.appendRow(item);
+    transducer_model_.append(new ac::TransducerAdapterItem(transducer));
 }
 
 void MainWindow::seed()
 {
-    /*QLineSeries *series = new QLineSeries();
-    series->append(0, 6);
-    series->append(2, 4);
-    series->append(3, 8);
-    series->append(7, 4);
-    series->append(10, 5);
-    *series << QPointF(11, 1) << QPointF(13, 3) << QPointF(17, 6) << QPointF(18, 3) << QPointF(20, 2);
+    FileReader file_reader;
+    int status;
+    std::vector<Transducer*> vec = { file_reader.read("/home/janek/test/2_P0.txt", &status),
+                 file_reader.read("/home/janek/test/2_P1.txt", &status),
+                 file_reader.read("/home/janek/test/2_P4.txt", &status) };
 
-    QChart *chart = new QChart();
-    chart->legend()->hide();
-    chart->addSeries(series);
-    chart->createDefaultAxes();
-    chart->setTitle("Simple line chart example");
-    chart->layout()->setContentsMargins(0,0,0,0);
-
-    chartView->setChart(chart);*/
+    for(auto it=vec.begin(); it!=vec.end(); it++)
+        this->add_transducer(*it);
 }
 
 void MainWindow::slot_add_new_plot()
@@ -165,29 +159,53 @@ void MainWindow::slot_remove_plot()
 
     if(selected.length() == 1)
     {
-        auto item = selected.at(0).data(TreeItemModel::Role).value<TreeNodeItem*>();
+        auto item = selected.at(0).data(TreeItemModel::Role).value<TreeItem*>();
         if (auto plot = dynamic_cast<ac::Plot*>(item))
             plot->kill();
     }
 }
 
+void MainWindow::create_menus()
+{
+    QAction* show_plot = plot_menu_.addAction(tr("Pokaż wykres"));
+    QAction* remove_plot = plot_menu_.addAction(tr("Usuń"));
+
+    QObject::connect(show_plot,SIGNAL(triggered()),
+                     this,SLOT(slot_show_plot()));
+    QObject::connect(remove_plot,SIGNAL(triggered()),
+                     this, SLOT(slot_remove_plot()));
+
+    QAction* log_axis = plot_view_menu_.addAction(tr("Oś Y logarytmiczna"));
+    QAction* linear_axis = plot_view_menu_.addAction(tr("Oś Y liniowa"));
+
+    QObject::connect(log_axis,SIGNAL(triggered()),
+                     plot_presenter_,SLOT(set_log_axis()));
+    QObject::connect(linear_axis, SIGNAL(triggered()),
+                     plot_presenter_, SLOT(set_linear_axis()));
+}
+
 void MainWindow::slot_add_function()
 {
-    /*auto selection = ui_->plotView->selectionModel();
+    auto selection = ui_->plotView->selectionModel();
     auto selected = selection->selectedIndexes();
 
     if(selected.length() == 1)
     {
         auto index = selected.at(0);
-        auto item = index.data(TreeItemModel::Role).value<TreeNodeItem*>();
-        if (auto func = dynamic_cast<ac::Function*>(item))
-            func->parent()->append(new ac::Function());
-        else if(auto plot = dynamic_cast<ac::Plot*>(item))
-            plot->append(new ac::Function());
-    }*/
+        auto item = index.data(TreeItemModel::Role).value<TreeItem*>();
+        Plot* plot= nullptr;
 
-    auto dialog = new FunctionDialog();
-    dialog->show();
+        if (auto func = dynamic_cast<ac::Function*>(item))
+            plot = dynamic_cast<Plot*>(func->parent());
+        else if(auto plot_ptr = dynamic_cast<ac::Plot*>(item))
+            plot = plot_ptr;
+
+        if (plot)
+        {
+            auto f = new FunctionDialog(nullptr, &transducer_model_, plot);
+            f->show();
+        }
+    }
 }
 
 void MainWindow::slot_remove_function()
@@ -197,8 +215,20 @@ void MainWindow::slot_remove_function()
 
     if(selected.length() == 1)
     {
-        auto item = selected.at(0).data(TreeItemModel::Role).value<TreeNodeItem*>();
+        auto item = selected.at(0).data(TreeItemModel::Role).value<TreeItem*>();
         if (auto func = dynamic_cast<ac::Function*>(item))
             func->kill();
+    }
+}
+
+void MainWindow::slot_show_plot()
+{
+    auto selection = ui_->plotView->selectionModel();
+
+    if ( selection->selectedIndexes().length() == 1)
+    {
+        auto item = selection->selectedIndexes().at(0).data(TreeItemModel::Role).value<TreeItem*>();
+        if (auto plot = dynamic_cast<ac::Plot*>(item))
+            plot_presenter_->show_plot(plot);
     }
 }

@@ -29,12 +29,15 @@ SOURCES += \
     src/view/plotitemsdelegate.cpp \
     src/view/plotpresenter.cpp \
     src/model/plotstoreitemmodel.cpp \
-    src/model/treemodel/treeitem.inl \
     src/model/treemodel/treeitemmodel.cpp \
-    src/model/treemodel/treenodeitem.cpp \
     src/functiondialog.cpp \
     src/model/transduceradapteritem.cpp \
-    src/model/setadapteritem.cpp
+    src/model/setadapteritem.cpp \
+    src/model/treemodel/flattentreeproxymodel.cpp \
+    src/model/transducersetproxymodel.cpp \
+    src/model/treemodel/branchfilterproxymodel.cpp \
+    src/model/treemodel/treeitemvalued.inl \
+    src/model/treemodel/treeitem.cpp
 
 HEADERS  += \
     src/mainwindow.h \
@@ -48,12 +51,15 @@ HEADERS  += \
     src/view/plotitemsdelegate.h \
     src/view/plotpresenter.h \
     src/model/plotstoreitemmodel.h \
-    src/model/treemodel/treeitem.h \
     src/model/treemodel/treeitemmodel.h \
-    src/model/treemodel/treenodeitem.h \
     src/functiondialog.h \
     src/model/transduceradapteritem.h \
-    src/model/setadapteritem.h
+    src/model/setadapteritem.h \
+    src/model/treemodel/flattentreeproxymodel.h \
+    src/model/transducersetproxymodel.h \
+    src/model/treemodel/branchfilterproxymodel.h \
+    src/model/treemodel/treeitemvalued.h \
+    src/model/treemodel/treeitem.h
 
 FORMS    += src/mainwindow.ui \
     src/functiondialog.ui

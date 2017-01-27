@@ -3,20 +3,21 @@
 
 #include <string>
 
-#include "treemodel/treenodeitem.h"
+#include "treemodel/treeitem.h"
 #include "set.h"
 
 namespace ac{
 
 class TransducerAdapterItem;
 
-class SetAdapterItem : public TreeNodeItem
+class SetAdapterItem : public TreeItem
 {
 public:
-    SetAdapterItem(TransducerAdapterItem* parent, const Set *set);
+    SetAdapterItem(TreeItem *parent, const Set *set);
 
     int children_count() const override;
     std::string to_string() const override;
+    const Set* set();
 
 protected:
     const Set* set_;

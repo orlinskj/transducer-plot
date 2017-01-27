@@ -9,7 +9,7 @@ FileReader::~FileReader()
 
 }
 
-std::shared_ptr<Transducer> FileReader::read(const char* file_path, int *status)
+Transducer *FileReader::read(const char* file_path, int *status)
 {
     ifstream file_stream(file_path);
 
@@ -118,6 +118,5 @@ std::shared_ptr<Transducer> FileReader::read(const char* file_path, int *status)
         sets.push_back(Set(std::move(*vit), *uit));
     }
 
-    return std::make_shared<Transducer>(
-                Transducer(name,source,std::move(description),std::move(sets)));
+    return new Transducer(name,source,std::move(description),std::move(sets));
 }

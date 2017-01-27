@@ -1,5 +1,7 @@
 #include "function.h"
 
+#include <sstream>
+
 using namespace std;
 using namespace ac;
 
@@ -12,7 +14,7 @@ Function::Function() :
 
 }
 
-Function::Function(Transducer* transducer, Set* domain, Set* codomain, Plot *plot) :
+Function::Function(Transducer* transducer, const Set* domain, const Set* codomain, Plot *plot) :
     transducer_(transducer),
     domain_(domain),
     codomain_(codomain),
@@ -53,5 +55,11 @@ void ac::Function::set_plot(const ac::Plot* plot)
 
 std::string ac::Function::to_string() const
 {
-    return std::string("Funkcja");
+    std::stringstream ss;
+    if (transducer_)
+        ss << "[" << transducer_->get_name() << "] ";
+    if (domain_ && codomain_)
+        ss << domain_->get_unit().get_symbol() << " -> " << codomain_->get_unit().get_symbol();
+
+    return ss.str();
 }

@@ -1,7 +1,7 @@
 #ifndef TRANSDUCERADAPTERITEM_H
 #define TRANSDUCERADAPTERITEM_H
 
-#include "treemodel/treenodeitem.h"
+#include "treemodel/treeitem.h"
 #include "transducer.h"
 
 
@@ -11,18 +11,21 @@ class SetAdapterItem;
 
 using SetAdapterItemPtr = std::unique_ptr<SetAdapterItem>;
 
-class TransducerAdapterItem : public Transducer, public TreeNodeItem
+class TransducerAdapterItem : public TreeItem
 {
 public:
-    TransducerAdapterItem(Transducer&& t);
+    TransducerAdapterItem(Transducer *t);
 
-    TreeNodeItem* child(int index) const override;
+    TreeItem* child(int index) const override;
     int children_count() const override;
 
     std::string to_string() const override;
 
+    Transducer* transducer() const;
+
 protected:
     std::vector<SetAdapterItemPtr> set_adapters_;
+    std::unique_ptr<Transducer> transducer_;
 };
 
 }

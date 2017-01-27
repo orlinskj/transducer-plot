@@ -1,20 +1,20 @@
 #include "treeitemmodel.h"
 
 TreeItemModel::TreeItemModel(QObject* parent) :
-    QAbstractItemModel(parent), TreeNodeItem(nullptr) { }
+    QAbstractItemModel(parent), TreeItem(nullptr) { }
 
 TreeItemModel::~TreeItemModel() { }
 
-/*TreeNodeItem* TreeItemModel::root() const
+/*TreeItem* TreeItemModel::root() const
 {
     return root_.get();
 }*/
 
 QModelIndex TreeItemModel::index(int row, int column, const QModelIndex &parent) const
 {
-    const TreeNodeItem* parent_item;
+    const TreeItem* parent_item;
     if (parent.isValid())
-        parent_item = static_cast<TreeNodeItem*>(parent.internalPointer());
+        parent_item = static_cast<TreeItem*>(parent.internalPointer());
     else
         parent_item = this;
 
@@ -34,7 +34,7 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid())
     {
-        auto item = static_cast<TreeNodeItem*>(index.internalPointer());
+        auto item = static_cast<TreeItem*>(index.internalPointer());
         if (role == Qt::DisplayRole)
             return QVariant(QString::fromStdString(item->to_string()));
         else if (role == TreeItemModel::Role)
@@ -48,7 +48,13 @@ QModelIndex TreeItemModel::parent(const QModelIndex &child) const
 {
     if (child.isValid())
     {
-        auto parent_item = static_cast<TreeNodeItem*>(child.internalPointer())->parent();
+        TreeItem* parent_item = nullptr;
+        auto item = static_cast<TreeItem*>(child.internalPointer());
+        if (item)
+             parent_item = item->parent();
+        else
+            return QModelIndex();
+
         if (parent_item == this)
             return QModelIndex();
         int row = parent_item->parent()->child_index(parent_item);
@@ -60,9 +66,9 @@ QModelIndex TreeItemModel::parent(const QModelIndex &child) const
 
 int TreeItemModel::rowCount(const QModelIndex &parent) const
 {
-    const TreeNodeItem* item;
+    const TreeItem* item;
     if (parent.isValid())
-        item = static_cast<TreeNodeItem*>(parent.internalPointer());
+        item = static_cast<TreeItem*>(parent.internalPointer());
     else
         item = this;
 

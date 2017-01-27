@@ -2,6 +2,7 @@
 #define PLOTPRESENTER_H
 
 #include <QChartView>
+#include <QObject>
 
 using namespace QtCharts;
 
@@ -9,14 +10,21 @@ using namespace QtCharts;
 
 namespace ac{
 
-class PlotPresenter
+class PlotPresenter : public QObject
 {
+    Q_OBJECT
 public:
     // widget should have added some layout to expand the chart view
-    PlotPresenter(QWidget* widget = nullptr);
+    PlotPresenter(QObject *object = nullptr);
+    ~PlotPresenter();
 
     void show_plot(Plot* plot);
+    QChartView* view() const;
+public slots:
+    void set_log_axis();
+    void set_linear_axis();
 
+protected:
     QChartView* view_;
 };
 

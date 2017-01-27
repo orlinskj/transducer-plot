@@ -4,9 +4,9 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 
-#include "treenodeitem.h"
+#include "treeitem.h"
 
-class TreeItemModel : public QAbstractItemModel, public TreeNodeItem
+class TreeItemModel : public QAbstractItemModel, public TreeItem
 {
 public:
     static constexpr int Role = Qt::UserRole + 6729432;
@@ -26,10 +26,12 @@ public:
     void emit_begin_remove_rows(int first, int last, std::vector<int>* tree);
     void emit_end_remove_rows();
 
-/*protected:
-    TreeNodeItemPtr root_;*/
+    //TreeItem* root() const;
+
+protected:
+    //TreeItemPtr root_;
 };
 
-Q_DECLARE_METATYPE(TreeNodeItem*)
+Q_DECLARE_METATYPE(TreeItem*)
 
 #endif // PLOTSTOREITEMMODEL_H

@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "treemodel/treenodeitem.h"
+#include "treemodel/treeitem.h"
 #include "transducer.h"
 #include "set.h"
 
@@ -11,12 +11,12 @@ namespace ac{
 
 class Plot;
 
-class Function : public TreeNodeItem {
+class Function : public TreeItem {
 
 public:
 
     Function();
-    Function(Transducer* transducer, Set* domain, Set* codomain, Plot* plot = nullptr);
+    Function(Transducer* transducer, const Set *domain, const Set *codomain, Plot* plot = nullptr);
 
     std::string to_string() const override;
     const Set* get_domain() const;

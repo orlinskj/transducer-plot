@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>401</width>
+    <width>403</width>
     <height>409</height>
    </rect>
   </property>
@@ -49,7 +49,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QListView" name="codomainView">
+  <widget class="QTreeView" name="codomainView">
    <property name="geometry">
     <rect>
      <x>220</x>

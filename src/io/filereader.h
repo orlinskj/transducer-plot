@@ -23,7 +23,7 @@ namespace ac {
     public:
         virtual ~FileReader();
 
-        virtual std::shared_ptr<Transducer> read(const char* filepath, int* status);
+        virtual Transducer* read(const char* filepath, int* status);
     };
 
 }
