@@ -79,7 +79,7 @@ Transducer *FileReader::read(const char* file_path, int *status)
 
                 if( !is_first_data_line_readed)
                 {
-                    Unit u = Unit::get_unit_by_symbol(std::string(token));
+                    Unit u = Unit::unit_by_symbol(std::string(token));
                     if (u == Unit::None)
                         u = Unit("",std::string(token),"");
 

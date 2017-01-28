@@ -22,6 +22,7 @@ public:
     virtual int child_index(const TreeItem *child) const;
     virtual int index() const;
     virtual int absolute_index(TreeItem* relative=nullptr) const;
+    virtual const std::vector<TreeItem*>& children();
 
     virtual TreeItem* child(int index) const;
     virtual TreeItem* parent() const;
@@ -45,6 +46,9 @@ protected:
     TreeItem* parent_;
     std::vector<TreeItemPtr> children_;
     int ancestor_count_;
+
+    std::vector<TreeItem*> children_weak_;
+    bool children_weak_valid_;
 };
 
 #endif // TREENODEITEM_H

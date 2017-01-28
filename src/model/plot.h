@@ -22,16 +22,9 @@ public:
     Plot(const std::string& name);
     ~Plot();
 
-    virtual Function* add_function(Function* f);
-    virtual bool remove_function(const Function* f);
-    virtual bool find_function(const Function* f) const;
-
-    int function_count() const;
-    const Function* function_at(int index) const;
-    int function_row(const Function* f) const;
-
     void set_name(const std::string& name);
-    const std::string& get_name() const;
+    const std::string& name() const;
+    std::string description() const;
 
     std::string to_string() const override;
 

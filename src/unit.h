@@ -10,11 +10,12 @@ class Unit {
 public:
     Unit(const std::string& name, const std::string& symbol, const std::string& unit);
 
-    const std::string& get_symbol() const;
-    const std::string& get_name() const;
-    const std::string& get_unit() const;
+    const std::string& symbol() const;
+    const std::string& name() const;
+    const std::string& unit() const;
+    const std::string& longname() const;
 
-    static Unit get_unit_by_symbol(const std::string& symbol);
+    static Unit unit_by_symbol(const std::string& symbol);
 
     static Unit None;
 
@@ -24,6 +25,7 @@ private:
     std::string name_;
     std::string symbol_;
     std::string unit_;
+    std::string longname_;
 
     static std::vector<Unit> defaults_;
 };

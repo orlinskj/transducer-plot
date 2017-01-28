@@ -63,26 +63,25 @@ void MainWindow::setup_view()
 
 void MainWindow::init_signals()
 {
+    // menus
     QObject::connect(ui_->actionFileOpen, SIGNAL(triggered()),
                      this, SLOT(slot_file_open()) );
-
     QObject::connect(ui_->plotView, SIGNAL(customContextMenuRequested(const QPoint &)),
                      this, SLOT(slot_on_tree_view_context_menu(const QPoint &)));
-
     QObject::connect(plot_presenter_->view(), SIGNAL(customContextMenuRequested(const QPoint&)),
                      this, SLOT(slot_on_plot_view_context_menu(QPoint)));
-
+    // buttons
     QObject::connect(ui_->plotAddButton, SIGNAL(clicked()),
                      this, SLOT(slot_add_new_plot()));
-
     QObject::connect(ui_->plotRemoveButton, SIGNAL(clicked()),
                      this, SLOT(slot_remove_plot()));
-
     QObject::connect(ui_->functionAddButton, SIGNAL(clicked()),
                      this, SLOT(slot_add_function()));
-
     QObject::connect(ui_->functionRemoveButton, SIGNAL(clicked()),
                      this, SLOT(slot_remove_function()));
+    // plotstoreitemmodel -> plotpresenter
+    QObject::connect(&plot_store_,SIGNAL(plot_changed(Plot*)),
+                     plot_presenter_,SLOT(update_plot_cache(Plot*)));
 }
 
 void MainWindow::slot_on_tree_view_context_menu(const QPoint& point)
@@ -169,11 +168,14 @@ void MainWindow::create_menus()
 {
     QAction* show_plot = plot_menu_.addAction(tr("Pokaż wykres"));
     QAction* remove_plot = plot_menu_.addAction(tr("Usuń"));
+    QAction* update_plot = plot_menu_.addAction(tr("Odśwież"));
 
     QObject::connect(show_plot,SIGNAL(triggered()),
                      this,SLOT(slot_show_plot()));
     QObject::connect(remove_plot,SIGNAL(triggered()),
                      this, SLOT(slot_remove_plot()));
+    QObject::connect(update_plot,SIGNAL(triggered()),
+                     this, SLOT(slot_update_plot()));
 
     QAction* log_axis = plot_view_menu_.addAction(tr("Oś Y logarytmiczna"));
     QAction* linear_axis = plot_view_menu_.addAction(tr("Oś Y liniowa"));
@@ -230,5 +232,17 @@ void MainWindow::slot_show_plot()
         auto item = selection->selectedIndexes().at(0).data(TreeItemModel::Role).value<TreeItem*>();
         if (auto plot = dynamic_cast<ac::Plot*>(item))
             plot_presenter_->show_plot(plot);
+    }
+}
+
+void MainWindow::slot_update_plot()
+{
+    auto selection = ui_->plotView->selectionModel();
+
+    if ( selection->selectedIndexes().length() == 1)
+    {
+        auto item = selection->selectedIndexes().at(0).data(TreeItemModel::Role).value<TreeItem*>();
+        if (auto plot = dynamic_cast<ac::Plot*>(item))
+            plot_presenter_->update_plot_cache(plot);
     }
 }

@@ -19,71 +19,38 @@ ac::PlotPresenter::PlotPresenter(QObject* object)
         widget->layout()->addWidget(view_);
     }
     else
-    {
         view_ = new QChartView(widget);
-    }
 
-    view_->viewport()->setAcceptDrops(true);
-    view_->chart()->layout()->setContentsMargins(0,0,0,0);
+    broom_ = nullptr;
 
     view_->setRenderHint(QPainter::Antialiasing);
     view_->setContentsMargins(0,0,0,0);
     view_->setDragMode(QGraphicsView::ScrollHandDrag);
 }
 
-ac::PlotPresenter::~PlotPresenter() {}
-
-void ac::PlotPresenter::show_plot(Plot *plot)
+ac::PlotPresenter::~PlotPresenter()
 {
-    for(int i=0; i<plot->children_count(); i++)
+    /// TODO this might cause problems
+    view_->setChart(nullptr);
+}
+
+void ac::PlotPresenter::show_plot(ac::Plot *plot)
+{
+    // looking for plot in internal storage
+    auto it = std::find_if(plots_.cbegin(), plots_.cend(),
+                 [plot](const ac::PlotAdapterPtr& plot_ptr){ return plot_ptr->plot() == plot; });
+    if (it != plots_.end())
+        view_->setChart((*it)->chart());
+    else
     {
-        auto func = dynamic_cast<Function*>(plot->child(i));
-        QLineSeries* series = new QLineSeries();
-
-        int points_count = std::min(
-                    func->get_domain()->get_values().size(),
-                    func->get_codomain()->get_values().size());
-
-        for(int v=0; v<points_count; v++)
-        {
-            series->append(
-                        func->get_domain()->get_values().at(v),
-                        func->get_codomain()->get_values().at(v));
-        }
-
-        QChart *chart = new QChart();
-        chart->legend()->hide();
-        chart->addSeries(series);
-        //chart->createDefaultAxes();
-        std::stringstream ss;
-        ss << "Wykres " << func->get_domain()->get_unit().get_name()
-           << " od " << func->get_codomain()->get_unit().get_name();
-        chart->setTitle(ss.str().c_str());
-
-        QValueAxis *axisX = new QValueAxis;
-        std::stringstream axis_x_ss;
-        axis_x_ss << func->get_domain()->get_unit().get_name()
-                  << "[" << func->get_domain()->get_unit().get_symbol() << "]";
-        axisX->setTitleText(axis_x_ss.str().c_str());
-        //axisX->setTickCount(6);
-        axisX->setLabelFormat("%i");
-        chart->addAxis(axisX, Qt::AlignBottom);
-        series->attachAxis(axisX);
-
-        QLogValueAxis *axisY = new QLogValueAxis;
-        axisY->setLabelFormat("%g");
-        std::stringstream axis_y_ss;
-        axis_x_ss << func->get_codomain()->get_unit().get_name()
-                  << "[" << func->get_codomain()->get_unit().get_symbol() << "]";
-        axisY->setTitleText(axis_y_ss.str().c_str());
-        axisY->setBase(10);
-        chart->addAxis(axisY, Qt::AlignLeft);
-        series->attachAxis(axisY);
-
-        if (view_->chart())
-            delete view_->chart();
-        view_->setChart(chart);
+        plots_.emplace_back(ac::PlotAdapterPtr(new ac::PlotAdapter(plot)));
+        view_->setChart(plots_.back()->chart());
     }
+
+    if (broom_)
+        delete broom_;
+    broom_ = new ac::Broom(view_->chart());
+    broom_->show();
 }
 
 void ac::PlotPresenter::set_log_axis()
@@ -92,6 +59,7 @@ void ac::PlotPresenter::set_log_axis()
     auto old_axis = axes.first();
 
     QLogValueAxis* axisY = new QLogValueAxis;
+    axisY->setLabelFormat("%g");
     axisY->setTitleText(old_axis->titleText());
     axisY->setBase(10);
 
@@ -142,4 +110,29 @@ void ac::PlotPresenter::set_linear_axis()
 QChartView* ac::PlotPresenter::view() const
 {
     return view_;
+}
+
+ac::Plot* ac::PlotPresenter::plot() const
+{
+    return plot_;
+}
+
+void ac::PlotPresenter::update_plot_cache(Plot *plot)
+{
+    // looking for plot in internal storage
+    auto it = std::find_if(plots_.cbegin(), plots_.cend(),
+                 [plot](const ac::PlotAdapterPtr& plot_ptr){ return plot_ptr->plot() == plot; });
+    if (it != plots_.end())
+        (*it)->update();
+    else
+        plots_.emplace_back(ac::PlotAdapterPtr(new ac::PlotAdapter(plot)));
+}
+
+void ac::PlotPresenter::remove_plot_cache(Plot* plot)
+{
+    // looking for plot in internal storage
+    auto it = std::find_if(plots_.cbegin(), plots_.cend(),
+                 [plot](const ac::PlotAdapterPtr& plot_ptr){ return plot_ptr->plot() == plot; });
+    if (it != plots_.end())
+        plots_.erase(it);
 }

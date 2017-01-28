@@ -21,8 +21,8 @@ public:
 
     Set_t(std::vector<T>&& values, Unit unit);
 
-    const std::vector<T>& get_values() const;
-    const Unit& get_unit() const;
+    const std::vector<T>& values() const;
+    const Unit& unit() const;
 
 private:
     Unit unit_;

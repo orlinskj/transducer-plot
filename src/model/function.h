@@ -19,11 +19,11 @@ public:
     Function(Transducer* transducer, const Set *domain, const Set *codomain, Plot* plot = nullptr);
 
     std::string to_string() const override;
-    const Set* get_domain() const;
-    const Set* get_codomain() const;
-    const Transducer *get_transducer() const;
+    const Set* domain() const;
+    const Set* codomain() const;
+    const Transducer *transducer() const;
 
-    const Plot* get_plot() const;
+    const Plot* plot() const;
 
     void set_plot(const Plot* plot);
 

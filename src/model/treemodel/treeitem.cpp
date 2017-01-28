@@ -3,7 +3,7 @@
 #include <algorithm>
 
 TreeItem::TreeItem(TreeItem *parent) :
-    parent_(parent), ancestor_count_(0) { }
+    parent_(parent), ancestor_count_(0), children_weak_valid_(false) { }
 
 TreeItem::~TreeItem() { }
 
@@ -109,6 +109,7 @@ void TreeItem::remove(TreeItem* item)
         children_.erase(it);
         for (TreeItem* it=this; it!=nullptr; it=it->parent())
             it->ancestor_count_--;
+        children_weak_valid_ = false;
         emit_end_remove_rows();
     }
 }
@@ -120,6 +121,7 @@ TreeItem* TreeItem::append(TreeItem* item)
     children_.emplace_back(TreeItemPtr(item));
     for(TreeItem* it=this; it!=nullptr; it=it->parent())
         it->ancestor_count_++;
+    children_weak_valid_ = false;
     emit_end_insert_rows();
     return item;
 }
@@ -140,12 +142,26 @@ void TreeItem::kill_children()
 {
     emit_begin_remove_rows(0,children_count()-1,nullptr);
     children_.clear();
+    children_weak_valid_ = false;
     emit_end_remove_rows();
 }
 
 std::string TreeItem::to_string() const
 {
     return std::string("TreeItem");
+}
+
+const std::vector<TreeItem*>& TreeItem::children()
+{
+    if (!children_weak_valid_)
+    {
+        children_weak_.clear();
+        for(auto &ptr : children_)
+            children_weak_.push_back(ptr.get());
+        children_weak_valid_ = true;
+    }
+
+    return children_weak_;
 }
 
 // ------ only for Qt ---------------------

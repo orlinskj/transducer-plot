@@ -16,5 +16,5 @@ int ac::SetAdapterItem::children_count() const
 
 std::string ac::SetAdapterItem::to_string() const
 {
-    return set_->get_unit().get_symbol();
+    return set_->unit().symbol();
 }

@@ -28,22 +28,22 @@ bool Function::operator ==(const Function &f) const
     return domain_==f.domain_ && codomain_==f.codomain_ && transducer_==f.transducer_;
 }
 
-const Set* Function::get_domain() const
+const Set* Function::domain() const
 {
     return domain_;
 }
 
-const Set* Function::get_codomain() const
+const Set* Function::codomain() const
 {
     return codomain_;
 }
 
-const Transducer* Function::get_transducer() const
+const Transducer* Function::transducer() const
 {
     return transducer_;
 }
 
-const ac::Plot* ac::Function::get_plot() const
+const ac::Plot* ac::Function::plot() const
 {
     return plot_;
 }
@@ -59,7 +59,7 @@ std::string ac::Function::to_string() const
     if (transducer_)
         ss << "[" << transducer_->get_name() << "] ";
     if (domain_ && codomain_)
-        ss << domain_->get_unit().get_symbol() << " -> " << codomain_->get_unit().get_symbol();
+        ss << domain_->unit().symbol() << " -> " << codomain_->unit().symbol();
 
     return ss.str();
 }

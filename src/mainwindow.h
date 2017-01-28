@@ -46,6 +46,7 @@ private slots:
     void slot_on_tree_view_context_menu(const QPoint &point);
     void slot_on_plot_view_context_menu(const QPoint &point);
     void slot_show_plot();
+    void slot_update_plot();
 
 private:
     void init_signals();
