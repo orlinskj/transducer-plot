@@ -6,7 +6,7 @@
 #include "treemodel/treeitem.h"
 #include "set.h"
 
-namespace ac{
+// namespace ac{
 
 class TransducerAdapterItem;
 
@@ -23,6 +23,6 @@ protected:
     const Set* set_;
 };
 
-}
+// } // namespace ac
 
 #endif // SETADAPTERITEM_H

@@ -1,6 +1,5 @@
 #include "transducer.h"
 
-using namespace ac;
 using namespace std;
 
 Transducer::Transducer(const std::string &name,

@@ -39,7 +39,6 @@ SOURCES += \
     src/model/treemodel/treeitemvalued.inl \
     src/model/treemodel/treeitem.cpp \
     src/view/plotadapter.cpp \
-    src/view/plotview.cpp \
     src/view/broom.cpp
 
 HEADERS  += \
@@ -64,7 +63,6 @@ HEADERS  += \
     src/model/treemodel/treeitemvalued.h \
     src/model/treemodel/treeitem.h \
     src/view/plotadapter.h \
-    src/view/plotview.h \
     src/view/broom.h
 
 FORMS    += src/mainwindow.ui \

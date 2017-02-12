@@ -3,7 +3,6 @@
 #include <sstream>
 
 using namespace std;
-using namespace ac;
 
 Function::Function() :
     transducer_(nullptr),
@@ -43,17 +42,17 @@ const Transducer* Function::transducer() const
     return transducer_;
 }
 
-const ac::Plot* ac::Function::plot() const
+const Plot* Function::plot() const
 {
     return plot_;
 }
 
-void ac::Function::set_plot(const ac::Plot* plot)
+void Function::set_plot(const Plot* plot)
 {
     plot_ = plot;
 }
 
-std::string ac::Function::to_string() const
+std::string Function::to_string() const
 {
     std::stringstream ss;
     if (transducer_)

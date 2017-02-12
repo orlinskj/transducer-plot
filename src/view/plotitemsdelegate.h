@@ -6,7 +6,7 @@
 
 #include "../model/plot.h"
 
-namespace ac{
+// namespace ac{
 
 class PlotItemsDelegate : public QStyledItemDelegate
 {
@@ -23,6 +23,6 @@ public:
                    ) const override;
 };
 
-}
+// } // namespace ac
 
 #endif // PLOTITEMSDELEGATE_H

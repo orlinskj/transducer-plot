@@ -7,7 +7,7 @@
 #include "plot.h"
 #include "treemodel/treeitemmodel.h"
 
-namespace ac{
+// namespace ac{
 
 class PlotStoreItemModel : public TreeItemModel
 {
@@ -33,6 +33,6 @@ protected:
 
 };
 
-}
+// } // namespace ac
 
 #endif // PLOTSTORE_H

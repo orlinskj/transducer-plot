@@ -4,22 +4,22 @@
 #include "../model/treemodel/treeitemmodel.h"
 #include "../model/transduceradapteritem.h"
 
-ac::TransducerDelegate::TransducerDelegate(QObject* parent) :
+TransducerDelegate::TransducerDelegate(QObject* parent) :
     QStyledItemDelegate(parent) { }
 
-void ac::TransducerDelegate::paint(
+void TransducerDelegate::paint(
         QPainter *p,
         const QStyleOptionViewItem &option,
         const QModelIndex &index
         ) const
 {
     auto tree_item = index.data(TreeItemModel::Role).value<TreeItem*>();
-    /*if (auto transducer_adapter_item = dynamic_cast<ac::TransducerAdapterItem*>(tree_item))
+    /*if (auto transducer_adapter_item = dynamic_cast<TransducerAdapterItem*>(tree_item))
     {*/
-        auto transducer_adapter_item = dynamic_cast<ac::TransducerAdapterItem*>(tree_item);
+        auto transducer_adapter_item = dynamic_cast<TransducerAdapterItem*>(tree_item);
         auto transducer = transducer_adapter_item->transducer();
 
-        //auto transducer = index.data(ac::Transducer::Role).value<ac::Transducer_ptr>();
+        //auto transducer = index.data(Transducer::Role).value<Transducer_ptr>();
 
         QString name  = transducer->get_name().c_str();
         QString path = transducer->get_source().c_str();
@@ -45,7 +45,7 @@ void ac::TransducerDelegate::paint(
 
 }
 
-QSize ac::TransducerDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize TransducerDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     return QSize(option.rect.width(), option.decorationSize.height()+8);
 }

@@ -2,16 +2,16 @@
 
 #include <QDebug>
 
-ac::PlotItemsDelegate::PlotItemsDelegate(QObject* parent) :
+PlotItemsDelegate::PlotItemsDelegate(QObject* parent) :
     QStyledItemDelegate(parent) { }
 
-void ac::PlotItemsDelegate::paint(QPainter *painter,
+void PlotItemsDelegate::paint(QPainter *painter,
                                const QStyleOptionViewItem &option,
                                const QModelIndex &index) const
 {
-    /*if (index.data(ac::PlotStoreItem::Role).canConvert<ac::Plot*>())
+    /*if (index.data(PlotStoreItem::Role).canConvert<Plot*>())
     {
-        auto plot = index.data(ac::PlotStoreItem::Role).value<ac::Plot*>();
+        auto plot = index.data(PlotStoreItem::Role).value<Plot*>();
 
         painter->setPen(option.palette.text().color());
 
@@ -32,19 +32,19 @@ void ac::PlotItemsDelegate::paint(QPainter *painter,
 
 
     }
-    else if (index.data(ac::PlotStoreItem::Role).canConvert<ac::Function*>())
+    else if (index.data(PlotStoreItem::Role).canConvert<Function*>())
     {
         QStyledItemDelegate::paint(painter, option, index);
     }*/
     //QStyledItemDelegate::paint(painter, option, index);
 }
 
-QSize ac::PlotItemsDelegate::sizeHint(const QStyleOptionViewItem &option,
+QSize PlotItemsDelegate::sizeHint(const QStyleOptionViewItem &option,
                                      const QModelIndex &index) const
 {
-    /*if (index.data(ac::PlotStoreItem::Role).canConvert<Plot*>())
+    /*if (index.data(PlotStoreItem::Role).canConvert<Plot*>())
     {
-        auto plot = index.data(ac::PlotStoreItem::Role).value<Plot*>();
+        auto plot = index.data(PlotStoreItem::Role).value<Plot*>();
 
         if (option.state & QStyle::State_Children)
         {

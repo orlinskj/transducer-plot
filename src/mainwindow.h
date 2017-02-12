@@ -16,7 +16,6 @@
 #include "view/plotpresenter.h"
 
 using namespace std;
-using namespace ac;
 using namespace QtCharts;
 
 namespace Ui {
@@ -44,7 +43,6 @@ private slots:
     void slot_remove_function();
     void slot_file_open();
     void slot_on_tree_view_context_menu(const QPoint &point);
-    void slot_on_plot_view_context_menu(const QPoint &point);
     void slot_show_plot();
     void slot_update_plot();
 
@@ -68,7 +66,6 @@ private:
     PlotPresenter* plot_presenter_;
 
     QMenu plot_menu_;
-    QMenu plot_view_menu_;
 };
 
 

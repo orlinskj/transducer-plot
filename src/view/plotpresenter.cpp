@@ -9,53 +9,75 @@
 #include <QLineSeries>
 #include <QValueAxis>
 #include <QLogValueAxis>
+#include <QDebug>
+#include <QPushButton>
+#include <QGraphicsProxyWidget>
 
-ac::PlotPresenter::PlotPresenter(QObject* object)
+PlotPresenter::PlotPresenter(QWidget* parent) :
+    QGraphicsView(new QGraphicsScene, parent)
+    //QChartView(parent)
 {
-    QWidget* widget = dynamic_cast<QWidget*>(object);
-    if (widget && widget->layout())
-    {
-        view_ = new QChartView();
-        widget->layout()->addWidget(view_);
-    }
-    else
-        view_ = new QChartView(widget);
+    broom_group_ = new QGraphicsItemGroup;
+    broom_group_->addToGroup(broom_line_ = new QGraphicsLineItem);
+    /*broom_group_->addToGroup(broom_rect_ = new QGraphicsRectItem);*/
+    broom_group_->addToGroup(broom_text_ = new QGraphicsSimpleTextItem);
 
-    broom_ = nullptr;
+    scene()->addItem(broom_group_);
+    broom_group_->setZValue(1000);
+    chart_ = nullptr;
 
-    view_->setRenderHint(QPainter::Antialiasing);
-    view_->setContentsMargins(0,0,0,0);
-    view_->setDragMode(QGraphicsView::ScrollHandDrag);
+    setRenderHint(QPainter::Antialiasing);
+    setContentsMargins(0,0,0,0);
+
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    setMouseTracking(true);
+
+    // setting up menu
+    auto left_axis_action  = menu_.addAction(tr("Oś Y lewa"));
+    auto right_axis_action = menu_.addAction(tr("Oś Y prawa"));
+    menu_.setEnabled(false);
+
+    QObject::connect(left_axis_action,SIGNAL(triggered()),
+                     this, SLOT(change_left_axis()));
+    QObject::connect(right_axis_action, SIGNAL(triggered()),
+                     this, SLOT(change_right_axis()));
+    QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+                     this, SLOT(context_menu(QPoint)));
 }
 
-ac::PlotPresenter::~PlotPresenter()
-{
-    /// TODO this might cause problems
-    view_->setChart(nullptr);
-}
+PlotPresenter::~PlotPresenter() {}
 
-void ac::PlotPresenter::show_plot(ac::Plot *plot)
+void PlotPresenter::show_plot(Plot *plot)
 {
+    if (chart_)
+        this->scene()->removeItem(chart_);
+
+    chart_ = nullptr;
     // looking for plot in internal storage
     auto it = std::find_if(plots_.cbegin(), plots_.cend(),
-                 [plot](const ac::PlotAdapterPtr& plot_ptr){ return plot_ptr->plot() == plot; });
+                 [plot](const PlotAdapterPtr& plot_ptr){ return plot_ptr->plot() == plot; });
     if (it != plots_.end())
-        view_->setChart((*it)->chart());
+    {
+        chart_ = (*it)->chart();
+    }
     else
     {
-        plots_.emplace_back(ac::PlotAdapterPtr(new ac::PlotAdapter(plot)));
-        view_->setChart(plots_.back()->chart());
+        plots_.emplace_back(PlotAdapterPtr(new PlotAdapter(plot)));
+        chart_ = plots_.back()->chart();
     }
 
-    if (broom_)
-        delete broom_;
-    broom_ = new ac::Broom(view_->chart());
-    broom_->show();
+    chart_->resize(this->size());
+    chart_->setAcceptHoverEvents(true);
+
+    scene()->addItem(chart_);
+    menu_.setEnabled(true);
 }
 
-void ac::PlotPresenter::set_log_axis()
+void PlotPresenter::set_log_axis()
 {
-    QList<QAbstractAxis*> axes = view_->chart()->axes(Qt::Vertical);
+    QList<QAbstractAxis*> axes = chart_->axes(Qt::Vertical);
     auto old_axis = axes.first();
 
     QLogValueAxis* axisY = new QLogValueAxis;
@@ -63,9 +85,9 @@ void ac::PlotPresenter::set_log_axis()
     axisY->setTitleText(old_axis->titleText());
     axisY->setBase(10);
 
-    view_->chart()->addAxis(axisY,Qt::AlignLeft);
+    chart_->addAxis(axisY,Qt::AlignLeft);
 
-    QList<QAbstractSeries*> series = view_->chart()->series();
+    QList<QAbstractSeries*> series = chart_->series();
     for (auto& s : series)
     {
         for ( auto& a : s->attachedAxes())
@@ -78,20 +100,20 @@ void ac::PlotPresenter::set_log_axis()
         }
     }
 
-    view_->chart()->removeAxis(old_axis);
+    chart_->removeAxis(old_axis);
 }
 
-void ac::PlotPresenter::set_linear_axis()
+void PlotPresenter::set_linear_axis()
 {
-    QList<QAbstractAxis*> axes = view_->chart()->axes(Qt::Vertical);
+    QList<QAbstractAxis*> axes = chart_->axes(Qt::Vertical);
     auto old_axis = axes.first();
 
     QValueAxis* axisY = new QValueAxis;
     axisY->setTitleText(old_axis->titleText());
 
-    view_->chart()->addAxis(axisY,Qt::AlignLeft);
+    chart_->addAxis(axisY,Qt::AlignLeft);
 
-    QList<QAbstractSeries*> series = view_->chart()->series();
+    QList<QAbstractSeries*> series = chart_->series();
     for (auto& s : series)
     {
         for ( auto& a : s->attachedAxes())
@@ -104,35 +126,122 @@ void ac::PlotPresenter::set_linear_axis()
         }
     }
 
-    view_->chart()->removeAxis(old_axis);
+    chart_->removeAxis(old_axis);
 }
 
-QChartView* ac::PlotPresenter::view() const
-{
-    return view_;
-}
 
-ac::Plot* ac::PlotPresenter::plot() const
+Plot* PlotPresenter::plot() const
 {
     return plot_;
 }
 
-void ac::PlotPresenter::update_plot_cache(Plot *plot)
+void PlotPresenter::update_plot_cache(Plot *plot)
 {
     // looking for plot in internal storage
     auto it = std::find_if(plots_.cbegin(), plots_.cend(),
-                 [plot](const ac::PlotAdapterPtr& plot_ptr){ return plot_ptr->plot() == plot; });
+                 [plot](const PlotAdapterPtr& plot_ptr){ return plot_ptr->plot() == plot; });
     if (it != plots_.end())
         (*it)->update();
     else
-        plots_.emplace_back(ac::PlotAdapterPtr(new ac::PlotAdapter(plot)));
+        plots_.emplace_back(PlotAdapterPtr(new PlotAdapter(plot)));
 }
 
-void ac::PlotPresenter::remove_plot_cache(Plot* plot)
+void PlotPresenter::remove_plot_cache(Plot* plot)
 {
     // looking for plot in internal storage
     auto it = std::find_if(plots_.cbegin(), plots_.cend(),
-                 [plot](const ac::PlotAdapterPtr& plot_ptr){ return plot_ptr->plot() == plot; });
+                 [plot](const PlotAdapterPtr& plot_ptr){ return plot_ptr->plot() == plot; });
     if (it != plots_.end())
         plots_.erase(it);
+}
+
+void PlotPresenter::resizeEvent(QResizeEvent *event)
+{
+    if (chart_)
+    {
+        scene()->setSceneRect(QRect(QPoint(0, 0), event->size()));
+        chart_->resize(event->size());
+
+        QRectF rect = chart_->plotArea();
+        broom_line_->setLine(0,rect.bottom(),0,rect.top());
+        broom_text_->setY(rect.bottom()-rect.height()/2);
+    }
+    QGraphicsView::resizeEvent(event);
+}
+
+void PlotPresenter::mousePressEvent(QMouseEvent *event)
+{
+    if (event->buttons() & Qt::LeftButton)
+        drag_start_ = event->pos();
+}
+
+//void PlotPresenter::adjusted_range(QVariant)
+
+void PlotPresenter::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->buttons() & Qt::LeftButton)
+    {
+        //chart_->axisX()->setRange();
+    }
+}
+
+void PlotPresenter::mouseMoveEvent(QMouseEvent *event)
+{
+    if (chart_)
+    {
+        if (chart_->plotArea().contains(event->pos()))
+        {
+            broom_group_->setPos(event->pos().x(), broom_group_->pos().y());
+            broom_group_->show();
+            broom_text_->setY(event->pos().y());
+            if (chart_->plotArea().adjusted(0,0,-chart_->plotArea().width()/2,0).contains(event->pos()))
+                broom_text_->setX(20);
+            else
+                broom_text_->setX(-broom_text_->boundingRect().width()-20);
+            // setting value
+            std::stringstream ss;
+            bool domain_set = false;
+            for (auto& s : chart_->series())
+            {
+
+                for (auto& a: chart_->axes())
+                {
+                }
+                ss << s->name().toStdString() << " ";
+            }
+        }
+        else
+            broom_group_->hide();
+
+        if (event->buttons() & Qt::LeftButton)
+        {
+            //event->
+        }
+    }
+
+    QGraphicsView::mouseMoveEvent(event);
+}
+
+std::vector<QAbstractAxis*> PlotPresenter::get_y_axes() const
+{
+    if (chart_)
+        return chart_->axes(Qt::Vertical).toVector().toStdVector();
+    else
+        return std::vector<QAbstractAxis*>();
+}
+
+void PlotPresenter::context_menu(const QPoint& point)
+{
+    if (menu_.isEnabled())
+        menu_.exec(this->mapToGlobal(point));
+}
+
+void PlotPresenter::change_left_axis()
+{
+
+}
+
+void PlotPresenter::change_right_axis()
+{
+
 }

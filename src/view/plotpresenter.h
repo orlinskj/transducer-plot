@@ -4,6 +4,8 @@
 #include <QChartView>
 #include <QObject>
 #include <QLineSeries>
+#include <QMenu>
+
 #include <vector>
 #include <memory>
 
@@ -14,36 +16,56 @@ using namespace QtCharts;
 #include "plotadapter.h"
 #include "broom.h"
 
-namespace ac{
+// namespace ac{
 
-class PlotPresenter : public QObject
+class PlotPresenter : public QGraphicsView
 {
     Q_OBJECT
 public:
     // widget should have added some layout to expand the chart view
-    PlotPresenter(QObject *object = nullptr);
+    PlotPresenter(QWidget *object = nullptr);
     ~PlotPresenter();
 
     void show_plot(Plot* plot);
-    QChartView* view() const;
     Plot* plot() const;
 
-    QLineSeries* series_from_func(const ac::Function* func);
-    QChart* default_chart() const;
+    //QAbstractAxis* axis_from_point(QPoint point);
+
+    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void resizeEvent(QResizeEvent *event);
+
+    std::vector<QAbstractAxis*> get_y_axes() const;
 
 public slots:
     void set_log_axis();
     void set_linear_axis();
+
     void update_plot_cache(Plot* plot);
     void remove_plot_cache(Plot* plot);
 
+    void change_left_axis();
+    void change_right_axis();
+
+    void context_menu(const QPoint& point);
+
 protected:
-    QChartView* view_;
+    QChart* chart_;
     Plot* plot_;
     std::vector<PlotAdapterPtr> plots_;
-    Broom* broom_;
+    //Broom* broom_;
+    QGraphicsLineItem* broom_line_;
+    QGraphicsItemGroup* broom_group_;
+    QGraphicsRectItem* broom_rect_;
+    QGraphicsSimpleTextItem* broom_text_;
+
+    QMenu menu_;
+
+    // dragging chart
+    QPointF drag_start_;
 };
 
-}
+// } // namespace ac
 
 #endif // PLOTPRESENTER_H

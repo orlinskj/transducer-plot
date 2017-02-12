@@ -2,8 +2,6 @@
 
 #include <locale>
 
-using namespace ac;
-
 FileReader::~FileReader()
 {
 

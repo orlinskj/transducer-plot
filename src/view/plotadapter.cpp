@@ -3,25 +3,26 @@
 #include <QGraphicsLayout>
 #include <map>
 
-ac::PlotAdapter::PlotAdapter(Plot *plot) : chart_(new QChart), plot_(plot)
+PlotAdapter::PlotAdapter(Plot *plot) : chart_(new QChart), plot_(plot)
 {
+    chart_->setMaximumSize(QSize(10000,10000));
     chart_->layout()->setContentsMargins(0,0,0,0);
     chart_->setMargins(QMargins(2,5,2,2));
     chart_->setTitle(plot->description().c_str());
     update();
 }
 
-ac::Plot* ac::PlotAdapter::plot() const
+Plot* PlotAdapter::plot() const
 {
     return plot_;
 }
 
-QChart* ac::PlotAdapter::chart() const
+QChart* PlotAdapter::chart() const
 {
     return chart_;
 }
 
-void ac::PlotAdapter::update()
+void PlotAdapter::update()
 {
     chart_->removeAllSeries();
     for (auto& axis : chart_->axes())
@@ -31,6 +32,7 @@ void ac::PlotAdapter::update()
 
     // map for storing axes (prevent duplicates)
     std::map<std::string,QAbstractAxis*> codomain_axes;
+    std::map<std::string,std::tuple<double,double>> codomain_axes_values;
     QValueAxis* x_axis = nullptr;
 
     for(auto& item : plot_->children())
@@ -65,6 +67,8 @@ void ac::PlotAdapter::update()
             chart_->addAxis(x_axis,Qt::AlignBottom);
         }
 
+        codomain_axes_values.emplace(codomain_key, func->codomain()->range());
+
         QLineSeries* series = this->series(func);
         chart_->addSeries(series);
 
@@ -73,7 +77,7 @@ void ac::PlotAdapter::update()
     }
 }
 
-QLineSeries* ac::PlotAdapter::series(const ac::Function* func) const
+QLineSeries* PlotAdapter::series(const Function* func) const
 {
     QLineSeries* series = new QLineSeries;
     series->setName(func->codomain()->unit().name().c_str());

@@ -6,17 +6,17 @@ TransducerSetProxyModel::TransducerSetProxyModel(QObject* parent) :
 
 }
 
-void ac::TransducerSetProxyModel::set_exclude_filter(SetAdapterItem *set)
+void TransducerSetProxyModel::set_exclude_filter(SetAdapterItem *set)
 {
     set_filter_ = set;
 }
 
-void ac::TransducerSetProxyModel::set_transducer_filter(TransducerAdapterItem *t)
+void TransducerSetProxyModel::set_transducer_filter(TransducerAdapterItem *t)
 {
     transducer_filter_ = t;
 }
 
-QModelIndex ac::TransducerSetProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
+QModelIndex TransducerSetProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
 {
     /*if (!transducer_filter_)
         return QModelIndex();

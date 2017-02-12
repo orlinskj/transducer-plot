@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace ac {
+// namespace ac {
 
 class Unit {
 public:
@@ -30,6 +30,6 @@ private:
     static std::vector<Unit> defaults_;
 };
 
-}
+// } // namespace ac
 
 #endif // UNIT_H

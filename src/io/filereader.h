@@ -11,22 +11,22 @@
 
 #include "../model/transducer.h"
 
-namespace ac {
+// namespace ac {
 
-    using namespace std;
-    using namespace boost::filesystem;
-    using namespace boost::algorithm;
+using namespace std;
+using namespace boost::filesystem;
+using namespace boost::algorithm;
 
-    // Reads data from file into Transducer instance.
-    class FileReader{
+// Reads data from file into Transducer instance.
+class FileReader{
 
-    public:
-        virtual ~FileReader();
+public:
+    virtual ~FileReader();
 
-        virtual Transducer* read(const char* filepath, int* status);
-    };
+    virtual Transducer* read(const char* filepath, int* status);
+};
 
-}
+// } // namespace ac
 
 #endif // _FILEREADER_H
 

@@ -7,7 +7,7 @@
 #include "transducer.h"
 #include "set.h"
 
-namespace ac{
+// namespace ac{
 
 class Plot;
 
@@ -38,8 +38,8 @@ protected:
 };
 
 
-}   // namespace ac
+// }   // namespace ac
 
-Q_DECLARE_METATYPE(ac::Function*)
+Q_DECLARE_METATYPE(Function*)
 
 #endif // FUNCTION_H

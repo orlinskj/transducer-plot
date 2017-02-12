@@ -4,7 +4,7 @@
 #include <QPainter>
 #include <QStyledItemDelegate>
 
-namespace ac{
+// namespace ac{
 
 class TransducerDelegate : public QStyledItemDelegate
 {
@@ -21,6 +21,6 @@ public:
                    ) const override;
 };
 
-}
+// } // namespace ac
 
 #endif // TRANSDUCERDELEGATE_H

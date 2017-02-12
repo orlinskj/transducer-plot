@@ -2,32 +2,52 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 
-ac::Broom::Broom(QChart* parent) : QGraphicsItem(parent), chart_(parent)
+Broom::Broom(QGraphicsItem *parent) : QGraphicsItem(parent), chart_(nullptr)
 {
     posx_ = 50;
 }
 
-void ac::Broom::set_position(double pos)
+void Broom::set_position(double pos)
 {
     posx_ = pos;
 }
 
-QRectF ac::Broom::boundingRect() const
+void Broom::set_chart(QChart *chart)
 {
-    QRectF rect(chart_->plotArea());
-    rect.setLeft(posx_);
-    rect.setRight(posx_);
+    chart_ = chart;
 }
 
-void ac::Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
+QRectF Broom::boundingRect() const
 {
-    QRectF rect(chart_->plotArea());
-    QPointF bottom(posx_,rect.bottom());
-    QPointF top(posx_,rect.top());
-    painter->drawLine(bottom,top);
+    if (chart_)
+    {
+        QRectF rect(chart_->plotArea());
+        rect.setLeft(posx_-1);
+        rect.setRight(posx_+1);
+    }
+
+    return QRectF();
+
 }
 
-void ac::Broom::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
+{
+    if (chart_)
+    {
+        QRectF rect(chart_->plotArea());
+        QPointF bottom(posx_,rect.bottom());
+        QPointF top(posx_,rect.top());
+        painter->drawLine(bottom,top);
+    }
+}
+
+void Broom::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     set_position(event->pos().x());
+    update_geometry();
+}
+
+void Broom::update_geometry()
+{
+    prepareGeometryChange();
 }

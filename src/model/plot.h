@@ -7,8 +7,7 @@
 #include "function.h"
 #include "treemodel/treeitem.h"
 
-namespace ac
-{
+// namespace ac {
 
 class Function;
 
@@ -29,13 +28,13 @@ public:
     std::string to_string() const override;
 
 protected:
-    std::vector<Function*> functions_;
+    // std::vector<Function*> functions_;
     std::string name_;
 };
 
-}
+// } // namespace ac
 
-Q_DECLARE_METATYPE(ac::Plot*)
+Q_DECLARE_METATYPE(Plot*)
 
 
 #endif // PLOT_H

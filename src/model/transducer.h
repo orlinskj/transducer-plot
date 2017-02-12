@@ -10,7 +10,7 @@
 
 #include "set.h"
 
-namespace ac{
+// namespace ac{
 
 // Stores all measured set of values
 class Transducer {
@@ -23,8 +23,6 @@ public:
     Transducer() = default;
     Transducer(const std::string& name, const std::string& source,
             Description&& description, std::vector<Set>&& sets);
-
-    //Transducer(Transducer&& t);
 
     const std::string& get_source() const;
     const std::string& get_name() const;
@@ -42,9 +40,9 @@ private:
 
 using Transducer_ptr = std::shared_ptr<Transducer>;
 
-}   // namespace ac
+// }   // namespace ac
 
-Q_DECLARE_METATYPE(ac::Transducer_ptr)
+Q_DECLARE_METATYPE(Transducer_ptr)
 
 #endif // _DATASET_H
 

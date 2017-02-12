@@ -9,7 +9,7 @@
 
 using namespace QtCharts;
 
-namespace ac{
+// namespace ac{
 
 class PlotAdapter
 {
@@ -29,6 +29,6 @@ protected:
 
 using PlotAdapterPtr = std::unique_ptr<PlotAdapter>;
 
-}
+// } // namespace ac
 
 #endif // PLOTADAPTER_H

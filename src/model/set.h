@@ -7,7 +7,7 @@
 
 #include "../unit.h"
 
-namespace ac{
+// namespace ac{
 
 
 template<typename T> class Set_t;
@@ -23,6 +23,7 @@ public:
 
     const std::vector<T>& values() const;
     const Unit& unit() const;
+    std::tuple<double,double> range() const;
 
 private:
     Unit unit_;
@@ -34,7 +35,7 @@ private:
 };
 
 
-}   // namespace ac
+// }   // namespace ac
 
 #include "set.inl"
 

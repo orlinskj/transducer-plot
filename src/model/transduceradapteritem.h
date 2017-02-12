@@ -5,7 +5,7 @@
 #include "transducer.h"
 
 
-namespace ac{
+// namespace ac{
 
 class SetAdapterItem;
 
@@ -28,6 +28,6 @@ protected:
     std::unique_ptr<Transducer> transducer_;
 };
 
-}
+// } // namespace ac
 
 #endif // TRANSDUCERADAPTERITEM_H

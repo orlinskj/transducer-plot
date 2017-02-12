@@ -17,7 +17,7 @@ class FunctionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit FunctionDialog(QWidget *parent = 0, TreeItemModel* model = nullptr, ac::Plot* plot = nullptr);
+    explicit FunctionDialog(QWidget *parent = 0, TreeItemModel* model = nullptr, Plot* plot = nullptr);
     ~FunctionDialog();
 
 protected slots:
@@ -33,7 +33,7 @@ private:
     BranchFilterProxyModel domain_model_;
     TreeItemModel sets_model_;
 
-    ac::Plot* plot_;
+    Plot* plot_;
 };
 
 #endif // FUNCTIONDIALOG_H

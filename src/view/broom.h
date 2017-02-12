@@ -6,16 +6,18 @@
 
 using namespace QtCharts;
 
-namespace ac{
+// namespace ac{
 
 class Broom : public QGraphicsItem
 {
 public:
-    Broom(QChart *parent);
+    Broom(QGraphicsItem *parent = nullptr);
 
     void set_position(double pos);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget);
+    void set_chart(QChart* chart);
+    void update_geometry();
 
 protected:
     //void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -25,6 +27,6 @@ protected:
     double posx_;
 };
 
-}
+// } // namespace ac
 
 #endif // BROOM_H

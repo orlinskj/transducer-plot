@@ -5,7 +5,7 @@
 #include "transduceradapteritem.h"
 #include "setadapteritem.h"
 
-namespace ac{
+// namespace ac{
 
 class TransducerSetProxyModel : public FlattenTreeProxyModel
 {
@@ -22,6 +22,6 @@ protected:
     SetAdapterItem* set_filter_;
 };
 
-}
+// } // namespace ac
 
 #endif // TRANSDUCERSETPROXYMODEL_H

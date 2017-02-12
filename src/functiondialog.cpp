@@ -6,13 +6,13 @@
 #include "model/transduceradapteritem.h"
 #include "model/function.h"
 
-FunctionDialog::FunctionDialog(QWidget *parent, TreeItemModel *model, ac::Plot *plot) :
+FunctionDialog::FunctionDialog(QWidget *parent, TreeItemModel *model, Plot *plot) :
     QDialog(parent),
     ui(new Ui::FunctionDialog)
 {
     ui->setupUi(this);
     ui->transducerView->setModel(model);
-    ui->transducerView->setItemDelegate(new ac::TransducerDelegate);
+    ui->transducerView->setItemDelegate(new TransducerDelegate);
 
     plot_ = plot;
 
@@ -65,5 +65,6 @@ void FunctionDialog::on_buttonBox_accepted()
     auto domain = dynamic_cast<SetAdapterItem*>(static_cast<TreeItem*>(d_item.internalPointer()));
     auto codomain = dynamic_cast<SetAdapterItem*>(static_cast<TreeItem*>(c_item.internalPointer()));
 
-    plot_->append(new ac::Function(transducer->transducer(),domain->set(),codomain->set()));
+    if (transducer && domain && codomain)
+        plot_->append(new Function(transducer->transducer(),domain->set(),codomain->set()));
 }
