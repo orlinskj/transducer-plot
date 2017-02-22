@@ -20,7 +20,7 @@ int TreeItem::ancestor_count() const
 int TreeItem::child_index(const TreeItem *child) const
 {
     auto it = std::find_if(children_.begin(), children_.end(),
-                           [child](const TreeItemPtr& p){ return p.get()==child; });
+                           [child](const TreeItem_ptr& p){ return p.get()==child; });
     if (it != children_.end())
         return int(it-children_.begin());
 
@@ -100,7 +100,7 @@ const TreeItem* TreeItem::absolute_child(int index) const
 void TreeItem::remove(TreeItem* item)
 {
     auto it = std::find_if(children_.begin(), children_.end(),
-                           [item](const TreeItemPtr& p){ return item == p.get(); });
+                           [item](const TreeItem_ptr& p){ return item == p.get(); });
 
     if (it != children_.end())
     {
@@ -118,7 +118,7 @@ TreeItem* TreeItem::append(TreeItem* item)
 {
     emit_begin_insert_rows(children_count(),children_count(), nullptr);
     item->parent_ = static_cast<TreeItem*>(this);
-    children_.emplace_back(TreeItemPtr(item));
+    children_.push_back(TreeItem_ptr(item));
     for(TreeItem* it=this; it!=nullptr; it=it->parent())
         it->ancestor_count_++;
     children_weak_valid_ = false;

@@ -16,7 +16,6 @@
 class Transducer {
 
 public:
-    static constexpr int Role = Qt::UserRole + 1;
 
     using Description = std::map<std::string, std::string>;
 
@@ -29,7 +28,9 @@ public:
 
     const Description& get_description() const;
     const Set& get_set(Unit unit) const;
-    const std::vector<Set>& get_sets() const;
+    std::vector<Set>& get_sets();
+
+    operator const std::string&() const;
 
 private:
     std::string name_;

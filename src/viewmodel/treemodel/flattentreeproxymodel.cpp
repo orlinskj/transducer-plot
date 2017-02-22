@@ -30,11 +30,13 @@ QModelIndex FlattenTreeProxyModel::mapToSource(const QModelIndex &proxyIndex) co
 
 QModelIndex FlattenTreeProxyModel::parent(const QModelIndex &child) const
 {
+    Q_UNUSED(child);
     return QModelIndex();
 }
 
 QModelIndex FlattenTreeProxyModel::index(int row, int column, const QModelIndex &parent) const
 {
+    Q_UNUSED(column);
     if (parent == QModelIndex() && root_)
     {
         auto item = root_->absolute_child(row+1);

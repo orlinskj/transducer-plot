@@ -6,13 +6,17 @@
 #include <string>
 #include <memory>
 
+#include <QtCore>
+
 class TreeItem;
 
-using TreeItemPtr = std::unique_ptr<TreeItem>;
+using TreeItem_ptr = std::unique_ptr<TreeItem>;
 
 class TreeItem
 {
 public:
+    static constexpr int Role = Qt::UserRole + 1;
+
     TreeItem(TreeItem* parent = nullptr);
     virtual ~TreeItem();
 
@@ -44,7 +48,7 @@ public:
 
 protected:
     TreeItem* parent_;
-    std::vector<TreeItemPtr> children_;
+    std::vector<TreeItem_ptr> children_;
     int ancestor_count_;
 
     std::vector<TreeItem*> children_weak_;

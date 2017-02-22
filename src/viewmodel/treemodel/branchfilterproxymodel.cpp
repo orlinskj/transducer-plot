@@ -85,6 +85,7 @@ QModelIndex BranchFilterProxyModel::parent(const QModelIndex &child) const
 
 int BranchFilterProxyModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     return 1;
 }
 

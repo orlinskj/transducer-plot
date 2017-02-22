@@ -1,23 +1,25 @@
 #include "transducersetproxymodel.h"
 
 TransducerSetProxyModel::TransducerSetProxyModel(QObject* parent) :
+    FlattenTreeProxyModel(parent),
     transducer_filter_(nullptr), set_filter_(nullptr)
 {
 
 }
 
-void TransducerSetProxyModel::set_exclude_filter(SetAdapterItem *set)
+void TransducerSetProxyModel::set_exclude_filter(SetItem *set)
 {
     set_filter_ = set;
 }
 
-void TransducerSetProxyModel::set_transducer_filter(TransducerAdapterItem *t)
+void TransducerSetProxyModel::set_transducer_filter(TransducerItem *t)
 {
     transducer_filter_ = t;
 }
 
 QModelIndex TransducerSetProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
 {
+    Q_UNUSED(sourceIndex);
     /*if (!transducer_filter_)
         return QModelIndex();
 

@@ -5,25 +5,25 @@
 #include <string>
 #include <tuple>
 
-#include "../unit.h"
-
-// namespace ac{
+#include "unit.h"
 
 
 template<typename T> class Set_t;
-using Set = Set_t<double>;
+using SetType = double;
+using Set = Set_t<SetType>;
 
 template <typename T>
 class Set_t {
 public:
-
     using value_type = T;
 
     Set_t(std::vector<T>&& values, Unit unit);
 
     const std::vector<T>& values() const;
     const Unit& unit() const;
-    std::tuple<double,double> range() const;
+    std::tuple<T,T> range() const;
+
+    operator std::string() const;
 
 private:
     Unit unit_;
@@ -34,8 +34,6 @@ private:
     std::tuple<T,size_t> max_;
 };
 
-
-// }   // namespace ac
 
 #include "set.inl"
 

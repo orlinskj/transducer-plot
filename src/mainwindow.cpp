@@ -13,8 +13,9 @@
 
 #include "view/transducerdelegate.h"
 //#include "view/plotitemsdelegate.h"
-#include "model/treemodel/treeitem.h"
-#include "model/transduceradapteritem.h"
+#include "viewmodel/treemodel/treeitem.h"
+#include "viewmodel/transduceritem.h"
+#include "viewmodel/functionitem.h"
 
 #include "functiondialog.h"
 
@@ -78,9 +79,6 @@ void MainWindow::init_signals()
                      this, SLOT(slot_add_function()));
     QObject::connect(ui_->functionRemoveButton, SIGNAL(clicked()),
                      this, SLOT(slot_remove_function()));
-    // plotstoreitemmodel -> plotpresenter
-    QObject::connect(&plot_store_,SIGNAL(plot_changed(Plot*)),
-                     plot_presenter_,SLOT(update_plot_cache(Plot*)));
 }
 
 void MainWindow::slot_on_tree_view_context_menu(const QPoint& point)
@@ -89,7 +87,7 @@ void MainWindow::slot_on_tree_view_context_menu(const QPoint& point)
 
     if (index.isValid()) {
         auto tree_item = index.data(TreeItemModel::Role).value<TreeItem*>();
-        if (auto plot = dynamic_cast<Plot*>(tree_item))
+        if (/*auto plot = */dynamic_cast<PlotItem*>(tree_item))
             plot_menu_.exec(ui_->plotView->mapToGlobal(point));
     }
 }
@@ -125,7 +123,9 @@ void MainWindow::slot_file_open()
 
 void MainWindow::add_transducer(Transducer* transducer)
 {
-    transducer_model_.append(new TransducerAdapterItem(transducer));
+    auto t = new TransducerItem(transducer);
+    transducer_model_.append(t);
+    //while(true){}
 }
 
 void MainWindow::seed()
@@ -138,11 +138,23 @@ void MainWindow::seed()
 
     for(auto it=vec.begin(); it!=vec.end(); it++)
         this->add_transducer(*it);
+
+    /* some plot, with some function ... */
+    this->slot_add_new_plot();
+
+    auto plot = dynamic_cast<PlotItem*>(plot_store_.child(0));
+    auto tadapter = dynamic_cast<TransducerItem*>(transducer_model_.child(0));
+    auto transducer = (*tadapter)();
+    auto func = new Function(transducer,&transducer->get_sets()[0], &transducer->get_sets()[1]);
+
+    plot->append(new FunctionItem(func));
+
+    plot_presenter_->show_plot(plot);
 }
 
 void MainWindow::slot_add_new_plot()
 {
-    plot_store_.append(new Plot());
+    plot_store_.append(new PlotItem);
 }
 
 void MainWindow::slot_remove_plot()
@@ -153,7 +165,7 @@ void MainWindow::slot_remove_plot()
     if(selected.length() == 1)
     {
         auto item = selected.at(0).data(TreeItemModel::Role).value<TreeItem*>();
-        if (auto plot = dynamic_cast<Plot*>(item))
+        if (auto plot = dynamic_cast<PlotItem*>(item))
             plot->kill();
     }
 }
@@ -162,14 +174,14 @@ void MainWindow::create_menus()
 {
     QAction* show_plot = plot_menu_.addAction(tr("Pokaż wykres"));
     QAction* remove_plot = plot_menu_.addAction(tr("Usuń"));
-    QAction* update_plot = plot_menu_.addAction(tr("Odśwież"));
+    // QAction* update_plot = plot_menu_.addAction(tr("Odśwież"));
 
     QObject::connect(show_plot,SIGNAL(triggered()),
                      this,SLOT(slot_show_plot()));
     QObject::connect(remove_plot,SIGNAL(triggered()),
                      this, SLOT(slot_remove_plot()));
-    QObject::connect(update_plot,SIGNAL(triggered()),
-                     this, SLOT(slot_update_plot()));
+    /*QObject::connect(update_plot,SIGNAL(triggered()),
+                     this, SLOT(slot_update_plot()));*/
 }
 
 void MainWindow::slot_add_function()
@@ -181,11 +193,11 @@ void MainWindow::slot_add_function()
     {
         auto index = selected.at(0);
         auto item = index.data(TreeItemModel::Role).value<TreeItem*>();
-        Plot* plot= nullptr;
+        PlotItem* plot = nullptr;
 
-        if (auto func = dynamic_cast<Function*>(item))
-            plot = dynamic_cast<Plot*>(func->parent());
-        else if(auto plot_ptr = dynamic_cast<Plot*>(item))
+        if (auto func = dynamic_cast<FunctionItem*>(item))
+            plot = dynamic_cast<PlotItem*>(func->parent());
+        else if(auto plot_ptr = dynamic_cast<PlotItem*>(item))
             plot = plot_ptr;
 
         if (plot)
@@ -204,7 +216,7 @@ void MainWindow::slot_remove_function()
     if(selected.length() == 1)
     {
         auto item = selected.at(0).data(TreeItemModel::Role).value<TreeItem*>();
-        if (auto func = dynamic_cast<Function*>(item))
+        if (auto func = dynamic_cast<FunctionItem*>(item))
             func->kill();
     }
 }
@@ -216,12 +228,12 @@ void MainWindow::slot_show_plot()
     if ( selection->selectedIndexes().length() == 1)
     {
         auto item = selection->selectedIndexes().at(0).data(TreeItemModel::Role).value<TreeItem*>();
-        if (auto plot = dynamic_cast<Plot*>(item))
+        if (auto plot = dynamic_cast<PlotItem*>(item))
             plot_presenter_->show_plot(plot);
     }
 }
 
-void MainWindow::slot_update_plot()
+/*void MainWindow::slot_update_plot()
 {
     auto selection = ui_->plotView->selectionModel();
 
@@ -231,4 +243,4 @@ void MainWindow::slot_update_plot()
         if (auto plot = dynamic_cast<Plot*>(item))
             plot_presenter_->update_plot_cache(plot);
     }
-}
+}*/

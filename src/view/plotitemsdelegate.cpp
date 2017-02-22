@@ -9,6 +9,9 @@ void PlotItemsDelegate::paint(QPainter *painter,
                                const QStyleOptionViewItem &option,
                                const QModelIndex &index) const
 {
+    Q_UNUSED(painter);
+    Q_UNUSED(option);
+    Q_UNUSED(index);
     /*if (index.data(PlotStoreItem::Role).canConvert<Plot*>())
     {
         auto plot = index.data(PlotStoreItem::Role).value<Plot*>();

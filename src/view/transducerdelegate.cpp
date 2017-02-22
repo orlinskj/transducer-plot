@@ -1,8 +1,8 @@
 #include "transducerdelegate.h"
 
 #include "../model/transducer.h"
-#include "../model/treemodel/treeitemmodel.h"
-#include "../model/transduceradapteritem.h"
+#include "../viewmodel/treemodel/treeitemmodel.h"
+#include "../viewmodel/transduceritem.h"
 
 TransducerDelegate::TransducerDelegate(QObject* parent) :
     QStyledItemDelegate(parent) { }
@@ -16,8 +16,9 @@ void TransducerDelegate::paint(
     auto tree_item = index.data(TreeItemModel::Role).value<TreeItem*>();
     /*if (auto transducer_adapter_item = dynamic_cast<TransducerAdapterItem*>(tree_item))
     {*/
-        auto transducer_adapter_item = dynamic_cast<TransducerAdapterItem*>(tree_item);
-        auto transducer = transducer_adapter_item->transducer();
+        auto transducer_item = dynamic_cast<TransducerItem*>(tree_item);
+
+        auto transducer = (*transducer_item)();
 
         //auto transducer = index.data(Transducer::Role).value<Transducer_ptr>();
 
@@ -47,5 +48,6 @@ void TransducerDelegate::paint(
 
 QSize TransducerDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(index);
     return QSize(option.rect.width(), option.decorationSize.height()+8);
 }

@@ -2,11 +2,11 @@
 #include "ui_functiondialog.h"
 
 #include "view/transducerdelegate.h"
-#include "model/setadapteritem.h"
-#include "model/transduceradapteritem.h"
-#include "model/function.h"
+#include "viewmodel/setitem.h"
+#include "viewmodel/transduceritem.h"
+#include "viewmodel/functionitem.h"
 
-FunctionDialog::FunctionDialog(QWidget *parent, TreeItemModel *model, Plot *plot) :
+FunctionDialog::FunctionDialog(QWidget *parent, TreeItemModel *model, PlotItem *plot) :
     QDialog(parent),
     ui(new Ui::FunctionDialog)
 {
@@ -35,11 +35,11 @@ void FunctionDialog::transducer_selection_changed(const QItemSelection &selectio
         QModelIndex transducer_index = selection.indexes().first();
         auto item = static_cast<TreeItem*>(transducer_index.internalPointer());
         auto t_adapter =
-                dynamic_cast<TransducerAdapterItem*>(item);
+                dynamic_cast<TransducerItem*>(item);
         for(int i=0; i<t_adapter->children_count(); i++)
         {
-            auto set = static_cast<SetAdapterItem*>(t_adapter->child(i));
-            sets_model_.append(new SetAdapterItem(nullptr,set->set()));
+            auto set = dynamic_cast<SetItem*>(t_adapter->child(i));
+            sets_model_.append(new SetItem((*set)()));
         }
         //domain_model_.set_branch(static_cast<TreeItem*>(transducer_index.internalPointer()));
 
@@ -61,10 +61,13 @@ void FunctionDialog::on_buttonBox_accepted()
     if (ui->codomainView->selectionModel()->hasSelection())
         c_item = ui->codomainView->selectionModel()->selectedIndexes().first();
 
-    auto transducer = dynamic_cast<TransducerAdapterItem*>(static_cast<TreeItem*>(t_item.internalPointer()));
-    auto domain = dynamic_cast<SetAdapterItem*>(static_cast<TreeItem*>(d_item.internalPointer()));
-    auto codomain = dynamic_cast<SetAdapterItem*>(static_cast<TreeItem*>(c_item.internalPointer()));
+    auto transducer = dynamic_cast<TransducerItem*>(static_cast<TreeItem*>(t_item.internalPointer()));
+    auto domain = dynamic_cast<SetItem*>(static_cast<TreeItem*>(d_item.internalPointer()));
+    auto codomain = dynamic_cast<SetItem*>(static_cast<TreeItem*>(c_item.internalPointer()));
 
     if (transducer && domain && codomain)
-        plot_->append(new Function(transducer->transducer(),domain->set(),codomain->set()));
+    {
+        auto func = new Function((*transducer)(),(*domain)(),(*codomain)());
+        plot_->append(new FunctionItem(func));
+    }
 }

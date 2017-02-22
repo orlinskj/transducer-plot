@@ -35,7 +35,12 @@ const Transducer::Description& Transducer::get_description() const
     return description_;
 }
 
-const std::vector<Set>& Transducer::get_sets() const
+std::vector<Set>& Transducer::get_sets()
 {
     return sets_;
+}
+
+Transducer::operator const std::string &() const
+{
+    return name_;
 }

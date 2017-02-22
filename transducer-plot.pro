@@ -11,59 +11,62 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = transducer-plot
 TEMPLATE = app
 
-CONFIG += c++11 console
+CONFIG += c++14 console
 
-QMAKE_CXXFLAGS += -std=c++11
-
+QMAKE_CXXFLAGS += -std=c++14
 
 SOURCES += \
-    src/main.cpp \
-    src/mainwindow.cpp \
-    src/unit.cpp \
+    src/io/filereader.cpp \
     src/model/function.cpp \
+    src/model/plot.cpp \
     src/model/set.inl \
     src/model/transducer.cpp \
-    src/model/plot.cpp \
-    src/io/filereader.cpp \
-    src/view/transducerdelegate.cpp \
+    src/model/unit.cpp \
+    src/view/broom.cpp \
     src/view/plotitemsdelegate.cpp \
     src/view/plotpresenter.cpp \
-    src/model/plotstoreitemmodel.cpp \
-    src/model/treemodel/treeitemmodel.cpp \
+    src/view/transducerdelegate.cpp \
+    src/viewmodel/treemodel/branchfilterproxymodel.cpp \
+    src/viewmodel/treemodel/flattentreeproxymodel.cpp \
+    src/viewmodel/treemodel/treeitem.cpp \
+    src/viewmodel/treemodel/treeitemmodel.cpp \
+    src/viewmodel/functionitem.cpp \
+    src/viewmodel/plotitem.cpp \
+    src/viewmodel/plotstoreitemmodel.cpp \
+    src/viewmodel/setitem.cpp \
+    src/viewmodel/transduceritem.cpp \
+    src/viewmodel/transducersetproxymodel.cpp \
     src/functiondialog.cpp \
-    src/model/transduceradapteritem.cpp \
-    src/model/setadapteritem.cpp \
-    src/model/treemodel/flattentreeproxymodel.cpp \
-    src/model/transducersetproxymodel.cpp \
-    src/model/treemodel/branchfilterproxymodel.cpp \
-    src/model/treemodel/treeitemvalued.inl \
-    src/model/treemodel/treeitem.cpp \
-    src/view/plotadapter.cpp \
-    src/view/broom.cpp
+    src/main.cpp \
+    src/mainwindow.cpp \
+    src/viewmodel/treemodel/treeitemt.inl \
+    src/view/unitaxis.cpp
 
-HEADERS  += \
-    src/mainwindow.h \
-    src/unit.h \
+HEADERS += \
+    src/io/filereader.h \
     src/model/function.h \
+    src/model/plot.h \
     src/model/set.h \
     src/model/transducer.h \
-    src/model/plot.h \
-    src/io/filereader.h \
-    src/view/transducerdelegate.h \
+    src/model/unit.h \
+    src/view/broom.h \
     src/view/plotitemsdelegate.h \
     src/view/plotpresenter.h \
-    src/model/plotstoreitemmodel.h \
-    src/model/treemodel/treeitemmodel.h \
+    src/view/transducerdelegate.h \
+    src/viewmodel/treemodel/branchfilterproxymodel.h \
+    src/viewmodel/treemodel/flattentreeproxymodel.h \
+    src/viewmodel/treemodel/treeitem.h \
+    src/viewmodel/treemodel/treeitemmodel.h \
+    src/viewmodel/functionitem.h \
+    src/viewmodel/plotitem.h \
+    src/viewmodel/plotstoreitemmodel.h \
+    src/viewmodel/setitem.h \
+    src/viewmodel/transduceritem.h \
+    src/viewmodel/transducersetproxymodel.h \
     src/functiondialog.h \
-    src/model/transduceradapteritem.h \
-    src/model/setadapteritem.h \
-    src/model/treemodel/flattentreeproxymodel.h \
-    src/model/transducersetproxymodel.h \
-    src/model/treemodel/branchfilterproxymodel.h \
-    src/model/treemodel/treeitemvalued.h \
-    src/model/treemodel/treeitem.h \
-    src/view/plotadapter.h \
-    src/view/broom.h
+    src/mainwindow.h \
+    src/viewmodel/treemodel/treeitemt.h \
+    src/view/unitaxis.h
 
 FORMS    += src/mainwindow.ui \
     src/functiondialog.ui

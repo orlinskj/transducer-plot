@@ -12,7 +12,7 @@
 #include "model/transducer.h"
 #include "io/filereader.h"
 #include "model/plot.h"
-#include "model/plotstoreitemmodel.h"
+#include "viewmodel/plotstoreitemmodel.h"
 #include "view/plotpresenter.h"
 
 using namespace std;
@@ -34,7 +34,6 @@ public:
     ~MainWindow();
 
     void add_transducer(Transducer *transducer);
-    void add_function(const Function& func);
 
 private slots:
     void slot_add_new_plot();
@@ -44,7 +43,6 @@ private slots:
     void slot_file_open();
     void slot_on_tree_view_context_menu(const QPoint &point);
     void slot_show_plot();
-    void slot_update_plot();
 
 private:
     void init_signals();

@@ -3,10 +3,10 @@
 
 #include <QDialog>
 #include <QItemSelection>
-#include "model/treemodel/treeitemmodel.h"
-#include "model/treemodel/flattentreeproxymodel.h"
-#include "model/treemodel/branchfilterproxymodel.h"
-#include "model/plot.h"
+#include "viewmodel/treemodel/treeitemmodel.h"
+#include "viewmodel/treemodel/flattentreeproxymodel.h"
+#include "viewmodel/treemodel/branchfilterproxymodel.h"
+#include "viewmodel/plotitem.h"
 
 namespace Ui {
 class FunctionDialog;
@@ -17,7 +17,7 @@ class FunctionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit FunctionDialog(QWidget *parent = 0, TreeItemModel* model = nullptr, Plot* plot = nullptr);
+    explicit FunctionDialog(QWidget *parent = 0, TreeItemModel* model = nullptr, PlotItem *plot = nullptr);
     ~FunctionDialog();
 
 protected slots:
@@ -33,7 +33,7 @@ private:
     BranchFilterProxyModel domain_model_;
     TreeItemModel sets_model_;
 
-    Plot* plot_;
+    PlotItem* plot_;
 };
 
 #endif // FUNCTIONDIALOG_H

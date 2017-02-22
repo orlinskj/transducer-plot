@@ -2,12 +2,8 @@
 
 #include <algorithm>
 #include <sstream>
-#include "plotstoreitemmodel.h"
 
-Plot::Plot() : name_("Wykres") {}
 Plot::Plot(const std::string& name) : name_(name) { }
-
-Plot::~Plot() {}
 
 const std::string& Plot::name() const
 {
@@ -23,24 +19,23 @@ std::string Plot::description() const
 {
     std::stringstream ss;
     ss << "Wykres";
-    if (children_count())
-    {
-        for(int i=0; i<children_count(); i++)
-        {
-            auto func = dynamic_cast<Function*>(child(i));
-            ss << " " << func->codomain()->unit().name();
-            if (i < children_count()-1)
-                ss << ",";
-        }
 
-        auto func = dynamic_cast<Function*>(child(0));
-        ss << " od " << func->domain()->unit().name();
+    if (!functions_.size())
+        return ss.str();
+
+    for(auto it=functions_.begin(); it!=functions_.end(); ++it)
+    {
+        ss << " " << (*it)->codomain()->unit().name();
+        if (it+1 != functions_.end())
+            ss << ",";
+        else
+            ss << " od " << (*it)->domain()->unit().name();
     }
 
     return ss.str();
 }
 
-std::string Plot::to_string() const
+Plot::operator std::string() const
 {
-    return name();
+    return description();
 }

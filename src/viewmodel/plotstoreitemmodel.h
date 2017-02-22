@@ -4,7 +4,7 @@
 #include <QAbstractItemModel>
 #include <vector>
 
-#include "plot.h"
+#include "../model/plot.h"
 #include "treemodel/treeitemmodel.h"
 
 // namespace ac{

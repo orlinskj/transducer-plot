@@ -5,7 +5,8 @@ CONFIG -= app_bundle
 SOURCES +=  main.cpp \
             ../src/unit.cpp \
             ../src/model/*.cpp \
-            ../src/model/treemodel/*.cpp
+            ../src/model/treemodel/*.cpp \
+    function_test.cpp
 
 HEADERS +=  ../src/unit.h \
             ../src/model/*.h \

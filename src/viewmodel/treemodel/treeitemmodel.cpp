@@ -77,6 +77,7 @@ int TreeItemModel::rowCount(const QModelIndex &parent) const
 
 int TreeItemModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     return 1;
 }
 
