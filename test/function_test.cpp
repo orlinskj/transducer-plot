@@ -1,9 +1,9 @@
 #define BOOST_TEST_DYN_LINK
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 #include "../src/model/function.h"
 #include "../src/model/set.h"
-#include "../src/unit.h"
+#include "../src/model/unit.h"
 
 #include <vector>
 #include <cmath>

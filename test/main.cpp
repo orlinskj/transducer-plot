@@ -1,18 +1,17 @@
 #define BOOST_TEST_MODULE transducer_plot
-
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_NO_MAIN
+#define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
 // entry point:
-int main(int argc, char* argv[], char* envp[])
+/*int main(int argc, char* argv[], char* envp[])
 {
   return boost::unit_test::unit_test_main( &init_unit_test, argc, argv );
-}
+}*/
 
-#include "../src/model/treemodel/treeitemmodel.h"
-#include "../src/model/treemodel/treeitem.h"
-#include "../src/model/treemodel/flattentreeproxymodel.h"
+#include "../src/viewmodel/treemodel/treeitemmodel.h"
+#include "../src/viewmodel/treemodel/treeitem.h"
+#include "../src/viewmodel/treemodel/flattentreeproxymodel.h"
 
 struct F{
     F(){

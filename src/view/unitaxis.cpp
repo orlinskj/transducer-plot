@@ -26,7 +26,8 @@ void UnitAxis::remove_unit(const Unit &u)
 
 bool UnitAxis::unit_match(const Unit &u)
 {
-    /// TODO
+    if (unit.unit() == u.unit())
+        return true;
     return false;
 }
 

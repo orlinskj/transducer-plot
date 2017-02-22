@@ -89,6 +89,14 @@ void CombinedUnit::remove_unit(const Unit &u)
     update();
 }
 
+bool CombinedUnit::match_unit(const Unit &u)
+{
+    if (units_.empty())
+        return true;
+
+    return units_.front().unit() == u.unit();
+}
+
 void CombinedUnit::update()
 {
     if (units_.empty())
