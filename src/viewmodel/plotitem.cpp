@@ -21,79 +21,35 @@ PlotItem::PlotItem(Plot *plot) : chart_(new QChart)
     chart_->setTitle(plot->description().c_str());
 }
 
+PlotItem::~PlotItem()
+{
+    // FunctionItem owns the series
+    while(chart_->series().length() > 0)
+    {
+        chart_->removeSeries(chart_->series().back());
+    }
+}
+
 QChart* PlotItem::chart() const
 {
     return chart_;
 }
 
-/*void PlotItem::update_graphics()
-{
-    chart()->removeAllSeries();
-    for (auto& axis : chart()->axes())
-        chart()->removeAxis(axis);
-
-    Qt::AlignmentFlag positions[] = { Qt::AlignLeft, Qt::AlignRight };
-
-    // map for storing axes (prevent duplicates)
-    std::map<std::string,QAbstractAxis*> codomain_axes;
-    std::map<std::string,std::tuple<double,double>> codomain_axes_values;
-    QValueAxis* x_axis = nullptr;
-
-    for(auto& item : children())
-    {
-        auto func = dynamic_cast<Function*>(item);
-        auto codomain_key = func->codomain()->unit().unit();
-        auto domain_key = func->domain()->unit().symbol();
-
-        auto it = codomain_axes.find(codomain_key);
-
-        QAbstractAxis* y_axis = nullptr;
-        if (it != codomain_axes.end())
-        {
-            y_axis = (*it).second;
-            // adding codomain name to axis description
-            std::string title = func->codomain()->unit().name() + ", " + y_axis->titleText().toStdString();
-            y_axis->setTitleText(QString::fromStdString(title));
-        }
-        else
-        {
-            y_axis = new QValueAxis;
-            y_axis->setTitleText(func->codomain()->unit().longname().c_str());
-            dynamic_cast<QValueAxis*>(y_axis)->setLabelFormat("%g");
-            chart()->addAxis(y_axis, positions[codomain_axes.size()%2]);
-            codomain_axes.emplace(codomain_key,y_axis);
-        }
-
-        if (!x_axis)
-        {
-            x_axis = new QValueAxis;
-            x_axis->setTitleText(func->domain()->unit().longname().c_str());
-            x_axis->setLabelFormat("%g");
-            chart()->addAxis(x_axis,Qt::AlignBottom);
-        }
-
-        codomain_axes_values.emplace(codomain_key, func->codomain()->range());
-
-        //QLineSeries* series = this->create_series(func);
-        //chart()->addSeries(series);
-
-        //series->attachAxis(x_axis);
-        //series->attachAxis(y_axis);
-    }
-}*/
-
 TreeItem* PlotItem::append(TreeItem* item)
 {
-    auto func_item = dynamic_cast<FunctionItem*>(item);
+    Qt::AlignmentFlag positions[] = { Qt::AlignLeft, Qt::AlignRight };
 
+    auto func_item = dynamic_cast<FunctionItem*>(item);
+    // transfering ownership of Function object to Plot
+    this->value()->add_function(func_item->value());
     chart_->addSeries(func_item->series());
 
     // looking for codomain axes in plot, if absent - create
     auto axes = chart_->axes(Qt::Vertical);
     auto axis_it = std::find_if(axes.cbegin(), axes.cend(), [func_item](auto axis){
         auto unit_axis = UnitAxis::from_qabstractaxis(axis);
-        /*if (unit_axis->unit_match(func_item->value()->codomain()->unit()))
-            return true;*/
+        if (unit_axis->match_unit(func_item->value()->codomain()->unit()))
+            return true;
         return false;
     });
 
@@ -110,22 +66,130 @@ TreeItem* PlotItem::append(TreeItem* item)
         else
             throw std::runtime_error("Chart axis is neither UnitValueAxis nor UnitLogValueAxis");
         axis->setTitleText(unit_axis->name().c_str());
+
     }
     else
     {
         axis = new UnitValueAxis(func_item->value()->codomain()->unit());
-        chart_->addAxis(axis,Qt::AlignLeft);
-        func_item->series()->attachAxis(axis);
+        auto position = positions[axes.size()%2];
+        chart_->addAxis(axis,position);
     }
+    func_item->series()->attachAxis(axis);
 
     auto x_axis = chart_->axisX();
     if (!x_axis)
     {
-        auto domain_axis = new UnitValueAxis(func_item->value()->domain()->unit());
-        chart_->addAxis(domain_axis,Qt::AlignBottom);
-        func_item->series()->attachAxis(domain_axis);
+        x_axis = new UnitValueAxis(func_item->value()->domain()->unit());
+        chart_->addAxis(x_axis,Qt::AlignBottom);
     }
+    func_item->series()->attachAxis(x_axis);
 
     return TreeItem::append(item);
+}
+
+QList<QAbstractSeries*> PlotItem::axis_series(QAbstractAxis* axis)
+{
+    QList<QAbstractSeries*> list;
+    for (auto series : chart_->series())
+    {
+        if (series->attachedAxes().contains(axis))
+            list.append(series);
+    }
+    return list;
+}
+
+void PlotItem::change_axis_alignment(QAbstractAxis* axis, Qt::Alignment align)
+{
+    auto series_attached = axis_series(axis);
+    // this remove axes from all series
+    chart_->removeAxis(axis);
+    chart_->addAxis(axis, align);
+    for (auto series : series_attached)
+        series->attachAxis(axis);
+}
+
+void PlotItem::remove(TreeItem *item)
+{
+    // 1. detach axes from series
+    // 2. check whether axes from step 1 have any series attached
+    // 3. if not - remove those axes from chart
+    // 4. remove series from plot
+
+    auto func_item = dynamic_cast<FunctionItem*>(item);
+
+    // looking for axes which should be updated/deleted
+    auto func_axes = func_item->series()->attachedAxes();
+
+    for (auto it = func_axes.begin(); it!=func_axes.end();++it)
+    {
+        auto axis = *it;
+        func_item->series()->detachAxis(axis);
+
+        auto unit_axis = UnitAxis::from_qabstractaxis(axis);
+
+        if (axis->orientation() == Qt::Vertical)
+        {
+            unit_axis->remove_unit(func_item->value()->codomain()->unit());
+            if (unit_axis->no_units())
+            {
+                chart_->removeAxis(axis);
+                delete axis;
+                // -------------------------------------------------------------
+                // count left and right axes
+                // move from one side to another to maintain balance
+                // Also we prefer axes on left side
+                QAbstractAxis* left = nullptr;
+                QAbstractAxis* right = nullptr;
+                int left_count = 0;
+                int right_count = 0;
+                for (auto axis : chart_->axes(Qt::Vertical))
+                {
+                    if (axis->alignment() == Qt::AlignLeft)
+                    {
+                        left_count++;
+                        left = axis;
+                    }
+                    else
+                    {
+                        right_count++;
+                        right = axis;
+                    }
+                }
+
+                if (right_count > left_count)
+                    change_axis_alignment(right,Qt::AlignLeft);
+                else if (left_count - right_count >= 2)
+                    change_axis_alignment(left,Qt::AlignRight);
+                // -------------------------------------------------------------
+            }
+        }
+    }
+
+    // removeSeries method detaches axes from series!
+    chart_->removeSeries(func_item->series());
+
+    // removing Function from Plot (Plot owns the Function, not FunctionItem!)
+    this->value()->remove_function(func_item->value());
+
+    TreeItem::remove(item);
+}
+
+void PlotItem::change_axis_type(QAbstractAxis* axis)
+{
+    auto alignment = axis->alignment();
+    QAbstractAxis* new_axis = nullptr;
+
+    if (auto unit_axis = dynamic_cast<UnitValueAxis*>(axis))
+        new_axis = new UnitLogValueAxis(*unit_axis);
+    else if (auto unit_axis = dynamic_cast<UnitLogValueAxis*>(axis))
+        new_axis = new UnitValueAxis(*unit_axis);
+
+    auto attached_series = axis_series(axis);
+    chart_->removeAxis(axis);
+    delete axis;
+
+    chart_->addAxis(new_axis,alignment);
+    for (auto series : attached_series)
+        series->attachAxis(new_axis);
 }
 

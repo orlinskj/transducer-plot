@@ -34,5 +34,11 @@ BOOST_AUTO_TEST_CASE(combined_unit)
     BOOST_CHECK_EQUAL(unit.symbol(), "symbol a, symbol a2");
     BOOST_CHECK_EQUAL(unit.unit(), "unit a");
 
+    unit.remove_unit(a);
+
+    BOOST_CHECK_EQUAL(unit.name(), "name a2");
+    BOOST_CHECK_EQUAL(unit.symbol(), "symbol a2");
+    BOOST_CHECK_EQUAL(unit.unit(), "unit a");
+
 }
 

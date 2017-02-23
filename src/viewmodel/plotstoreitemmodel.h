@@ -4,10 +4,10 @@
 #include <QAbstractItemModel>
 #include <vector>
 
-#include "../model/plot.h"
+#include "../viewmodel/plotitem.h"
 #include "treemodel/treeitemmodel.h"
 
-// namespace ac{
+
 
 class PlotStoreItemModel : public TreeItemModel
 {
@@ -23,16 +23,15 @@ public:
     void emit_end_remove_rows();
 
 signals:
-    void plot_changed(Plot* plot);
-    void plot_removed(Plot* plot);
+    void plot_changed(PlotItem* plot);
+    void plot_removed(PlotItem* plot);
 
 protected:
-    Plot* plot_to_be_changed_;
-    Plot* plot_to_be_removed_;
+    PlotItem* plot_to_be_changed_;
+    PlotItem* plot_to_be_removed_;
     bool  plot_to_be_added_;
 
 };
 
-// } // namespace ac
 
 #endif // PLOTSTORE_H

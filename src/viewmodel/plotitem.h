@@ -18,11 +18,22 @@ class PlotItem : public TreeItemTOwner<Plot>
 public:
     PlotItem();
     PlotItem(Plot* plot);
+    ~PlotItem();
 
     QChart* chart() const;
+    void change_axis_type(QAbstractAxis* axis);
+
     TreeItem* append(TreeItem* item) override; // from TreeItem
+    void remove(TreeItem* item) override; // from TreeItem
+
+//signals:
+    //void function_added(FunctionItem* f);
+    //void function_removed(FunctionItem* f);
 
 protected:
+    QList<QAbstractSeries*> axis_series(QAbstractAxis* axis);
+    void change_axis_alignment(QAbstractAxis* axis, Qt::Alignment align);
+
     QChart* chart_;
 
 };

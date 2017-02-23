@@ -18,5 +18,5 @@ FunctionItem::FunctionItem(Function *f) :
 
 QLineSeries* FunctionItem::series() const
 {
-    return series_;
+    return series_.get();
 }

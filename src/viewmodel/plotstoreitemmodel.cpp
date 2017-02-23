@@ -23,7 +23,7 @@ void PlotStoreItemModel::emit_begin_insert_rows(int first, int last, std::vector
         while (tree->size())
         {
             item = item ? item->child(tree->back()) : child(tree->back());
-            if (auto plot = dynamic_cast<Plot*>(item))
+            if (auto plot = dynamic_cast<PlotItem*>(item))
             {
                 plot_to_be_changed_ = plot;
                 break;
@@ -47,7 +47,7 @@ void PlotStoreItemModel::emit_end_insert_rows()
     }
     if (plot_to_be_added_)
     {
-        emit plot_changed(dynamic_cast<Plot*>(child(children_count()-1)));
+        emit plot_changed(dynamic_cast<PlotItem*>(child(children_count()-1)));
         plot_to_be_added_ = false;
     }
 }
@@ -58,14 +58,14 @@ void PlotStoreItemModel::emit_begin_remove_rows(int first, int last, std::vector
 
     // this assumes that plots can only be first level nodes of tree
     if (!tree || !tree->size())
-        plot_to_be_removed_ = dynamic_cast<Plot*>(child(first));
+        plot_to_be_removed_ = dynamic_cast<PlotItem*>(child(first));
     else
     {
-        TreeItem* item;
-        for (;tree->size();tree->pop_back())
+        TreeItem* item = nullptr;
+        for (;!tree->empty();tree->pop_back())
         {
             item = child(tree->back());
-            if (auto plot = dynamic_cast<Plot*>(item))
+            if (auto plot = dynamic_cast<PlotItem*>(item))
             {
                 plot_to_be_changed_ = plot;
                 break;

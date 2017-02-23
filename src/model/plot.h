@@ -27,7 +27,7 @@ public:
     operator std::string() const;
 
 protected:
-    std::vector<Function*> functions_;
+    std::vector<std::unique_ptr<Function>> functions_;
     std::string name_;
 };
 

@@ -37,7 +37,8 @@ public:
 
     void add_unit(const Unit& u);
     void remove_unit(const Unit& u);
-    bool match_unit(const Unit& u);
+    bool match_unit(const Unit& u) const;
+    bool no_units() const;
 private:
     void update();
     std::vector<Unit> units_;

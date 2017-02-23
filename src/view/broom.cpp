@@ -1,10 +1,14 @@
 #include "broom.h"
+
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
 #include <QDebug>
 #include <QLegendMarker>
 #include <QLineSeries>
+
+#include <boost/optional.hpp>
+#include "../viewmodel/functionitem.h"
 
 Broom::Broom(QGraphicsItem *parent) :
     QGraphicsItem(parent),
@@ -38,6 +42,7 @@ void Broom::set_position(double x)
 void Broom::set_plot(PlotItem* plot)
 {
     plot_ = plot;
+    update();
 }
 
 QRectF Broom::boundingRect() const
@@ -82,23 +87,22 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     for (auto marker: chart()->legend()->markers())
     {
-        /*auto functs = plot_->children();
-        auto f_it = std::find_if(functs.begin(), functs.end(),
+        auto funcs = plot_->children();
+        auto f_it = std::find_if(funcs.begin(), funcs.end(),
             [marker,this](const TreeItem* t){
-                if(auto f = dynamic_cast<const Function*>(t))
+                if(auto f = dynamic_cast<const FunctionItem*>(t))
                 {
-                    qDebug() << marker->series();
-                    qDebug() << dynamic_cast<QLineSeries*>(marker->series());
-                    return this->plot_->series(f) == dynamic_cast<QLineSeries*>(marker->series());
-                    return false;
+                    //qDebug() << marker->series();
+                    //qDebug() << dynamic_cast<QLineSeries*>(marker->series());
+                    return f->series() == dynamic_cast<QLineSeries*>(marker->series());
                 }
                 return false;
             });
 
-        if (f_it == functs.end())
+        if (f_it == funcs.end())
             throw std::runtime_error("function with same series like marker not found");
 
-        Function* func = dynamic_cast<Function*>(*f_it);*/
+        auto func_item = dynamic_cast<FunctionItem*>(*f_it);
 
         QRectF rect(pos,QSizeF(marker_size_,marker_size_));
         painter->fillRect(rect,marker->brush());
@@ -110,12 +114,12 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->setPen(marker_value);
 
-        //SetType x = chart()->mapToValue(this->pos(),marker->series()).x();
+        SetType x_val = chart()->mapToValue(chart()->mapFromScene(x(),0)).x();
         QString text;
-        /*auto val = func->value_at(x);
+        auto val = func_item->value()->value_at(x_val);
         if (val)
             text = QString::number(*val);
-        else*/
+        else
             text = "-";
 
         painter->drawText(pos + QPointF(marker_size_+5,marker_size_),text);
@@ -124,16 +128,6 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     }
 
     painter->setFont(font_bak);
-}
-
-void Broom::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    Q_UNUSED(event);
-    //set_position(event->pos().x());
-    // update_geometry();
-
-    /*QLineSeries l;
-    l.*/
 }
 
 QChart* Broom::chart() const

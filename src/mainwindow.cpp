@@ -52,7 +52,7 @@ void MainWindow::setup_view()
     ui_->plotView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // plot presenter configuration
-    plot_presenter_ = new PlotPresenter(nullptr);
+    plot_presenter_ = new PlotPresenter(&plot_store_);
     plot_presenter_->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // frame for chart view configuration
@@ -125,7 +125,6 @@ void MainWindow::add_transducer(Transducer* transducer)
 {
     auto t = new TransducerItem(transducer);
     transducer_model_.append(t);
-    //while(true){}
 }
 
 void MainWindow::seed()
@@ -232,15 +231,3 @@ void MainWindow::slot_show_plot()
             plot_presenter_->show_plot(plot);
     }
 }
-
-/*void MainWindow::slot_update_plot()
-{
-    auto selection = ui_->plotView->selectionModel();
-
-    if ( selection->selectedIndexes().length() == 1)
-    {
-        auto item = selection->selectedIndexes().at(0).data(TreeItemModel::Role).value<TreeItem*>();
-        if (auto plot = dynamic_cast<Plot*>(item))
-            plot_presenter_->update_plot_cache(plot);
-    }
-}*/

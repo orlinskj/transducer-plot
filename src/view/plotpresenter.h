@@ -25,15 +25,13 @@ class PlotPresenter : public QGraphicsView
     Q_OBJECT
 public:
     // widget should have added some layout to expand the chart view
-    PlotPresenter(QWidget *object = nullptr, PlotStoreItemModel* store = nullptr);
+    PlotPresenter(PlotStoreItemModel* store = nullptr);
     ~PlotPresenter();
 
     void show_plot(PlotItem* plot);
 
     QChart* chart() const;
     PlotItem* plot() const;
-
-    //QAbstractAxis* axis_from_point(QPoint point);
 
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
@@ -43,11 +41,6 @@ public:
     void alter_menu();
 
 public slots:
-
-    //void update_plot_cache(Plot* plot);
-    //void remove_plot_cache(Plot* plot);
-    //void change_axis(QAbstractAxis* axis);
-
     void context_menu(const QPoint& point);
 
 protected:

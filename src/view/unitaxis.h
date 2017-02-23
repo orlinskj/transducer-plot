@@ -18,10 +18,12 @@ class UnitAxis {
 public:
     UnitAxis() = default;
     UnitAxis(const CombinedUnit& unit);
+    UnitAxis(const UnitAxis& axis);
 
     void add_unit(const Unit& u);
     void remove_unit(const Unit& u);
-    bool unit_match(const Unit& u);
+    bool match_unit(const Unit& u);
+    bool no_units() const;
     std::string name() const;
     virtual void update();
 
@@ -35,7 +37,7 @@ class UnitValueAxis : public QValueAxis, public UnitAxis {
 public:
     UnitValueAxis() = default;
     UnitValueAxis(const CombinedUnit& unit);
-    UnitValueAxis(const UnitLogValueAxis& axis);
+    UnitValueAxis(const UnitAxis& axis);
     void update() override;
 };
 
@@ -43,7 +45,7 @@ class UnitLogValueAxis : public QLogValueAxis, public UnitAxis {
 public:
     UnitLogValueAxis() = default;
     UnitLogValueAxis(const CombinedUnit& unit);
-    UnitLogValueAxis(const UnitValueAxis& axis);
+    UnitLogValueAxis(const UnitAxis& axis);
     void update() override;
 };
 

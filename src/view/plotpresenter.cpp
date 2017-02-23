@@ -13,8 +13,10 @@
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
 
-PlotPresenter::PlotPresenter(QWidget* parent, PlotStoreItemModel *store) :
-    QGraphicsView(new QGraphicsScene, parent),
+#include "../viewmodel/plotstoreitemmodel.h"
+
+PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
+    QGraphicsView(new QGraphicsScene, nullptr),
     plot_(nullptr),
     store_(store),
     broom_(new Broom)
@@ -30,6 +32,24 @@ PlotPresenter::PlotPresenter(QWidget* parent, PlotStoreItemModel *store) :
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setMouseTracking(true);
+
+    // plot store signals
+    QObject::connect(store_, &PlotStoreItemModel::plot_changed,
+                     this,
+                     [this](PlotItem* p){
+        broom_->set_plot(p);
+        alter_menu();
+    });
+    QObject::connect(store_, &PlotStoreItemModel::plot_removed,
+                     this,
+                     [this](PlotItem* p)
+    {
+        broom_->set_plot(nullptr);
+        if (p->chart() == this->chart())
+            scene()->removeItem(p->chart());
+        plot_ = nullptr;
+        alter_menu();
+    });
 
     // setting up menu
     menu_.setEnabled(false);
@@ -57,13 +77,16 @@ void PlotPresenter::show_plot(PlotItem *plot)
 
 void PlotPresenter::alter_menu()
 {
-    if (!plot_->chart())
+    if (!chart())
+    {
+        menu_.setEnabled(false);
         return;
+    }
 
     menu_.setEnabled(true);
     menu_.clear();
 
-    for (auto axis: plot_->chart()->axes(Qt::Vertical))
+    for (auto axis: chart()->axes(Qt::Vertical))
     {
         QString change_to("liniowa");
         if (dynamic_cast<QValueAxis*>(axis))
@@ -73,7 +96,7 @@ void PlotPresenter::alter_menu()
         QAction* action = menu_.addAction(text);
         ///TODO add action here
         connect(action, &QAction::triggered,
-                this, [axis,this](){ /*this->change_axis(axis);*/ });
+                this, [axis,this](){ plot_->change_axis_type(axis); alter_menu(); });
     }
 }
 
@@ -92,10 +115,10 @@ QChart* PlotPresenter::chart() const
 
 void PlotPresenter::resizeEvent(QResizeEvent *event)
 {
-    if (plot_->chart())
+    if (chart())
     {
         scene()->setSceneRect(QRect(QPoint(0, 0), event->size()));
-        plot_->chart()->resize(event->size());
+        chart()->resize(event->size());
     }
     broom_->update();
     QGraphicsView::resizeEvent(event);
@@ -117,7 +140,7 @@ void PlotPresenter::mouseReleaseEvent(QMouseEvent *event)
 
 void PlotPresenter::mouseMoveEvent(QMouseEvent *event)
 {
-    if (plot_->chart())
+    if (chart())
     {
         // qDebug() << "mouseMove(" << event->pos() << ")";
         if (chart()->plotArea().contains(event->pos()))
@@ -144,28 +167,3 @@ void PlotPresenter::context_menu(const QPoint& point)
     if (menu_.isEnabled())
         menu_.exec(this->mapToGlobal(point));
 }
-
-/*void PlotPresenter::change_axis(QAbstractAxis* axis)
-{
-    QAbstractAxis* new_axis = nullptr;
-
-    if (dynamic_cast<QValueAxis*>(axis))
-        new_axis = new QLogValueAxis;
-    else
-        new_axis = new QValueAxis;
-
-    new_axis->setTitleText(axis->titleText());
-    chart()->addAxis(new_axis,axis->alignment());
-    for (auto ser: chart()->series())
-    {
-        if (ser->attachedAxes().indexOf(axis) >= 0)
-        {
-            ser->detachAxis(axis);
-            ser->attachAxis(new_axis);
-        }
-    }
-    chart()->removeAxis(axis);
-    delete axis;
-
-    alter_menu();
-}*/

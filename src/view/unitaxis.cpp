@@ -2,7 +2,15 @@
 
 UnitAxis::UnitAxis(const CombinedUnit& unit) :
     unit(unit)
-{ }
+{
+    update();
+}
+
+UnitAxis::UnitAxis(const UnitAxis& axis) :
+    unit(axis.unit)
+{
+    update();
+}
 
 std::string UnitAxis::name() const
 {
@@ -24,16 +32,29 @@ void UnitAxis::remove_unit(const Unit &u)
     update();
 }
 
-bool UnitAxis::unit_match(const Unit &u)
+bool UnitAxis::match_unit(const Unit &u)
 {
     if (unit.unit() == u.unit())
         return true;
     return false;
 }
 
+bool UnitAxis::no_units() const
+{
+    return unit.no_units();
+}
+
 UnitValueAxis::UnitValueAxis(const CombinedUnit &unit) :
     UnitAxis(unit)
-{ }
+{
+    update();
+}
+
+UnitValueAxis::UnitValueAxis(const UnitAxis &axis) :
+    UnitAxis(axis)
+{
+    update();
+}
 
 void UnitValueAxis::update()
 {
@@ -42,7 +63,15 @@ void UnitValueAxis::update()
 
 UnitLogValueAxis::UnitLogValueAxis(const CombinedUnit &unit) :
     UnitAxis(unit)
-{ }
+{
+    update();
+}
+
+UnitLogValueAxis::UnitLogValueAxis(const UnitAxis &axis) :
+    UnitAxis(axis)
+{
+    update();
+}
 
 void UnitLogValueAxis::update()
 {

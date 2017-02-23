@@ -9,11 +9,8 @@
 class TreeItemModel : public QAbstractItemModel, public TreeItem
 {
 public:
-    static constexpr int Role = Qt::UserRole + 6729432;
-
     TreeItemModel(QObject* parent = nullptr);
     virtual ~TreeItemModel();
-    //TreeNodeItem* root() const;
 
     virtual QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
     virtual QVariant data(const QModelIndex &index, int role) const override;

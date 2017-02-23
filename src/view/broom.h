@@ -27,7 +27,7 @@ public:
 
 protected:
     //void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    //void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
     PlotItem* plot_;
     QRectF box_;

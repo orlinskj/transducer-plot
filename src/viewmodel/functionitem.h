@@ -1,8 +1,8 @@
 #ifndef FUNCTIONITEM_H
 #define FUNCTIONITEM_H
 
-//#include <QAbstractSeries>
 #include <QLineSeries>
+
 
 using namespace QtCharts;
 
@@ -17,7 +17,7 @@ public:
     QLineSeries* series() const;
 
 protected:
-    QLineSeries* series_;
+    std::unique_ptr<QLineSeries> series_;
 
 };
 
