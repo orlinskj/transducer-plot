@@ -33,10 +33,12 @@ public:
     QChart* chart() const;
     PlotItem* plot() const;
 
-    void mouseMoveEvent(QMouseEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void resizeEvent(QResizeEvent *event);
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+
+    void keyPressEvent(QKeyEvent *event) override;
 
     void alter_menu();
 
@@ -51,7 +53,9 @@ protected:
     QMenu menu_;
 
     // dragging chart
-    QPointF drag_start_;
+    bool drag_enabled_;
+    QPointF drag_pos_;
+    Qt::MouseButton drag_button_;
 };
 
 // } // namespace ac

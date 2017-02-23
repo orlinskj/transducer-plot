@@ -19,7 +19,8 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
     QGraphicsView(new QGraphicsScene, nullptr),
     plot_(nullptr),
     store_(store),
-    broom_(new Broom)
+    broom_(new Broom),
+    drag_enabled_(false)
 {
     broom_->setVisible(false);
     scene()->addItem(broom_);
@@ -30,6 +31,7 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
 
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setFocusPolicy(Qt::ClickFocus);
 
     setMouseTracking(true);
 
@@ -126,15 +128,47 @@ void PlotPresenter::resizeEvent(QResizeEvent *event)
 
 void PlotPresenter::mousePressEvent(QMouseEvent *event)
 {
-    if (event->buttons() & Qt::LeftButton)
-        drag_start_ = event->pos();
+    if (chart())
+    {
+        drag_pos_ = event->pos();
+
+        if (event->buttons() & Qt::MiddleButton)
+        {
+            drag_enabled_ = true;
+            drag_button_ = Qt::MiddleButton;
+        }
+        else if(event->buttons() & Qt::LeftButton && event->modifiers() & Qt::ControlModifier)
+        {
+            drag_enabled_ = true;
+            drag_button_ = Qt::LeftButton;
+        }
+    }
+}
+
+void PlotPresenter::keyPressEvent(QKeyEvent *event)
+{
+    switch(event->key())
+    {
+    case Qt::Key_Left:
+        chart()->scroll(2,0);
+        break;
+    case Qt::Key_Right:
+        chart()->scroll(-2,0);
+        break;
+    case Qt::Key_Up:
+        chart()->scroll(0,2);
+        break;
+    case Qt::Key_Down:
+        chart()->scroll(0,-2);
+        break;
+    }
 }
 
 void PlotPresenter::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (event->buttons() & Qt::LeftButton)
+    if (!(event->buttons() & drag_button_))
     {
-        //chart_->axisX()->setRange();
+        drag_enabled_ = false;
     }
 }
 
@@ -142,21 +176,22 @@ void PlotPresenter::mouseMoveEvent(QMouseEvent *event)
 {
     if (chart())
     {
-        // qDebug() << "mouseMove(" << event->pos() << ")";
+        // dragging
+        if (drag_enabled_)
+        {
+            auto delta = event->pos() - drag_pos_;
+            chart()->scroll(-delta.x(),delta.y());
+            drag_pos_ = event->pos();
+        }
+
+        // broom
         if (chart()->plotArea().contains(event->pos()))
         {
             broom_->show();
             broom_->set_position(event->pos().x());
         }
         else
-        {
             broom_->hide();
-        }
-
-        if (event->buttons() & Qt::LeftButton)
-        {
-            //event->
-        }
     }
 
     QGraphicsView::mouseMoveEvent(event);
