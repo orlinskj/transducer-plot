@@ -7,7 +7,7 @@ FunctionItem::FunctionItem(Function *f) :
     TreeItemT<Function>(f), series_(new QLineSeries)
 {
     // initialize series with values from function
-    // series_->setUseOpenGL(true);
+    //series_->setUseOpenGL(true);
     series_->setName(f->codomain()->unit().name().c_str());
     auto dv = f->domain()->values();
     auto cv = f->codomain()->values();

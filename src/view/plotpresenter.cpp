@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include <QGraphicsLayout>
+#include <QStyleOptionGraphicsItem>
 #include <QBoxLayout>
 #include <QStyle>
 #include <QLineSeries>
@@ -22,7 +23,7 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
     broom_(new Broom),
     drag_enabled_(false)
 {
-    broom_->setVisible(false);
+    broom_->set_visibility(false);
     scene()->addItem(broom_);
 
     setRenderHint(QPainter::Antialiasing);
@@ -39,7 +40,8 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
     QObject::connect(store_, &PlotStoreItemModel::plot_changed,
                      this,
                      [this](PlotItem* p){
-        broom_->set_plot(p);
+        if (broom_->plot() == p)
+            broom_->update();
         alter_menu();
     });
     QObject::connect(store_, &PlotStoreItemModel::plot_removed,
@@ -119,8 +121,17 @@ void PlotPresenter::resizeEvent(QResizeEvent *event)
 {
     if (chart())
     {
+        // broom
+        auto value = chart()->mapToValue(chart()->mapFromScene(broom_->pos()));
+        qDebug() << "value = " << value;
+        qDebug() << "old pos = " << broom_->pos();
+        // chart
         scene()->setSceneRect(QRect(QPoint(0, 0), event->size()));
         chart()->resize(event->size());
+        // broom continuation
+        auto new_pos = chart()->mapToScene(chart()->mapToPosition(value));
+        broom_->set_position(new_pos, true);
+        qDebug() << "new pos = " << new_pos;
     }
     broom_->update();
     QGraphicsView::resizeEvent(event);
@@ -131,16 +142,27 @@ void PlotPresenter::mousePressEvent(QMouseEvent *event)
     if (chart())
     {
         drag_pos_ = event->pos();
+        zoom_pos_ = event->pos();
+        broom_click_pos_ = event->pos();
 
-        if (event->buttons() & Qt::MiddleButton)
+        if (event->buttons() & Qt::LeftButton)
         {
-            drag_enabled_ = true;
-            drag_button_ = Qt::MiddleButton;
-        }
-        else if(event->buttons() & Qt::LeftButton && event->modifiers() & Qt::ControlModifier)
-        {
-            drag_enabled_ = true;
-            drag_button_ = Qt::LeftButton;
+            if (event->modifiers() & Qt::ControlModifier)
+            {
+                zoom_enabled_ = true;
+                zoom_button_ = Qt::LeftButton;
+            }
+            else if(event->modifiers() & Qt::ShiftModifier)
+            {
+                //zoom_enabled_ = true;
+                //zoom_button_ = Qt::LeftButton;
+            }
+            else
+            {
+                drag_enabled_ = true;
+                drag_button_ = Qt::LeftButton;
+                broom_click_ = true;
+            }
         }
     }
 }
@@ -161,14 +183,30 @@ void PlotPresenter::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Down:
         chart()->scroll(0,-2);
         break;
+    case Qt::Key_Plus:
+        chart()->zoomIn();
+        break;
+    case Qt::Key_Minus:
+        chart()->zoomOut();
+        break;
     }
 }
 
 void PlotPresenter::mouseReleaseEvent(QMouseEvent *event)
 {
     if (!(event->buttons() & drag_button_))
-    {
         drag_enabled_ = false;
+    if (!(event->buttons() & zoom_button_))
+        zoom_enabled_ = false;
+
+    if (broom_click_ && !(event->buttons() & Qt::LeftButton))
+    {
+        broom_click_ = false;
+        if (broom_click_pos_ == event->pos())
+        {
+            broom_->set_position(event->pos());
+            broom_->toggle();
+        }
     }
 }
 
@@ -183,15 +221,23 @@ void PlotPresenter::mouseMoveEvent(QMouseEvent *event)
             chart()->scroll(-delta.x(),delta.y());
             drag_pos_ = event->pos();
         }
+        // zooming
+        if (zoom_enabled_)
+        {
+            double k = 100.0;
+            auto delta = event->pos() - zoom_pos_;
+            chart()->zoom(k/(k+delta.y()));
+            zoom_pos_ = event->pos();
+        }
 
         // broom
         if (chart()->plotArea().contains(event->pos()))
         {
-            broom_->show();
-            broom_->set_position(event->pos().x());
+            broom_->set_visibility(true);
+            broom_->set_position(event->pos());
         }
         else
-            broom_->hide();
+            broom_->set_visibility(false);
     }
 
     QGraphicsView::mouseMoveEvent(event);
@@ -201,4 +247,23 @@ void PlotPresenter::context_menu(const QPoint& point)
 {
     if (menu_.isEnabled())
         menu_.exec(this->mapToGlobal(point));
+}
+
+QImage PlotPresenter::screenshot(int width, int height)
+{
+    QImage img(width,height,QImage::Format_ARGB32);
+    img.fill(Qt::white);
+
+    QPainter painter(&img);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    auto tmp_size = this->size();
+    this->resize(width,height);
+    scene()->render(&painter);
+    this->resize(tmp_size);
+
+    if (!img.save("/home/janek/ss.png","png",70))
+        throw std::runtime_error("Cannot save to a file");
+
+    return img;
 }

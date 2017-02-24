@@ -12,15 +12,20 @@
 
 Broom::Broom(QGraphicsItem *parent) :
     QGraphicsItem(parent),
-    plot_(nullptr)
+    plot_(nullptr),
+    enabled_(true)
 {
     box_.setSize(QSizeF(100.0,60.0));
     setPos(50,0);
     setZValue(1000);
 }
 
-void Broom::set_position(double x)
+void Broom::set_position(QPointF position, bool force)
 {
+    if (!enabled_ && !force)
+        return;
+
+    auto x = position.x();
     this->setPos(QPointF(x, this->pos().y()));
 
     // switch box position [right/left to broom line]
@@ -41,6 +46,7 @@ void Broom::set_position(double x)
 
 void Broom::set_plot(PlotItem* plot)
 {
+    enabled_ = true;
     plot_ = plot;
     update();
 }
@@ -55,6 +61,17 @@ QRectF Broom::boundingRect() const
     rect.setRight( std::max(1.0, box_.right()) );
 
     return rect;
+}
+
+void Broom::toggle()
+{
+    enabled_ = !enabled_;
+}
+
+void Broom::set_visibility(bool visibility)
+{
+    if (enabled_)
+        setVisible(visibility);
 }
 
 void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

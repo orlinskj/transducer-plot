@@ -181,6 +181,11 @@ void MainWindow::create_menus()
                      this, SLOT(slot_remove_plot()));
     /*QObject::connect(update_plot,SIGNAL(triggered()),
                      this, SLOT(slot_update_plot()));*/
+
+    QObject::connect( ui_->actionPlotScreenshot, &QAction::triggered,
+                      this, [this](){
+        plot_presenter_->screenshot(1024,768);
+    });
 }
 
 void MainWindow::slot_add_function()

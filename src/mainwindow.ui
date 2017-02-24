@@ -236,27 +236,32 @@
      <height>19</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>Plik</string>
-    </property>
-    <addaction name="actionFileOpen"/>
-    <addaction name="actionFileExit"/>
-   </widget>
    <widget class="QMenu" name="menuPlot">
     <property name="title">
      <string>Wykres</string>
     </property>
     <addaction name="actionPlotFit"/>
-    <addaction name="actionPlotTable"/>
+    <addaction name="actionPlotScreenshot"/>
+    <addaction name="actionPlotAxes"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Pomoc</string>
     </property>
+    <addaction name="actionHelpAbout"/>
+    <addaction name="actionHelpHelp"/>
+    <addaction name="actionHelpOnline"/>
    </widget>
-   <addaction name="menuFile"/>
+   <widget class="QMenu" name="menuTransducer">
+    <property name="title">
+     <string>Przetwornik</string>
+    </property>
+    <addaction name="actionTransducerGeneratePdf"/>
+    <addaction name="actionTransducerTableData"/>
+    <addaction name="actionTransducerModels"/>
+   </widget>
    <addaction name="menuPlot"/>
+   <addaction name="menuTransducer"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -281,18 +286,58 @@
   </action>
   <action name="actionPlotFit">
    <property name="text">
-    <string>Dopasuj do okna</string>
+    <string>Dopasuj</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
    </property>
   </action>
-  <action name="actionPlotTable">
+  <action name="actionPlotScreenshot">
    <property name="text">
-    <string>Dane tabelaryczne</string>
+    <string>Zrzut obrazu</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionTransducerTableData">
+   <property name="text">
+    <string>Dane tabelaryczne</string>
+   </property>
+  </action>
+  <action name="actionZapisz_jako">
+   <property name="text">
+    <string>Zapisz jako...</string>
+   </property>
+  </action>
+  <action name="actionTransducerGeneratePdf">
+   <property name="text">
+    <string>Generuj PDF...</string>
+   </property>
+  </action>
+  <action name="actionTransducerModels">
+   <property name="text">
+    <string>Modele zastępcze</string>
+   </property>
+  </action>
+  <action name="actionHelpAbout">
+   <property name="text">
+    <string>O programie</string>
+   </property>
+  </action>
+  <action name="actionHelpHelp">
+   <property name="text">
+    <string>Pomoc PDF</string>
+   </property>
+  </action>
+  <action name="actionHelpOnline">
+   <property name="text">
+    <string>Pomoc (online)</string>
+   </property>
+  </action>
+  <action name="actionPlotAxes">
+   <property name="text">
+    <string>Osie</string>
    </property>
   </action>
  </widget>

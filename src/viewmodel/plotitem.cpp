@@ -2,6 +2,8 @@
 
 #include <QValueAxis>
 #include <QGraphicsLayout>
+#include <QStyleOptionGraphicsItem>
+#include <QPainter>
 
 #include <map>
 #include <regex>
@@ -42,6 +44,7 @@ TreeItem* PlotItem::append(TreeItem* item)
     auto func_item = dynamic_cast<FunctionItem*>(item);
     // transfering ownership of Function object to Plot
     this->value()->add_function(func_item->value());
+    chart_->setTitle(this->value()->name().c_str());
     chart_->addSeries(func_item->series());
 
     // looking for codomain axes in plot, if absent - create
@@ -170,6 +173,7 @@ void PlotItem::remove(TreeItem *item)
 
     // removing Function from Plot (Plot owns the Function, not FunctionItem!)
     this->value()->remove_function(func_item->value());
+    chart_->setTitle(this->value()->name().c_str());
 
     TreeItem::remove(item);
 }

@@ -14,7 +14,8 @@ class Broom : public QGraphicsItem
 public:
     Broom(QGraphicsItem *parent = nullptr);
 
-    void set_position(double pos);
+    void set_position(QPointF pos, bool force = false);
+
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget);
 
@@ -22,6 +23,8 @@ public:
     PlotItem* plot() const;
 
     void set_plot(PlotItem* plot_adapter);
+    void toggle();
+    void set_visibility(bool visibility);
 
     void update();
 
@@ -31,6 +34,7 @@ protected:
 
     PlotItem* plot_;
     QRectF box_;
+    bool enabled_;
 
 private:
     static constexpr int    box_offset_ = 15;

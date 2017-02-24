@@ -41,6 +41,7 @@ public:
     void keyPressEvent(QKeyEvent *event) override;
 
     void alter_menu();
+    QImage screenshot(int width, int height);
 
 public slots:
     void context_menu(const QPoint& point);
@@ -56,6 +57,15 @@ protected:
     bool drag_enabled_;
     QPointF drag_pos_;
     Qt::MouseButton drag_button_;
+
+    // zooming chart
+    bool zoom_enabled_;
+    QPointF zoom_pos_;
+    Qt::MouseButton zoom_button_;
+
+    // broom control
+    bool broom_click_;
+    QPointF broom_click_pos_;
 };
 
 // } // namespace ac
