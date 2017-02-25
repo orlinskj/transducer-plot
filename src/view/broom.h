@@ -18,10 +18,13 @@ public:
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget);
+    void resizeEvent(QResizeEvent* event);
 
     QChart* chart() const;
     PlotItem* plot() const;
 
+    void update_bounding_rect();
+    void update_position();
     void set_plot(PlotItem* plot_adapter);
     void toggle();
     void set_visibility(bool visibility);
@@ -29,12 +32,13 @@ public:
     void update();
 
 protected:
-    //void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    //void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
+    double x_value_;
     PlotItem* plot_;
     QRectF box_;
     bool enabled_;
+
+    QRectF bounding_rect_;
 
 private:
     static constexpr int    box_offset_ = 15;

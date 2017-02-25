@@ -13,34 +13,38 @@
 Broom::Broom(QGraphicsItem *parent) :
     QGraphicsItem(parent),
     plot_(nullptr),
-    enabled_(true)
+    enabled_(true),
+    bounding_rect_(QRectF())
 {
-    box_.setSize(QSizeF(100.0,60.0));
-    setPos(50,0);
     setZValue(1000);
+    box_.setWidth(75.0);
 }
 
 void Broom::set_position(QPointF position, bool force)
 {
-    if (!enabled_ && !force)
+    if ((!enabled_ && !force) || !chart())
         return;
 
-    auto x = position.x();
-    this->setPos(QPointF(x, this->pos().y()));
+    auto old_x = pos().x();
+    auto new_x = position.x();
+    this->setPos(QPointF(new_x, this->pos().y()));
+
+    auto broom_chart_pos = chart()->mapFromScene(pos());
+    x_value_ = chart()->mapToValue(broom_chart_pos).x();
 
     // switch box position [right/left to broom line]
     qreal xmiddle = chart()->plotArea().center().x();
-    if(chart()->mapFromScene(x,0).x() < xmiddle)
+    if(broom_chart_pos.x() < xmiddle)
     {
-        if (chart()->mapFromScene(pos().x(),0).x() >= xmiddle)
-            update();
         box_.moveLeft(box_offset_);
+        if (old_x >= xmiddle)
+            update_bounding_rect();
     }
     else
     {
-        if (chart()->mapFromScene(pos().x(),0).x() < xmiddle)
-            update();
         box_.moveRight(-box_offset_);
+        if (old_x < xmiddle)
+            update_bounding_rect();
     }
 }
 
@@ -48,19 +52,32 @@ void Broom::set_plot(PlotItem* plot)
 {
     enabled_ = true;
     plot_ = plot;
-    update();
+    update_bounding_rect();
+}
+
+void Broom::update_bounding_rect()
+{
+    qDebug() << "update_bounding_rect()";
+    prepareGeometryChange();
+    if (chart())
+    {
+        bounding_rect_ = chart()->plotArea();
+        bounding_rect_.setLeft( std::min(-1.0,box_.left()) );
+        bounding_rect_.setRight( std::max(1.0, box_.right()) );
+    }
+    else
+        bounding_rect_ = QRectF();
+}
+
+void Broom::update_position()
+{
+    if (chart())
+        set_position(chart()->mapToScene(chart()->mapToPosition(QPointF(x_value_,0))),true);
 }
 
 QRectF Broom::boundingRect() const
 {
-    if (!chart())
-        return QRectF();
-
-    QRectF rect(chart()->plotArea());
-    rect.setLeft( std::min(-1.0,box_.left()) );
-    rect.setRight( std::max(1.0, box_.right()) );
-
-    return rect;
+    return bounding_rect_;
 }
 
 void Broom::toggle()
@@ -79,20 +96,30 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    qreal ymiddle = chart()->mapToScene(chart()->plotArea().center()).y();
+    box_.moveTop(ymiddle - box_.height()/2);
+    box_.setHeight(5+3+marker_entry_height_*chart()->series().count());
+
     if (!plot())
         return;
+
+    auto plot_area_scene = chart()->mapToScene(chart()->plotArea()).boundingRect();
+    auto clip_rect = this->mapFromScene(plot_area_scene).boundingRect();
+    painter->setClipRect(clip_rect);
 
     QFont   font_bak = painter->font();
     QPen    marker_outline(Qt::black,0.5);
     QFont   marker_font("",marker_font_size_);
     QPen    marker_value(option->palette.light().color());
 
+    // broom vertical line
     painter->setRenderHint(QPainter::Antialiasing, false);
     QRectF rect(chart()->plotArea());
     QPointF bottom(0,rect.bottom());
     QPointF top(0,rect.top());
     painter->drawLine(bottom,top);
 
+    // broom rect text field
     painter->setRenderHint(QPainter::Antialiasing, true);
     QPainterPath path;
     path.addRoundedRect(box_,3,3);
@@ -147,6 +174,11 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->setFont(font_bak);
 }
 
+void Broom::resizeEvent(QResizeEvent* event)
+{
+    qDebug() << "resize event [BROOM]";
+}
+
 QChart* Broom::chart() const
 {
     if (plot_)
@@ -158,15 +190,4 @@ QChart* Broom::chart() const
 PlotItem* Broom::plot() const
 {
     return plot_;
-}
-
-void Broom::update()
-{
-    prepareGeometryChange();
-    if (!chart())
-        return;
-
-    qreal ymiddle = chart()->mapToScene(chart()->plotArea().center()).y();
-    box_.moveTop(ymiddle - box_.height()/2);
-    box_.setHeight(5+3+marker_entry_height_*chart()->series().count());
 }

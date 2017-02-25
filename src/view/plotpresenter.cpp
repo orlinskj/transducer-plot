@@ -38,12 +38,7 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
 
     // plot store signals
     QObject::connect(store_, &PlotStoreItemModel::plot_changed,
-                     this,
-                     [this](PlotItem* p){
-        if (broom_->plot() == p)
-            broom_->update();
-        alter_menu();
-    });
+                     this, [this](PlotItem* p){ alter_menu();});
     QObject::connect(store_, &PlotStoreItemModel::plot_removed,
                      this,
                      [this](PlotItem* p)
@@ -123,18 +118,18 @@ void PlotPresenter::resizeEvent(QResizeEvent *event)
     {
         // broom
         auto value = chart()->mapToValue(chart()->mapFromScene(broom_->pos()));
-        qDebug() << "value = " << value;
-        qDebug() << "old pos = " << broom_->pos();
+        /*qDebug() << "value = " << value;
+        qDebug() << "old pos = " << broom_->pos();*/
         // chart
         scene()->setSceneRect(QRect(QPoint(0, 0), event->size()));
         chart()->resize(event->size());
         // broom continuation
         auto new_pos = chart()->mapToScene(chart()->mapToPosition(value));
         broom_->set_position(new_pos, true);
-        qDebug() << "new pos = " << new_pos;
+        //qDebug() << "new pos = " << new_pos;
     }
-    broom_->update();
     QGraphicsView::resizeEvent(event);
+    broom_->update_bounding_rect();
 }
 
 void PlotPresenter::mousePressEvent(QMouseEvent *event)
@@ -220,14 +215,16 @@ void PlotPresenter::mouseMoveEvent(QMouseEvent *event)
             auto delta = event->pos() - drag_pos_;
             chart()->scroll(-delta.x(),delta.y());
             drag_pos_ = event->pos();
+            broom_->update_position();
         }
         // zooming
-        if (zoom_enabled_)
+        else if (zoom_enabled_)
         {
             double k = 100.0;
             auto delta = event->pos() - zoom_pos_;
             chart()->zoom(k/(k+delta.y()));
             zoom_pos_ = event->pos();
+            broom_->update_position();
         }
 
         // broom
