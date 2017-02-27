@@ -18,6 +18,7 @@
 #include "viewmodel/functionitem.h"
 
 #include "functiondialog.h"
+#include "tabledatadialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -173,19 +174,23 @@ void MainWindow::create_menus()
 {
     QAction* show_plot = plot_menu_.addAction(tr("Pokaż wykres"));
     QAction* remove_plot = plot_menu_.addAction(tr("Usuń"));
-    // QAction* update_plot = plot_menu_.addAction(tr("Odśwież"));
 
     QObject::connect(show_plot,SIGNAL(triggered()),
                      this,SLOT(slot_show_plot()));
     QObject::connect(remove_plot,SIGNAL(triggered()),
                      this, SLOT(slot_remove_plot()));
-    /*QObject::connect(update_plot,SIGNAL(triggered()),
-                     this, SLOT(slot_update_plot()));*/
 
     QObject::connect( ui_->actionPlotScreenshot, &QAction::triggered,
                       this, [this](){
         plot_presenter_->screenshot(1024,768);
     });
+
+    QObject::connect( ui_->actionTransducerTableData, &QAction::triggered,
+                      this,
+                      [this](){
+                        auto dialog = new TableDataDialog(this,&transducer_model_);
+                        dialog->show();
+                      });
 }
 
 void MainWindow::slot_add_function()
@@ -206,7 +211,7 @@ void MainWindow::slot_add_function()
 
         if (plot)
         {
-            auto f = new FunctionDialog(nullptr, &transducer_model_, plot);
+            auto f = new FunctionDialog(this, &transducer_model_, plot);
             f->show();
         }
     }

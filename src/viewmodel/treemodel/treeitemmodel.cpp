@@ -5,11 +5,6 @@ TreeItemModel::TreeItemModel(QObject* parent) :
 
 TreeItemModel::~TreeItemModel() { }
 
-/*TreeItem* TreeItemModel::root() const
-{
-    return root_.get();
-}*/
-
 QModelIndex TreeItemModel::index(int row, int column, const QModelIndex &parent) const
 {
     const TreeItem* parent_item;

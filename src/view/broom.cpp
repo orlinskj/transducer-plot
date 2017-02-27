@@ -57,7 +57,6 @@ void Broom::set_plot(PlotItem* plot)
 
 void Broom::update_bounding_rect()
 {
-    qDebug() << "update_bounding_rect()";
     prepareGeometryChange();
     if (chart())
     {
@@ -176,7 +175,8 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 void Broom::resizeEvent(QResizeEvent* event)
 {
-    qDebug() << "resize event [BROOM]";
+    Q_UNUSED(event);
+    update_bounding_rect();
 }
 
 QChart* Broom::chart() const

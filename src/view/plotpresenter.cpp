@@ -38,7 +38,7 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
 
     // plot store signals
     QObject::connect(store_, &PlotStoreItemModel::plot_changed,
-                     this, [this](PlotItem* p){ alter_menu();});
+                     this, [this](PlotItem* p){ Q_UNUSED(p); alter_menu();});
     QObject::connect(store_, &PlotStoreItemModel::plot_removed,
                      this,
                      [this](PlotItem* p)
@@ -87,15 +87,18 @@ void PlotPresenter::alter_menu()
 
     for (auto axis: chart()->axes(Qt::Vertical))
     {
-        QString change_to("liniowa");
+        QString change_to(tr("liniowa"));
         if (dynamic_cast<QValueAxis*>(axis))
-            change_to = "logarytmiczna";
+            change_to = tr("logarytmiczna");
 
         QString text(QString("\"")+axis->titleText() + "\" na: " + change_to);
         QAction* action = menu_.addAction(text);
-        ///TODO add action here
         connect(action, &QAction::triggered,
-                this, [axis,this](){ plot_->change_axis_type(axis); alter_menu(); });
+                this, [axis,this](){
+                        plot_->change_axis_type(axis);
+                        alter_menu();
+                        broom_->update_position();
+                        });
     }
 }
 
@@ -185,6 +188,8 @@ void PlotPresenter::keyPressEvent(QKeyEvent *event)
         chart()->zoomOut();
         break;
     }
+
+    broom_->update_position();
 }
 
 void PlotPresenter::mouseReleaseEvent(QMouseEvent *event)

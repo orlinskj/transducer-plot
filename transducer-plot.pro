@@ -40,7 +40,9 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/viewmodel/treemodel/treeitemt.inl \
-    src/view/unitaxis.cpp
+    src/view/unitaxis.cpp \
+    src/viewmodel/transducertableproxymodel.cpp \
+    src/tabledatadialog.cpp
 
 HEADERS += \
     src/io/filereader.h \
@@ -66,14 +68,17 @@ HEADERS += \
     src/functiondialog.h \
     src/mainwindow.h \
     src/viewmodel/treemodel/treeitemt.h \
-    src/view/unitaxis.h
+    src/view/unitaxis.h \
+    src/tabledatadialog.h \
+    src/viewmodel/transducertableproxymodel.h
 
 FORMS    += src/mainwindow.ui \
-    src/functiondialog.ui
+    src/functiondialog.ui \
+    src/tabledatadialog.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/release/ -lqcustomplot
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/debug/ -lqcustomplot
-else:unix: LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/ -lqcustomplot
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/release/
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/debug/
+else:unix: LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/
 
 INCLUDEPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
 DEPENDPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu

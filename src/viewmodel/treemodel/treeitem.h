@@ -17,7 +17,7 @@ class TreeItem
 public:
     static constexpr int Role = Qt::UserRole + 1;
 
-    TreeItem(TreeItem* parent = nullptr);
+    TreeItem(TreeItem *parent = nullptr);
     virtual ~TreeItem();
 
     virtual int children_count() const;
