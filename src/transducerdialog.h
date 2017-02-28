@@ -2,31 +2,36 @@
 #define TABLEDATADIALOG_H
 
 #include <QDialog>
-// #include "viewmodel/transducertableproxymodel.h"
+#include <QStandardItemModel>
 #include <memory>
 
 namespace Ui {
-class TableDataDialog;
+class TransducerDialog;
 }
 
 class TreeItemModel;
 class TransducerItem;
 class TransducerTableProxyModel;
 
-class TableDataDialog : public QDialog
+class TransducerDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit TableDataDialog(QWidget *parent = 0, TreeItemModel* transducer_model = nullptr);
-    ~TableDataDialog();
+    explicit TransducerDialog(QWidget *parent = 0, TreeItemModel* transducer_model = nullptr);
+    ~TransducerDialog();
 
     void set_transducer(TransducerItem* t);
 
+public slots:
+    void export_as();
+    void set_tab(int tab);
+
 private:
-    Ui::TableDataDialog *ui;
+    Ui::TransducerDialog *ui;
     std::unique_ptr<TransducerTableProxyModel> transducer_table_model_;
     TreeItemModel* transducer_model_;
+    QStandardItemModel type_model_;
 };
 
 

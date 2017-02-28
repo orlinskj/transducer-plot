@@ -28,7 +28,7 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
 
     setRenderHint(QPainter::Antialiasing);
     setContentsMargins(0,0,0,0);
-    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    //setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

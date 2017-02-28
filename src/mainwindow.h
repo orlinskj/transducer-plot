@@ -19,10 +19,10 @@ using namespace std;
 using namespace QtCharts;
 
 namespace Ui {
-
     class MainWindow;
-
 }
+
+class TransducerDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -44,6 +44,8 @@ private slots:
     void slot_on_tree_view_context_menu(const QPoint &point);
     void slot_show_plot();
 
+    void show_transducer_dialog(int tab);
+
 private:
     void init_signals();
     void setup_view();
@@ -62,6 +64,8 @@ private:
 
     // presents plot on QChartView
     PlotPresenter* plot_presenter_;
+
+    TransducerDialog* transducer_dialog_;
 
     QMenu plot_menu_;
 };

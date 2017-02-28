@@ -23,7 +23,6 @@ SOURCES += \
     src/model/transducer.cpp \
     src/model/unit.cpp \
     src/view/broom.cpp \
-    src/view/plotitemsdelegate.cpp \
     src/view/plotpresenter.cpp \
     src/view/transducerdelegate.cpp \
     src/viewmodel/treemodel/branchfilterproxymodel.cpp \
@@ -42,7 +41,9 @@ SOURCES += \
     src/viewmodel/treemodel/treeitemt.inl \
     src/view/unitaxis.cpp \
     src/viewmodel/transducertableproxymodel.cpp \
-    src/tabledatadialog.cpp
+    src/io/tablemodelfilehandler.cpp \
+    src/transducerdialog.cpp \
+    src/view/plotitemdelegate.cpp
 
 HEADERS += \
     src/io/filereader.h \
@@ -52,7 +53,6 @@ HEADERS += \
     src/model/transducer.h \
     src/model/unit.h \
     src/view/broom.h \
-    src/view/plotitemsdelegate.h \
     src/view/plotpresenter.h \
     src/view/transducerdelegate.h \
     src/viewmodel/treemodel/branchfilterproxymodel.h \
@@ -69,12 +69,14 @@ HEADERS += \
     src/mainwindow.h \
     src/viewmodel/treemodel/treeitemt.h \
     src/view/unitaxis.h \
-    src/tabledatadialog.h \
-    src/viewmodel/transducertableproxymodel.h
+    src/viewmodel/transducertableproxymodel.h \
+    src/io/tablemodelfilehandler.h \
+    src/transducerdialog.h \
+    src/view/plotitemdelegate.h
 
 FORMS    += src/mainwindow.ui \
     src/functiondialog.ui \
-    src/tabledatadialog.ui
+    src/transducerdialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/release/
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/debug/

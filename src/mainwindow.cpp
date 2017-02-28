@@ -18,11 +18,12 @@
 #include "viewmodel/functionitem.h"
 
 #include "functiondialog.h"
-#include "tabledatadialog.h"
+#include "transducerdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui_(new Ui::MainWindow)
+    ui_(new Ui::MainWindow),
+    transducer_dialog_(nullptr)
 {
     ui_->setupUi(this);
 
@@ -97,29 +98,23 @@ void MainWindow::slot_on_tree_view_context_menu(const QPoint& point)
 void MainWindow::slot_file_open()
 {
     QString filename = QFileDialog::getOpenFileName(
-                this,
-                tr("Otwórz plik z danymi"),
-                ".",
-                tr("Pliki tekstowe (*.txt);;Wszystkie pliki (*.*)"));
+                this, tr("Otwórz plik z danymi"),
+                ".", tr("Pliki tekstowe (*.txt);;Wszystkie pliki (*.*)"));
 
     if (!filename.isEmpty())
-    {
-        int status;
-        FileReader file_reader;
-        auto transducer = file_reader.read(filename.toLocal8Bit(),
-                                                       &status);
-        if (transducer)
-        {
-            this->add_transducer(transducer);
-            ui_->statusBar->showMessage(tr("Wczytano plik ")+filename);
-        }
-        else
-        {
-            ui_->statusBar->showMessage(
-                        tr("Nie udało się wczytać pliku ")+filename);
-        }
-    }
+        return;
 
+    int status = 1;
+    FileReader file_reader;
+    auto transducer = file_reader.read(filename.toLocal8Bit(),
+                                                   &status);
+    if (transducer)
+    {
+        this->add_transducer(transducer);
+        ui_->statusBar->showMessage(tr("Wczytano plik ")+filename);
+    }
+    else
+        ui_->statusBar->showMessage(tr("Nie udało się wczytać pliku ")+filename);
 }
 
 void MainWindow::add_transducer(Transducer* transducer)
@@ -186,11 +181,23 @@ void MainWindow::create_menus()
     });
 
     QObject::connect( ui_->actionTransducerTableData, &QAction::triggered,
-                      this,
-                      [this](){
-                        auto dialog = new TableDataDialog(this,&transducer_model_);
-                        dialog->show();
-                      });
+                      this, [this](){ show_transducer_dialog(0); });
+
+    QObject::connect( ui_->actionTransducerModels, &QAction::triggered,
+                      this, [this](){ show_transducer_dialog(1); });
+}
+
+void MainWindow::show_transducer_dialog(int tab)
+{
+    if (!transducer_dialog_)
+    {
+        transducer_dialog_ = new TransducerDialog(this,&transducer_model_);
+        QObject::connect(transducer_dialog_, &QDialog::destroyed,
+                         this, [this](){ transducer_dialog_ = nullptr; });
+    }
+    transducer_dialog_->set_tab(tab);
+    transducer_dialog_->show();
+    transducer_dialog_->setFocus();
 }
 
 void MainWindow::slot_add_function()

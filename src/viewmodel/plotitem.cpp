@@ -13,7 +13,10 @@
 #include "../view/unitaxis.h"
 
 PlotItem::PlotItem() : TreeItemTOwner<Plot>(new Plot), chart_(new QChart)
-{ }
+{
+    //chart_->layout()->setContentsMargins(5,5,5,5);
+    chart_->setMargins(QMargins(0,0,0,0));
+}
 
 PlotItem::PlotItem(Plot *plot) : chart_(new QChart)
 {

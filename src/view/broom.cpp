@@ -13,11 +13,11 @@
 Broom::Broom(QGraphicsItem *parent) :
     QGraphicsItem(parent),
     plot_(nullptr),
-    enabled_(true),
-    bounding_rect_(QRectF())
+    enabled_(true)
 {
     setZValue(1000);
     box_.setWidth(75.0);
+    update_bounding_rect();
 }
 
 void Broom::set_position(QPointF position, bool force)

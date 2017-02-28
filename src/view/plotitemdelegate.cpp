@@ -1,11 +1,11 @@
-#include "plotitemsdelegate.h"
+#include "plotitemdelegate.h"
 
 #include <QDebug>
 
-PlotItemsDelegate::PlotItemsDelegate(QObject* parent) :
+PlotItemDelegate::PlotItemDelegate(QObject* parent) :
     QStyledItemDelegate(parent) { }
 
-void PlotItemsDelegate::paint(QPainter *painter,
+void PlotItemDelegate::paint(QPainter *painter,
                                const QStyleOptionViewItem &option,
                                const QModelIndex &index) const
 {
@@ -42,7 +42,7 @@ void PlotItemsDelegate::paint(QPainter *painter,
     //QStyledItemDelegate::paint(painter, option, index);
 }
 
-QSize PlotItemsDelegate::sizeHint(const QStyleOptionViewItem &option,
+QSize PlotItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                      const QModelIndex &index) const
 {
     /*if (index.data(PlotStoreItem::Role).canConvert<Plot*>())

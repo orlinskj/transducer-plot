@@ -8,10 +8,10 @@
 
 // namespace ac{
 
-class PlotItemsDelegate : public QStyledItemDelegate
+class PlotItemDelegate : public QStyledItemDelegate
 {
 public:
-    PlotItemsDelegate(QObject* parent = nullptr);
+    PlotItemDelegate(QObject* parent = nullptr);
 
     void paint(QPainter *painter,
                const QStyleOptionViewItem &option,

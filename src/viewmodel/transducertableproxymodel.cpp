@@ -92,3 +92,13 @@ QVariant TransducerTableProxyModel::headerData(int section, Qt::Orientation orie
             return QVariant();
     }
 }
+
+bool TransducerTableProxyModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    return false;
+}
+
+Qt::ItemFlags TransducerTableProxyModel::flags(const QModelIndex &index) const
+{
+    return Qt::ItemIsEditable | Qt::ItemIsSelectable;
+}
