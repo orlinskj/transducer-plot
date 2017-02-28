@@ -140,10 +140,13 @@ void TreeItem::kill()
 
 void TreeItem::kill_children()
 {
-    emit_begin_remove_rows(0,children_count()-1,nullptr);
-    children_.clear();
-    children_weak_valid_ = false;
-    emit_end_remove_rows();
+    if (!children_.empty())
+    {
+        emit_begin_remove_rows(0,children_count()-1,nullptr);
+        children_.clear();
+        children_weak_valid_ = false;
+        emit_end_remove_rows();
+    }
 }
 
 std::string TreeItem::to_string() const

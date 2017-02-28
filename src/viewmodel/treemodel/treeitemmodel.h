@@ -22,11 +22,6 @@ public:
     void emit_end_insert_rows();
     void emit_begin_remove_rows(int first, int last, std::vector<int>* tree);
     void emit_end_remove_rows();
-
-    //TreeItem* root() const;
-
-protected:
-    //TreeItemPtr root_;
 };
 
 Q_DECLARE_METATYPE(TreeItem*)

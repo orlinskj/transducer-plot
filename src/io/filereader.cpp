@@ -116,5 +116,6 @@ Transducer *FileReader::read(const char* file_path, int *status)
         sets.push_back(Set(std::move(*vit), *uit));
     }
 
+    *status = 0;
     return new Transducer(name,source,std::move(description),std::move(sets));
 }

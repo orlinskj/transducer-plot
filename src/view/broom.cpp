@@ -108,7 +108,7 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     QFont   font_bak = painter->font();
     QPen    marker_outline(Qt::black,0.5);
-    QFont   marker_font("",marker_font_size_);
+    QFont   marker_font("Monospace",marker_font_size_);
     QPen    marker_value(option->palette.light().color());
 
     // broom vertical line

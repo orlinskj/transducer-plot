@@ -85,7 +85,8 @@ else:unix: LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/
 INCLUDEPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
 DEPENDPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
 
-unix|win32: LIBS += -lboost_system -lboost_filesystem
+unix: LIBS += -lboost_system -lboost_filesystem
+win32-g++: LIBS += -lboost_system-mt -lboost_filesystem-mt
 
 DISTFILES +=
 
