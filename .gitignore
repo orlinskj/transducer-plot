@@ -42,4 +42,4 @@ Makefile*
 # QtCtreator CMake
 CMakeLists.txt.user*
 
-resources/glyphicons/
+resources/glyphicons/glyphicons/
