@@ -43,7 +43,11 @@ SOURCES += \
     src/viewmodel/transducertableproxymodel.cpp \
     src/io/tablemodelfilehandler.cpp \
     src/transducerdialog.cpp \
-    src/view/plotitemdelegate.cpp
+    src/view/plotitemdelegate.cpp \
+    src/aboutdialog.cpp \
+    src/screenshotform.cpp \
+    src/pathvalidator.cpp \
+    src/sizevalidator.cpp
 
 HEADERS += \
     src/io/filereader.h \
@@ -72,11 +76,17 @@ HEADERS += \
     src/viewmodel/transducertableproxymodel.h \
     src/io/tablemodelfilehandler.h \
     src/transducerdialog.h \
-    src/view/plotitemdelegate.h
+    src/view/plotitemdelegate.h \
+    src/aboutdialog.h \
+    src/screenshotform.h \
+    src/pathvalidator.h \
+    src/sizevalidator.h
 
 FORMS    += src/mainwindow.ui \
     src/functiondialog.ui \
-    src/transducerdialog.ui
+    src/transducerdialog.ui \
+    src/aboutdialog.ui \
+    src/screenshotform.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/release/
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/debug/

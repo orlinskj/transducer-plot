@@ -1,0 +1,68 @@
+#include "screenshotform.h"
+#include "ui_screenshotform.h"
+
+#include "view/plotpresenter.h"
+#include "sizevalidator.h"
+#include <regex>
+#include <QComboBox>
+
+ScreenshotForm::ScreenshotForm(QWidget *parent, PlotPresenter* presenter) :
+    QWidget(parent),
+    ui(new Ui::ScreenshotForm),
+    presenter_(presenter)
+{
+    ui->setupUi(this);
+    this->setVisible(false);
+    this->setPalette(parent->palette());
+    this->move(6,6);
+
+    // sizes setup
+    QList<QStandardItem*> items = {
+        new QStandardItem("640x480"),
+        new QStandardItem("800x600"),
+        new QStandardItem("1024x768"),
+        new QStandardItem("1600x1200")
+    };
+    sizes_.appendColumn(items);
+    ui->comboBoxSize->setModel(&sizes_);
+    size_validator_ = new SizeValidator(ui->comboBoxSize);
+    ui->comboBoxSize->setValidator(size_validator_);
+
+    connect(ui->buttonClose, &QToolButton::clicked,
+            this, [this](){ this->hide(); });
+    connect(ui->buttonSave, &QToolButton::clicked,
+            this, &ScreenshotForm::save);
+
+    connect(ui->comboBoxSize, &QComboBox::currentTextChanged,
+            this, &ScreenshotForm::enable_save_button);
+}
+
+ScreenshotForm::~ScreenshotForm()
+{
+    delete ui;
+}
+
+void ScreenshotForm::save()
+{
+    auto re = size_validator_->regExp();
+    re.indexIn(ui->comboBoxSize->currentText());
+    int width = re.cap(1).toInt();
+    int height = re.cap(2).toInt();
+
+    QImage img = presenter_->screenshot(width,height);
+    img.save(ui->lineEditPath->text(),nullptr,-1);
+    this->hide();
+}
+
+void ScreenshotForm::enable_save_button(const QString&)
+{
+    std::regex re("([1-9]\\d{1,3})\\D+([1-9]\\d{1,3})");
+    std::smatch match;
+    std::string target = ui->comboBoxSize->currentText().toStdString();
+    if (std::regex_match(target,match,re))
+    {
+        ui->buttonSave->setEnabled(true);
+    }
+    else
+        ui->buttonSave->setEnabled(false);
+}

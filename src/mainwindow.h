@@ -15,6 +15,8 @@
 #include "viewmodel/plotstoreitemmodel.h"
 #include "view/plotpresenter.h"
 
+#include "screenshotform.h"
+
 using namespace std;
 using namespace QtCharts;
 
@@ -23,6 +25,7 @@ namespace Ui {
 }
 
 class TransducerDialog;
+class AboutDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -36,6 +39,8 @@ public:
     void add_transducer(Transducer *transducer);
 
 private slots:
+    void resizeEvent(QResizeEvent* event);
+
     void slot_add_new_plot();
     void slot_remove_plot();
     void slot_add_function();
@@ -44,7 +49,9 @@ private slots:
     void slot_on_tree_view_context_menu(const QPoint &point);
     void slot_show_plot();
 
+    void show_screenshot_form();
     void show_transducer_dialog(int tab);
+    void show_about_dialog();
 
 private:
     void init_signals();
@@ -52,8 +59,9 @@ private:
     void seed();
 
     void create_menus();
-
+public:
     Ui::MainWindow *ui_;
+private:
 
     // Transducer model - stores all transducers
     //QStandardItemModel transducer_model_;
@@ -65,7 +73,10 @@ private:
     // presents plot on QChartView
     PlotPresenter* plot_presenter_;
 
+    // dialog window handlers
     TransducerDialog* transducer_dialog_;
+    AboutDialog* about_dialog_;
+    ScreenshotForm* screenshot_form_;
 
     QMenu plot_menu_;
 };

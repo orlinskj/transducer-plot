@@ -264,8 +264,8 @@ QImage PlotPresenter::screenshot(int width, int height)
     scene()->render(&painter);
     this->resize(tmp_size);
 
-    if (!img.save("/home/janek/ss.png","png",70))
-        throw std::runtime_error("Cannot save to a file");
+    /*if (!img.save("/home/janek/ss.png","png",70))
+        throw std::runtime_error("Cannot save to a file");*/
 
     return img;
 }

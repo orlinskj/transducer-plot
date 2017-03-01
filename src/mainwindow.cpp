@@ -19,11 +19,16 @@
 
 #include "functiondialog.h"
 #include "transducerdialog.h"
+#include "aboutdialog.h"
+//#include "screenshotdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui_(new Ui::MainWindow),
-    transducer_dialog_(nullptr)
+    plot_presenter_(new PlotPresenter(&plot_store_)),
+    transducer_dialog_(nullptr),
+    about_dialog_(nullptr),
+    screenshot_form_(nullptr)
 {
     ui_->setupUi(this);
 
@@ -31,6 +36,11 @@ MainWindow::MainWindow(QWidget *parent) :
     seed();
     create_menus();
     init_signals();
+
+    // emitting resize event
+    show();
+    QResizeEvent r(size(),size());
+    resizeEvent(&r);
 }
 
 MainWindow::~MainWindow()
@@ -50,11 +60,9 @@ void MainWindow::setup_view()
     ui_->plotView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui_->plotView->setHeaderHidden(true);
     //ui_->plotView->setItemDelegate(new PlotItemsDelegate);
-
     ui_->plotView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // plot presenter configuration
-    plot_presenter_ = new PlotPresenter(&plot_store_);
     plot_presenter_->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // frame for chart view configuration
@@ -62,6 +70,10 @@ void MainWindow::setup_view()
     layout->addWidget(plot_presenter_);
     layout->setContentsMargins(0,0,0,0);
     ui_->frame->setLayout(layout);
+
+    auto s = ui_->frame->size();
+    screenshot_form_ = new ScreenshotForm(ui_->frame, plot_presenter_);
+    screenshot_form_->raise();
 
 }
 
@@ -152,6 +164,15 @@ void MainWindow::slot_add_new_plot()
     plot_store_.append(new PlotItem);
 }
 
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QMainWindow::resizeEvent(event);
+
+    auto screenshot_height = screenshot_form_->size().height();
+    auto frame_width = ui_->frame->size().width();
+    screenshot_form_->resize(frame_width-12,screenshot_height);
+}
+
 void MainWindow::slot_remove_plot()
 {
     auto selection = ui_->plotView->selectionModel();
@@ -176,19 +197,38 @@ void MainWindow::create_menus()
                      this, SLOT(slot_remove_plot()));
 
     QObject::connect( ui_->actionPlotScreenshot, &QAction::triggered,
-                      this, [this](){
-        plot_presenter_->screenshot(1024,768);
-    });
+                      this, [this](){ show_screenshot_form(); });
 
     QObject::connect( ui_->actionTransducerTableData, &QAction::triggered,
                       this, [this](){ show_transducer_dialog(0); });
 
     QObject::connect( ui_->actionTransducerModels, &QAction::triggered,
                       this, [this](){ show_transducer_dialog(1); });
+
+    QObject::connect( ui_->actionHelpAbout, &QAction::triggered,
+                      this, [this]{ show_about_dialog(); });
+}
+
+void MainWindow::show_screenshot_form()
+{
+    /*QImage screenshot = plot_presenter_->screenshot(1024,768);
+
+    if (!screenshot_dialog_)
+    {
+        screenshot_dialog_ = new ScreenshotDialog(this,screenshot);
+        QObject::connect(screenshot_dialog_, &QDialog::destroyed,
+                         this, [this](){ screenshot_dialog_ = nullptr; });
+    }
+    else
+        screenshot_dialog_->set_image(screenshot);
+    screenshot_dialog_->show();*/
+    screenshot_form_->show();
+
 }
 
 void MainWindow::show_transducer_dialog(int tab)
 {
+
     if (!transducer_dialog_)
     {
         transducer_dialog_ = new TransducerDialog(this,&transducer_model_);
@@ -198,6 +238,17 @@ void MainWindow::show_transducer_dialog(int tab)
     transducer_dialog_->set_tab(tab);
     transducer_dialog_->show();
     transducer_dialog_->setFocus();
+}
+
+void MainWindow::show_about_dialog()
+{
+    if (!about_dialog_)
+    {
+        about_dialog_ = new AboutDialog(this);
+        QObject::connect(about_dialog_, &QDialog::destroyed,
+                         this, [this](){ about_dialog_ = nullptr; });
+    }
+    about_dialog_->show();
 }
 
 void MainWindow::slot_add_function()
