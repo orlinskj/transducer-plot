@@ -49,7 +49,7 @@ public:
 protected:
     TreeItem* parent_;
     std::vector<TreeItem_ptr> children_;
-    int ancestor_count_;
+    int ancestor_count_; // cached
 
     std::vector<TreeItem*> children_weak_;
     bool children_weak_valid_;

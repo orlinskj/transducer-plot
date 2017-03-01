@@ -93,6 +93,8 @@ void MainWindow::init_signals()
                      this, SLOT(slot_add_function()));
     QObject::connect(ui_->functionRemoveButton, SIGNAL(clicked()),
                      this, SLOT(slot_remove_function()));
+    QObject::connect(ui_->transducerAddButton, &QPushButton::clicked,
+                     this, [this]{ slot_file_open(); });
 }
 
 void MainWindow::slot_on_tree_view_context_menu(const QPoint& point)
@@ -113,7 +115,7 @@ void MainWindow::slot_file_open()
                 this, tr("Otwórz plik z danymi"),
                 ".", tr("Pliki tekstowe (*.txt);;Wszystkie pliki (*.*)"));
 
-    if (!filename.isEmpty())
+    if (filename.isEmpty())
         return;
 
     int status = 1;
@@ -139,23 +141,37 @@ void MainWindow::seed()
 {
     FileReader file_reader;
     int status;
-    std::vector<Transducer*> vec = { file_reader.read("/home/janek/test/2_P0.txt", &status),
-                 file_reader.read("/home/janek/test/2_P1.txt", &status),
-                 file_reader.read("/home/janek/test/2_P4.txt", &status) };
 
-    for(auto it=vec.begin(); it!=vec.end(); it++)
-        this->add_transducer(*it);
+    std::vector<std::string> files;
+    #ifdef __linux__
+    files.push_back("/home/janek/test/2_P0.txt");
+    files.push_back("/home/janek/test/2_P1.txt");
+    files.push_back("/home/janek/test/2_P4.txt");
+    #elif _WIN32
+    files.push_back("C:\\test\\2_P0.txt");
+    files.push_back("C:\\test\\2_P1.txt");
+    files.push_back("C:\\test\\2_P4.txt");
+    #endif
+
+    for(auto file : files)
+    {
+        int err = 1;
+        auto transducer = file_reader.read(file.c_str(),&err);
+        if (transducer && !err)
+            this->add_transducer(transducer);
+    }
 
     /* some plot, with some function ... */
     this->slot_add_new_plot();
 
     auto plot = dynamic_cast<PlotItem*>(plot_store_.child(0));
     auto tadapter = dynamic_cast<TransducerItem*>(transducer_model_.child(0));
-    auto transducer = (*tadapter)();
-    auto func = new Function(transducer,&transducer->get_sets()[0], &transducer->get_sets()[1]);
-
-    plot->append(new FunctionItem(func));
-
+    if (tadapter)
+    {
+        auto transducer = (*tadapter)();
+        auto func = new Function(transducer,&transducer->get_sets()[0], &transducer->get_sets()[1]);
+        plot->append(new FunctionItem(func));
+    }
     plot_presenter_->show_plot(plot);
 }
 
