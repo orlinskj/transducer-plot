@@ -23,6 +23,7 @@ public:
     SolverType C(Type type) const;
     SolverType Q(Type type) const;
     SolverType f(Type type) const;
+    SolverType Z(Type type) const;
 
     SolverType QQ() const;
     SolverType k33() const;
@@ -35,6 +36,7 @@ protected:
     SolverType Ls_, Lp_;
     SolverType Cs_, Cp_;
     SolverType fs_, fp_;
+    SolverType Zs_, Zp_;
     SolverType Qs_, Qp_, QQ_;
     SolverType keff_, k33_, k_;
 

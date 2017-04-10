@@ -71,7 +71,7 @@ void MainWindow::setup_view()
     layout->setContentsMargins(0,0,0,0);
     ui_->frame->setLayout(layout);
 
-    auto s = ui_->frame->size();
+    // auto s = ui_->frame->size();
     screenshot_form_ = new ScreenshotForm(ui_->frame, plot_presenter_);
     screenshot_form_->raise();
 
@@ -140,7 +140,7 @@ void MainWindow::add_transducer(Transducer* transducer)
 void MainWindow::seed()
 {
     FileReader file_reader;
-    int status;
+    //int status;
 
     std::vector<std::string> files;
     #ifdef __linux__

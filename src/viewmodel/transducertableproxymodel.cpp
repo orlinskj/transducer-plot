@@ -100,5 +100,6 @@ QVariant TransducerTableProxyModel::headerData(int section, Qt::Orientation orie
 
 Qt::ItemFlags TransducerTableProxyModel::flags(const QModelIndex &index) const
 {
+    Q_UNUSED(index);
     return Qt::ItemIsEditable | Qt::ItemIsSelectable;
 }

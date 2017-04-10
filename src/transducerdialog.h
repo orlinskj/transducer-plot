@@ -31,12 +31,14 @@ public slots:
     void export_as();
     void set_tab(int tab);
     void select_model(const QString& option);
+    void recalc_model();
 
 private:
     Ui::TransducerDialog *ui;
     std::unique_ptr<TransducerTableProxyModel> transducer_table_model_;
     TreeItemModel* transducer_model_;
     QStandardItemModel type_model_;
+    QStandardItemModel table_params_model_;
     QGraphicsPixmapItem* pixmap_;
 
     static std::vector<Label> labels_series;

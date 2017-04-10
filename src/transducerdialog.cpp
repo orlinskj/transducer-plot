@@ -11,7 +11,9 @@
 #include <QGraphicsTextItem>
 #include "io/tablemodelfilehandler.h"
 #include <string>
+#include <tuple>
 #include <boost/filesystem.hpp>
+#include "model/solver.h"
 
 std::vector<TransducerDialog::Label> TransducerDialog::labels_series = {
     TransducerDialog::Label("R",QPointF(245,220),true),
@@ -69,6 +71,10 @@ TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_mo
     type_model_.appendColumn(items);
     ui->transducerComboBox->setItemDelegate(new TransducerDelegate);
     ui->comboBoxModelType->setModel(&type_model_);
+
+    ui->tableViewModelParams->verticalHeader()->setDefaultSectionSize(20);
+    ui->tableViewModelParams->setModel(&table_params_model_);
+    ui->tableViewModelParams->horizontalHeader()->hide();
 }
 
 TransducerDialog::~TransducerDialog()
@@ -111,6 +117,58 @@ void TransducerDialog::set_transducer(TransducerItem* t)
 
 }
 
+void TransducerDialog::recalc_model()
+{
+    BVDSolver::Type type;
+    if (ui->comboBoxModelType->currentIndex() == 0)
+        type = BVDSolver::Type::Series;
+    else
+        type = BVDSolver::Type::Parallel;
+
+    auto transducer_item = dynamic_cast<TransducerItem*>(
+                transducer_model_->child(ui->transducerComboBox->currentIndex()));
+
+    boost::optional<SolverType> input_capacity = boost::none;
+    if (ui->autoCapacityCheckBox->checkState() != Qt::Checked)
+    {
+        input_capacity = table_params_model_.index(2,0).data().toDouble();
+    }
+
+    BVDSolver solver;
+    solver.solve(*(transducer_item->value()),input_capacity);
+
+
+    // setting cells' values
+    std::vector<std::tuple<qreal,Unit>> vals = {
+        std::make_tuple(solver.f(type),Unit::from_symbol("f")),
+        std::make_tuple(solver.Co(type),Unit::from_symbol("C")),
+        std::make_tuple(solver.R(type),Unit::from_symbol("R")),
+        std::make_tuple(solver.L(type),Unit::from_symbol("L")),
+        std::make_tuple(solver.C(type),Unit::from_symbol("C")),
+        std::make_tuple(solver.Q(type),Unit::None),
+        std::make_tuple(solver.QQ(),Unit::None),
+        std::make_tuple(solver.keff(),Unit::None),
+        std::make_tuple(solver.k33(),Unit::None),
+        std::make_tuple(solver.k(),Unit::None)
+    };
+    table_params_model_.removeRows(0,12);
+    for(auto val : vals)
+    {
+        auto str = QString::fromStdString( std::get<1>(val).nice_repr(std::get<0>(val)));
+        table_params_model_.appendRow(new QStandardItem(str));
+    }
+    table_params_model_.insertRow(7,new QStandardItem(""));
+
+    // initializing table for parameters
+    QStringList header_items = {
+        "f",    "|Z|",  "Co",   "R",
+        "L",    "C",    "Q",    "",
+        "Q",    "keff", "k33",  "k"
+    };
+
+    table_params_model_.setVerticalHeaderLabels(header_items);
+}
+
 void TransducerDialog::select_model(const QString& option)
 {
     ui->graphicsViewModel->scene()->clear();
@@ -128,6 +186,8 @@ void TransducerDialog::select_model(const QString& option)
         place_pixmap_labels(labels_parallel);
     }
     pixmap_->setPos(0,0);
+
+    recalc_model();
 }
 
 void TransducerDialog::place_pixmap_labels(const std::vector<TransducerDialog::Label>& labels)

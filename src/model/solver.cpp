@@ -24,16 +24,16 @@ bool BVDSolver::solve(const Transducer& t, boost::optional<SolverType> input_cap
 
     // calculating resonance frequencies
     // looking for min and max impedance - min is for series, max is for parallel resonance
-    SolverType fs_index = std::get<1>(impedance_set->max());
-    SolverType fp_index = std::get<1>(impedance_set->min());
+    auto fs_index = std::get<1>(impedance_set->min());
+    auto fp_index = std::get<1>(impedance_set->max());
 
     //SolverType pi = boost::math::constants::pi<SolverType>();
     SolverType pi = 3.14159;
 
-    SolverType fs = freq_set->values().at(fs_index);
-    SolverType fp = freq_set->values().at(fp_index);
-    SolverType ws = 2 * pi * fs;
-    SolverType wp = 2 * pi * fp;
+    fs_ = freq_set->values().at(fs_index);
+    fp_ = freq_set->values().at(fp_index);
+    SolverType ws = 2 * pi * fs_;
+    SolverType wp = 2 * pi * fp_;
 
     // calculating transducer input capacity
     if (input_capacity)
@@ -44,11 +44,14 @@ bool BVDSolver::solve(const Transducer& t, boost::optional<SolverType> input_cap
         SolverType min_f_Im = imaginary_set->values().at(0);
         SolverType min_w = 2.0 * M_PI * min_f;
 
-        Cop_ = 1.0 / (min_w * min_f_Im);
+        Cop_ = 1.0 / (min_w * -min_f_Im);
     }
 
     SolverType f_ratio = fs_ / fp_;
     Cos_ = f_ratio*f_ratio * Cop_;
+
+    Zs_ = impedance_set->values().at(fs_index);
+    Zp_ = impedance_set->values().at(fp_index);
 
     // calculating R
     Rs_ = impedance_set->values().at(fs_index);
@@ -115,6 +118,14 @@ SolverType BVDSolver::f(BVDSolver::Type type) const
         return fs_;
     else
         return fp_;
+}
+
+SolverType BVDSolver::Z(BVDSolver::Type type) const
+{
+    if (type == BVDSolver::Type::Series)
+        return Zs_;
+    else
+        return Zp_;
 }
 
 SolverType BVDSolver::Q(BVDSolver::Type type) const
