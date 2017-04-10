@@ -19,7 +19,7 @@ public:
     QModelIndex parent(const QModelIndex &child) const override;
     QVariant data(const QModelIndex &proxyIndex, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+    // bool setData(const QModelIndex &index, const QVariant &value, int role) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 private:

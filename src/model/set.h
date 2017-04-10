@@ -22,6 +22,8 @@ public:
     const std::vector<T>& values() const;
     const Unit& unit() const;
     std::tuple<T,T> range() const;
+    std::tuple<T, size_t> min() const;
+    std::tuple<T, size_t> max() const;
 
     operator std::string() const;
 

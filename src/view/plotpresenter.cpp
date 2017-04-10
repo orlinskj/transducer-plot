@@ -149,6 +149,7 @@ void PlotPresenter::mousePressEvent(QMouseEvent *event)
             {
                 zoom_enabled_ = true;
                 zoom_button_ = Qt::LeftButton;
+                broom_->setVisible(false);
             }
             else if(event->modifiers() & Qt::ShiftModifier)
             {
@@ -160,6 +161,7 @@ void PlotPresenter::mousePressEvent(QMouseEvent *event)
                 drag_enabled_ = true;
                 drag_button_ = Qt::LeftButton;
                 broom_click_ = true;
+                broom_->setVisible(false);
             }
         }
     }
@@ -187,6 +189,12 @@ void PlotPresenter::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Minus:
         chart()->zoomOut();
         break;
+    case Qt::Key_N:
+        for (auto axis : chart()->axes(Qt::Vertical))
+        {
+            if (auto value_axis = dynamic_cast<QValueAxis*>(axis))
+                value_axis->applyNiceNumbers();
+        }
     }
 
     broom_->update_position();
@@ -195,9 +203,15 @@ void PlotPresenter::keyPressEvent(QKeyEvent *event)
 void PlotPresenter::mouseReleaseEvent(QMouseEvent *event)
 {
     if (!(event->buttons() & drag_button_))
+    {
         drag_enabled_ = false;
+        broom_->setVisible(true);
+    }
     if (!(event->buttons() & zoom_button_))
+    {
         zoom_enabled_ = false;
+        broom_->setVisible(true);
+    }
 
     if (broom_click_ && !(event->buttons() & Qt::LeftButton))
     {

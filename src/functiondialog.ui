@@ -90,12 +90,17 @@
     <rect>
      <x>150</x>
      <y>270</y>
-     <width>31</width>
+     <width>21</width>
      <height>16</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+    </font>
+   </property>
    <property name="text">
-    <string>-&gt;</string>
+    <string>→</string>
    </property>
   </widget>
  </widget>

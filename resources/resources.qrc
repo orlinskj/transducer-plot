@@ -8,5 +8,7 @@
         <file>glyphicons/glyphicons-738-pictures.png</file>
         <file>glyphicons/glyphicons-198-remove-circle.png</file>
         <file>glyphicons/glyphicons-444-floppy-disk.png</file>
+        <file>icons/bvd-parallel.svg</file>
+        <file>icons/bvd-series.svg</file>
     </qresource>
 </RCC>

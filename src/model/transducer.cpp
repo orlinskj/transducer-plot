@@ -35,6 +35,19 @@ const Transducer::Description& Transducer::get_description() const
     return description_;
 }
 
+const Set* Transducer::get_set(Unit unit) const
+{
+    auto it = std::find_if(sets_.begin(), sets_.end(),
+        [unit](const auto& s){
+            return s.unit() == unit;
+        });
+
+    if (it != sets_.end())
+        return &(*it);
+
+    return nullptr;
+}
+
 std::vector<Set>& Transducer::get_sets()
 {
     return sets_;

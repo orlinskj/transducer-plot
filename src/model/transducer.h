@@ -27,7 +27,7 @@ public:
     const std::string& get_name() const;
 
     const Description& get_description() const;
-    const Set& get_set(Unit unit) const;
+    const Set* get_set(Unit unit) const;
     std::vector<Set>& get_sets();
 
     operator const std::string&() const;

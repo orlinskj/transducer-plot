@@ -89,9 +89,9 @@ std::string Function::full_name() const
 {
     std::stringstream ss;
     if (transducer_)
-        ss << "[" << transducer_->get_name() << "] ";
+        ss << "" << transducer_->get_name() << ":    ";
     if (domain_ && codomain_)
-        ss << domain_->unit().symbol() << " -> " << codomain_->unit().symbol();
+        ss << domain_->unit().symbol() << "→" << codomain_->unit().symbol();
 
     return ss.str();
 }

@@ -7,15 +7,32 @@
 
 #include <QComboBox>
 #include <QFileDialog>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsTextItem>
 #include "io/tablemodelfilehandler.h"
 #include <string>
 #include <boost/filesystem.hpp>
+
+std::vector<TransducerDialog::Label> TransducerDialog::labels_series = {
+    TransducerDialog::Label("R",QPointF(245,220),true),
+    TransducerDialog::Label("L",QPointF(245,90),true),
+    TransducerDialog::Label("C",QPointF(330,155),false),
+    TransducerDialog::Label("Co",QPointF(160,155),false)
+};
+
+std::vector<TransducerDialog::Label> TransducerDialog::labels_parallel = {
+    TransducerDialog::Label("R",QPointF(170,155),false),
+    TransducerDialog::Label("L",QPointF(250,155),false),
+    TransducerDialog::Label("C",QPointF(330,155),false),
+    TransducerDialog::Label("Co",QPointF(105,220),true)
+};
 
 TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_model) :
     QDialog(parent),
     ui(new Ui::TransducerDialog),
     transducer_table_model_(nullptr),
-    transducer_model_(transducer_model)
+    transducer_model_(transducer_model),
+    pixmap_(nullptr)
 {
     ui->setupUi(this);
     setWindowFlags(Qt::Window);
@@ -35,9 +52,15 @@ TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_mo
                         set_transducer(dynamic_cast<TransducerItem*>(transducer_model_->child(index)));
                      });
 
+    ui->graphicsViewModel->setScene(new QGraphicsScene);
+    ui->graphicsViewModel->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsViewModel->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     connect(ui->saveButton, &QPushButton::clicked,
             this, &TransducerDialog::export_as);
 
+    connect(ui->comboBoxModelType, &QComboBox::currentTextChanged,
+            this, &TransducerDialog::select_model);
 
     QList<QStandardItem*> items = {
         new QStandardItem(tr("Szeregowy")),
@@ -86,4 +109,49 @@ void TransducerDialog::set_transducer(TransducerItem* t)
     transducer_table_model_.reset(new TransducerTableProxyModel(t));
     ui->tableView->setModel(transducer_table_model_.get());
 
+}
+
+void TransducerDialog::select_model(const QString& option)
+{
+    ui->graphicsViewModel->scene()->clear();
+    pixmap_ = nullptr;
+    if (option == tr("Szeregowy"))
+    {
+        pixmap_ = new QGraphicsPixmapItem(QPixmap(":/icons/bvd-series.svg"));
+        ui->graphicsViewModel->scene()->addItem(pixmap_);
+        place_pixmap_labels(labels_series);
+    }
+    else if (option == tr("Równoległy"))
+    {
+        pixmap_ = new QGraphicsPixmapItem(QPixmap(":/icons/bvd-parallel.svg"));
+        ui->graphicsViewModel->scene()->addItem(pixmap_);
+        place_pixmap_labels(labels_parallel);
+    }
+    pixmap_->setPos(0,0);
+}
+
+void TransducerDialog::place_pixmap_labels(const std::vector<TransducerDialog::Label>& labels)
+{
+    for (const auto& l : labels)
+    {
+        auto text = new QGraphicsTextItem(std::get<0>(l).c_str());
+        ui->graphicsViewModel->scene()->addItem(text);
+        QPointF pos = std::get<1>(l);
+        pos.ry() = pixmap_->pixmap().size().height()-pos.y();
+        text->setPos(pos);
+        char first_letter = std::get<0>(l).at(0);
+
+        if (!std::get<2>(l))
+        {
+            text->setRotation(-90);
+            text->moveBy(-45,15);
+            if      (first_letter == 'C') text->moveBy(-5,0);
+            else if (first_letter == 'R') text->moveBy(3,0);
+        }
+        else
+        {
+            if      (first_letter == 'R') text->moveBy(0,3);
+            text->moveBy(-15,-45);
+        }
+    }
 }

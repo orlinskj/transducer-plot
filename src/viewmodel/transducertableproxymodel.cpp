@@ -93,10 +93,10 @@ QVariant TransducerTableProxyModel::headerData(int section, Qt::Orientation orie
     }
 }
 
-bool TransducerTableProxyModel::setData(const QModelIndex &index, const QVariant &value, int role)
+/*bool TransducerTableProxyModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     return false;
-}
+}*/
 
 Qt::ItemFlags TransducerTableProxyModel::flags(const QModelIndex &index) const
 {

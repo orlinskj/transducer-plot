@@ -24,6 +24,18 @@ std::tuple<T,T> Set_t<T>::range() const
 }
 
 template <typename T>
+std::tuple<T, size_t> Set_t<T>::min() const
+{
+    return min_;
+}
+
+template <typename T>
+std::tuple<T, size_t> Set_t<T>::max() const
+{
+    return max_;
+}
+
+template <typename T>
 Set_t<T>::operator std::string() const
 {
     return unit_.symbol();

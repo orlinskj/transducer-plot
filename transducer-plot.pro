@@ -47,7 +47,9 @@ SOURCES += \
     src/aboutdialog.cpp \
     src/screenshotform.cpp \
     src/pathvalidator.cpp \
-    src/sizevalidator.cpp
+    src/sizevalidator.cpp \
+    src/model/solver.cpp \
+    src/model/transducercalculator.cpp
 
 HEADERS += \
     src/io/filereader.h \
@@ -80,7 +82,9 @@ HEADERS += \
     src/aboutdialog.h \
     src/screenshotform.h \
     src/pathvalidator.h \
-    src/sizevalidator.h
+    src/sizevalidator.h \
+    src/model/solver.h \
+    src/model/transducercalculator.h
 
 FORMS    += src/mainwindow.ui \
     src/functiondialog.ui \

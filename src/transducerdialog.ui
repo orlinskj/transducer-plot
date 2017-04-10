@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>601</width>
-    <height>445</height>
+    <height>450</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -243,7 +243,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="3,0">
              <item>
-              <widget class="QGraphicsView" name="graphicsView"/>
+              <widget class="QGraphicsView" name="graphicsViewModel"/>
              </item>
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_4">
