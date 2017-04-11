@@ -42,3 +42,29 @@ BOOST_AUTO_TEST_CASE(combined_unit)
 
 }
 
+BOOST_AUTO_TEST_CASE(unit_representation)
+{
+    Unit c("capacity","C","F");
+    Unit i("inductance","L","H");
+
+    BOOST_CHECK_EQUAL(c.nice_repr<double>(12.345,5), "12.345 F");
+    BOOST_CHECK_EQUAL(c.nice_repr<double>(123.45,5), "123.45 F");
+    BOOST_CHECK_EQUAL(c.nice_repr<double>(1234.5,5), "1.2345 kF");
+
+    BOOST_CHECK_EQUAL(c.nice_repr<double>(1e-3,5), "1 mF");
+    BOOST_CHECK_EQUAL(c.nice_repr<double>(1.23e-6,5), "1.23 µF");
+    BOOST_CHECK_EQUAL(c.nice_repr<double>(1.23e-8,5), "12.3 nF");
+
+    double eps = 1e-13;
+
+    BOOST_CHECK_CLOSE( c.value_from_repr<double>("1.23 nF"), 1.23e-9, eps);
+    BOOST_CHECK_CLOSE( c.value_from_repr<double>("1.23nF"), 1.23e-9, eps);
+
+    BOOST_CHECK_CLOSE( c.value_from_repr<double>("1.23 F"), 1.23, eps);
+    BOOST_CHECK_CLOSE( c.value_from_repr<double>("1.23F"), 1.23, eps);
+
+    BOOST_CHECK_CLOSE( c.value_from_repr<double>("1.23 µF"), 1.23e-6, eps);
+    BOOST_CHECK_CLOSE( c.value_from_repr<double>("1.23µF"), 1.23e-6, eps);
+
+}
+

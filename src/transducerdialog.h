@@ -32,6 +32,7 @@ public slots:
     void set_tab(int tab);
     void select_model(const QString& option);
     void recalc_model();
+    void fixed_capacity_checkbox(int state);
 
 private:
     Ui::TransducerDialog *ui;

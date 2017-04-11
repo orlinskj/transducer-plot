@@ -51,7 +51,28 @@ std::vector<Unit> Unit::defaults_ = {
     Unit("moduł impedancji", "|Z|", "Ω"),
     Unit("kąt fazowy", "theta", "rad"),
     Unit("część rzeczywista", "Re", "Ω"),
-    Unit("część urojona", "Im", "Ω")
+    Unit("część urojona", "Im", "Ω"),
+    Unit("rezystancja", "R", "Ω"),
+    Unit("pojemność", "C", "F"),
+    Unit("indukcyjność", "L", "H")
+};
+
+std::vector<std::tuple<std::string, double>> Unit::prefixes_ = {
+    std::make_tuple(    "E",   1e18 ),
+    std::make_tuple(    "P",   1e15 ),
+    std::make_tuple(    "T",   1e12 ),
+    std::make_tuple(    "G",   1e9  ),
+    std::make_tuple(    "M",   1e6  ),
+    std::make_tuple(    "k",   1e3  ),
+    //std::make_tuple(    "h",   1e2  ),
+    //std::make_tuple(    "da",  1e1  ),
+    //std::make_tuple(    "c",   1e-1 ),
+    std::make_tuple(    "m",   1e-3 ),
+    std::make_tuple(    "µ",   1e-6 ),
+    std::make_tuple(    "n",   1e-9 ),
+    std::make_tuple(    "p",   1e-12),
+    std::make_tuple(    "f",   1e-15),
+    std::make_tuple(    "a",   1e-18)
 };
 
 // ---------------

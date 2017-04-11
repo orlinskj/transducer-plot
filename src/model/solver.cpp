@@ -1,6 +1,6 @@
 #include "solver.h"
 
-//#include <boost/math/constants/constants.hpp>
+#include <boost/math/constants/constants.hpp>
 
 bool BVDSolver::solve(const Transducer& t, boost::optional<SolverType> input_capacity)
 {
@@ -27,8 +27,8 @@ bool BVDSolver::solve(const Transducer& t, boost::optional<SolverType> input_cap
     auto fs_index = std::get<1>(impedance_set->min());
     auto fp_index = std::get<1>(impedance_set->max());
 
-    //SolverType pi = boost::math::constants::pi<SolverType>();
-    SolverType pi = 3.14159;
+    SolverType pi = boost::math::constants::pi<SolverType>();
+    //SolverType pi = 3.14159;
 
     fs_ = freq_set->values().at(fs_index);
     fp_ = freq_set->values().at(fp_index);
@@ -71,9 +71,9 @@ bool BVDSolver::solve(const Transducer& t, boost::optional<SolverType> input_cap
     QQ_ = std::sqrt(Qs_*Qp_);
 
     // calculating coefficients
-    //SolverType half_pi = boost::math::constants::half_pi<SolverType>();
-    SolverType half_pi = 1.570796;
-    k33_ = std::sqrt(half_pi*fs_*fp_*std::tan((fp_-fs_)/fp_*half_pi));
+    SolverType half_pi = boost::math::constants::half_pi<SolverType>();
+    //SolverType half_pi = 1.570796;
+    k33_ = std::sqrt(half_pi*fs_/fp_*std::tan((fp_-fs_)/fp_*half_pi));
     keff_ = std::sqrt((fp_*fp_-fs_*fs_)/(fs_*fs_));
     k_ = (keff_/k33_)*(keff_/k33_);
 

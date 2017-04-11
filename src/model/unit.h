@@ -4,6 +4,10 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <algorithm>
+#include <iomanip>
+#include <tuple>
+#include <utf8.h>
 
 class Unit {
 public:
@@ -15,7 +19,9 @@ public:
     virtual const std::string& symbol() const;
     virtual const std::string& unit() const;
     virtual std::string longname() const;
-    template<typename T> std::string nice_repr(T) const;
+
+    template<typename T> std::string nice_repr(T,size_t = 6) const;
+    template<typename T> T value_from_repr(const std::string& repr) const;
 
     static Unit from_symbol(const std::string& s);
     static Unit None;
@@ -26,31 +32,74 @@ protected:
     std::string unit_;
 
     static std::vector<Unit> defaults_;
+    static std::vector<std::tuple<std::string,double>> prefixes_;
 };
 
 bool operator ==(const Unit& a, const Unit& b);
 
-template <typename T> std::string Unit::nice_repr(T value) const
+template <typename T> std::string Unit::nice_repr(T value, size_t prec) const
 {
     std::string prefixes = "TGMk mµnp";
+    auto it = std::find(prefixes.begin(),prefixes.end(),' ');
 
-    size_t i = prefixes.size() / 2;
-
-    while(value < 0 && i+1<prefixes.size())
+    while(std::abs(value) < 1)
     {
-        value *= 1e3;
-        i++;
+        utf8::advance(it,1,prefixes.end());
+        if (it != prefixes.end())
+            value *= 1e3;
+        else
+        {
+            utf8::prior(it,prefixes.begin());
+            break;
+        }
     }
 
-    while(value > 1e3 && i>1)
+    while(std::abs(value) >= 1e3 && it != prefixes.begin())
     {
+        utf8::prior(it,prefixes.begin());
         value /= 1e3;
-        i--;
     }
 
     std::stringstream ss;
-    ss << value << prefixes.at(i) << this->unit();
+    auto start = it;
+    utf8::next(it,prefixes.end());
+    std::string p(start,it);
+    if (p == " ")
+        p.clear();
+    ss << std::setprecision(prec) << value << " " << p << this->unit();
     return ss.str();
+}
+
+template <typename T> T Unit::value_from_repr(const std::string& repr) const
+{
+    std::string wo_spaces;
+    for (auto c : repr)
+        if (c != ' ')
+            wo_spaces += c;
+
+    double value;
+    std::string prefix;
+    std::stringstream ss(wo_spaces);
+
+    ss >> value >> prefix;
+
+    size_t i = prefix.find(this->unit());
+    if (i != std::string::npos && this->unit().length() + i == prefix.length())
+    {
+        prefix.erase(i);
+    }
+
+    auto it = std::find_if(prefixes_.begin(), prefixes_.end(), [prefix](const auto& p)
+    {
+        return std::get<0>(p) == prefix;
+    });
+
+    if (it != prefixes_.end())
+    {
+        value *= std::get<1>(*it);
+    }
+
+    return value;
 }
 
 

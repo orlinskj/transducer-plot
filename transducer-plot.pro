@@ -13,7 +13,7 @@ TEMPLATE = app
 
 CONFIG += c++14 console
 
-QMAKE_CXXFLAGS += -std=c++14
+QMAKE_CXXFLAGS += -std=c++14 -fext-numeric-literals
 
 SOURCES += \
     src/io/filereader.cpp \

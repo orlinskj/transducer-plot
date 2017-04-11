@@ -49,10 +49,17 @@ TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_mo
 
     ui->transducerComboBox->setModel(transducer_model);
     connect(ui->transducerComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                     this,
-                     [this](int index){
-                        set_transducer(dynamic_cast<TransducerItem*>(transducer_model_->child(index)));
-                     });
+            this, [this](int index){
+        set_transducer(dynamic_cast<TransducerItem*>(transducer_model_->child(index)));
+    });
+
+    connect(ui->tableWidgetCop, &QTableWidget::cellChanged,
+            this, [this](int row, int col){
+        this->recalc_model();
+    });
+
+    connect(ui->fixedCopCheckBox, SIGNAL(stateChanged(int)),
+            this, SLOT(fixed_capacity_checkbox(int)));
 
     ui->graphicsViewModel->setScene(new QGraphicsScene);
     ui->graphicsViewModel->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -129,14 +136,36 @@ void TransducerDialog::recalc_model()
                 transducer_model_->child(ui->transducerComboBox->currentIndex()));
 
     boost::optional<SolverType> input_capacity = boost::none;
-    if (ui->autoCapacityCheckBox->checkState() != Qt::Checked)
+    auto Cop_item = ui->tableWidgetCop->item(0,0);
+    if (ui->fixedCopCheckBox->isChecked() == true && Cop_item)
     {
-        input_capacity = table_params_model_.index(2,0).data().toDouble();
+        std::string Co_cell = Cop_item->data(Qt::DisplayRole).toString().toStdString();
+        input_capacity = Unit::from_symbol("C").value_from_repr<SolverType>(Co_cell);
+        qDebug() << "input capacity = " << *input_capacity;
     }
+
+    table_params_model_.clear();
+
+    QStringList header_items = {
+        "f",    "Co",   "R",
+        "L",    "C",    "Q",    "",
+        "Q",    "keff", "k33",  "k"
+    };
+
+    QString script_index = "ₚ";
+    if (type == BVDSolver::Type::Series)
+        script_index = "ₛ";
+
+    for (auto it = header_items.begin(); it != header_items.begin()+6; ++it)
+        *it += script_index;
+
+    table_params_model_.setVerticalHeaderLabels(header_items);
+
+    if (!transducer_item)
+        return;
 
     BVDSolver solver;
     solver.solve(*(transducer_item->value()),input_capacity);
-
 
     // setting cells' values
     std::vector<std::tuple<qreal,Unit>> vals = {
@@ -151,22 +180,28 @@ void TransducerDialog::recalc_model()
         std::make_tuple(solver.k33(),Unit::None),
         std::make_tuple(solver.k(),Unit::None)
     };
-    table_params_model_.removeRows(0,12);
+
+    size_t i = 0;
     for(auto val : vals)
     {
-        auto str = QString::fromStdString( std::get<1>(val).nice_repr(std::get<0>(val)));
+        auto str = QString::number(std::get<0>(val));
+        if (i++ < 5)
+            str = QString::fromStdString( std::get<1>(val).nice_repr(std::get<0>(val)));
         table_params_model_.appendRow(new QStandardItem(str));
     }
-    table_params_model_.insertRow(7,new QStandardItem(""));
+    table_params_model_.insertRow(6,new QStandardItem(""));
 
-    // initializing table for parameters
-    QStringList header_items = {
-        "f",    "|Z|",  "Co",   "R",
-        "L",    "C",    "Q",    "",
-        "Q",    "keff", "k33",  "k"
-    };
 
-    table_params_model_.setVerticalHeaderLabels(header_items);
+}
+
+void TransducerDialog::fixed_capacity_checkbox(int state)
+{
+    if (state == Qt::Checked)
+        ui->tableWidgetCop->setEnabled(true);
+    else
+        ui->tableWidgetCop->setEnabled(false);
+
+    recalc_model();
 }
 
 void TransducerDialog::select_model(const QString& option)
