@@ -146,21 +146,6 @@ void TransducerDialog::recalc_model()
 
     table_params_model_.clear();
 
-    QStringList header_items = {
-        "f",    "Co",   "R",
-        "L",    "C",    "Q",    "",
-        "Q",    "keff", "k33",  "k"
-    };
-
-    QString script_index = "ₚ";
-    if (type == BVDSolver::Type::Series)
-        script_index = "ₛ";
-
-    for (auto it = header_items.begin(); it != header_items.begin()+6; ++it)
-        *it += script_index;
-
-    table_params_model_.setVerticalHeaderLabels(header_items);
-
     if (!transducer_item)
         return;
 
@@ -191,7 +176,20 @@ void TransducerDialog::recalc_model()
     }
     table_params_model_.insertRow(6,new QStandardItem(""));
 
+    QStringList header_items = {
+        "f",    "Co",   "R",
+        "L",    "C",    "Q",    "",
+        "Q",    "keff", "k33",  "k"
+    };
 
+    QString script_index = "ₚ";
+    if (type == BVDSolver::Type::Series)
+        script_index = "ₛ";
+
+    for (auto it = header_items.begin(); it != header_items.begin()+6; ++it)
+        *it += script_index;
+
+    table_params_model_.setVerticalHeaderLabels(header_items);
 }
 
 void TransducerDialog::fixed_capacity_checkbox(int state)

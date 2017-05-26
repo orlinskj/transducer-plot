@@ -10,7 +10,7 @@
 #include <QMenu>
 
 #include "model/transducer.h"
-#include "io/filereader.h"
+#include "io/loader.h"
 #include "model/plot.h"
 #include "viewmodel/plotstoreitemmodel.h"
 #include "view/plotpresenter.h"
@@ -64,7 +64,6 @@ public:
 private:
 
     // Transducer model - stores all transducers
-    //QStandardItemModel transducer_model_;
     TreeItemModel transducer_model_;
 
     //  stores plots and their functions

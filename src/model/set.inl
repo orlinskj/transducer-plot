@@ -1,8 +1,10 @@
 // using namespace ac;
 
 template <typename T>
-Set_t<T>::Set_t(std::vector<T>&& values, Unit unit) :
-    unit_(unit), values_(values)
+Set_t<T>::Set_t(const Unit& u) : unit_(u) { }
+
+template <typename T>
+void Set_t<T>::calc_extremes()
 {
     if (values_.size() > 0)
     {
@@ -16,7 +18,19 @@ Set_t<T>::Set_t(std::vector<T>&& values, Unit unit) :
                 max_ = std::make_tuple(values_.at(i),i);
         }
     }
+}
 
+template <typename T>
+Set_t<T>::Set_t(std::vector<T>&& values, Unit unit) :
+    unit_(unit), values_(values)
+{
+    calc_extremes();
+}
+
+template <typename T>
+void Set_t<T>::push(const Set_t<T>::value_type& v)
+{
+    values_.push_back(v);
 }
 
 template <typename T>

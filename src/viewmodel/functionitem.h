@@ -15,9 +15,14 @@ public:
     FunctionItem(Function *f = nullptr);
 
     QLineSeries* series() const;
+    QPointF top() const;
+    QPointF bottom() const;
+    QPointF right() const;
+    QPointF left() const;
 
 protected:
     std::unique_ptr<QLineSeries> series_;
+    QPointF top_, bottom_, right_, left_;
 
 };
 

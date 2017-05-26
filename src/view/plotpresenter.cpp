@@ -26,9 +26,9 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
     broom_->set_visibility(false);
     scene()->addItem(broom_);
 
-    setRenderHint(QPainter::Antialiasing);
+    //setRenderHint(QPainter::Antialiasing);
     setContentsMargins(0,0,0,0);
-    //setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -60,6 +60,13 @@ PlotPresenter::~PlotPresenter() {}
 
 void PlotPresenter::show_plot(PlotItem *plot)
 {
+    if (plot_ == plot)
+        return;
+
+    if (plot_){
+        this->scene()->removeItem(&(plot_->layers()));
+    }
+
     broom_->set_plot(plot);
 
     if (chart())
@@ -68,8 +75,12 @@ void PlotPresenter::show_plot(PlotItem *plot)
     plot_ = plot;
 
     scene()->addItem(plot_->chart());
+    scene()->addItem(&(plot_->layers()));
+
     plot_->chart()->resize(this->size());
     plot_->chart()->setAcceptHoverEvents(true);
+
+    plot_->layers().resize(size());
 
     alter_menu();
 }
@@ -121,18 +132,16 @@ void PlotPresenter::resizeEvent(QResizeEvent *event)
     {
         // broom
         auto value = chart()->mapToValue(chart()->mapFromScene(broom_->pos()));
-        /*qDebug() << "value = " << value;
-        qDebug() << "old pos = " << broom_->pos();*/
         // chart
         scene()->setSceneRect(QRect(QPoint(0, 0), event->size()));
         chart()->resize(event->size());
         // broom continuation
         auto new_pos = chart()->mapToScene(chart()->mapToPosition(value));
         broom_->set_position(new_pos, true);
-        //qDebug() << "new pos = " << new_pos;
     }
     QGraphicsView::resizeEvent(event);
     broom_->update_bounding_rect();
+    plot_->layers().resize(event->size());
 }
 
 void PlotPresenter::mousePressEvent(QMouseEvent *event)
@@ -235,6 +244,7 @@ void PlotPresenter::mouseMoveEvent(QMouseEvent *event)
             chart()->scroll(-delta.x(),delta.y());
             drag_pos_ = event->pos();
             broom_->update_position();
+            plot_->layers().recalc();
         }
         // zooming
         else if (zoom_enabled_)
@@ -244,6 +254,7 @@ void PlotPresenter::mouseMoveEvent(QMouseEvent *event)
             chart()->zoom(k/(k+delta.y()));
             zoom_pos_ = event->pos();
             broom_->update_position();
+            plot_->layers().recalc();
         }
 
         // broom

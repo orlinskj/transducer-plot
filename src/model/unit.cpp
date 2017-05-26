@@ -3,10 +3,26 @@
 #include <algorithm>
 #include <sstream>
 #include <boost/assert.hpp>
+#include <iostream>
+#include "../error.h"
+
+const Unit& Unit::record(const std::string& name, const std::string& symbol, const std::string& unit)
+{
+    Unit u = Unit(name, symbol, unit);
+    auto result = Unit::register_.insert(std::make_pair(symbol,u));
+    if(!result.second){
+        auto existing = Unit::register_.find(symbol);
+        std::stringstream ss;
+        ss << "Unit with symbol " << symbol << " already registered as '" << (existing->second).name() << "'";
+        throw Error(ss.str());
+    }
+    return (*(result.first)).second;
+}
 
 Unit::Unit(const std::string& name, const std::string& symbol, const std::string& unit) :
     name_(name), symbol_(symbol), unit_(unit)
-{ }
+{
+}
 
 const std::string& Unit::name() const
 {
@@ -30,13 +46,13 @@ std::string Unit::longname() const
 
 Unit Unit::from_symbol(const std::string& s)
 {
-    auto it = std::find_if(defaults_.begin(), defaults_.end(),
-              [s](const Unit& u){ return s == u.symbol(); });
-
-    if (it != defaults_.end())
-        return *it;
-
-    return Unit::None;
+    try{
+        return Unit::register_.at(s);
+    }
+    catch(const std::out_of_range&){
+        std::cout << "Unit with symbol " << s << " not found in register.";
+        return Unit("",s,"");
+    }
 }
 
 bool operator ==(const Unit& a, const Unit& b)
@@ -44,18 +60,20 @@ bool operator ==(const Unit& a, const Unit& b)
     return a.name() == b.name() && a.symbol() == b.symbol() && a.unit() == b.unit();
 }
 
-Unit Unit::None = Unit("","","");
+std::map<std::string, Unit> Unit::register_;
 
-std::vector<Unit> Unit::defaults_ = {
-    Unit("częstotliwość", "f", "Hz"),
-    Unit("moduł impedancji", "|Z|", "Ω"),
-    Unit("kąt fazowy", "theta", "rad"),
-    Unit("część rzeczywista", "Re", "Ω"),
-    Unit("część urojona", "Im", "Ω"),
-    Unit("rezystancja", "R", "Ω"),
-    Unit("pojemność", "C", "F"),
-    Unit("indukcyjność", "L", "H")
-};
+Unit Unit::None     = Unit::record("","","");
+Unit Unit::Voltage  = Unit::record("napięcie", "U", "V");
+Unit Unit::Current  = Unit::record("prąd", "I", "A");
+Unit Unit::Frequency    = Unit::record("częstotliwość", "f", "Hz");
+Unit Unit::PhaseAngle   = Unit::record("kąt fazowy", "theta", "rad");
+Unit Unit::Resistance   = Unit::record("rezystancja", "R", "Ω");
+Unit Unit::Capacity     = Unit::record("pojemność", "C", "F");
+Unit Unit::Inductance   = Unit::record("indukcyjność", "L", "H");
+Unit Unit::Impedance    = Unit::record("moduł impedancji", "|Z|", "Ω");
+Unit Unit::ImpedanceReal    = Unit::record("część rzeczywista", "Re", "Ω");
+Unit Unit::ImpedanceImag    = Unit::record("część urojona", "Im", "Ω");
+Unit Unit::Admitance    = Unit::record("moduł admitancji", "|Y|", "S");
 
 std::vector<std::tuple<std::string, double>> Unit::prefixes_ = {
     std::make_tuple(    "E",   1e18 ),

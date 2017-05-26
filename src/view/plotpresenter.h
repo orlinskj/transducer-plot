@@ -15,6 +15,7 @@ using namespace QtCharts;
 #include "../model/function.h"
 #include "../viewmodel/plotitem.h"
 #include "broom.h"
+#include "admitanceringlayer.h"
 
 // namespace ac{
 

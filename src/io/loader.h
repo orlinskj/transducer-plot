@@ -1,5 +1,5 @@
-#ifndef _FILEREADER_H
-#define _FILEREADER_H
+#ifndef _LOADER_H
+#define _LOADER_H
 
 //#include <iostream>
 #include <fstream>
@@ -11,22 +11,16 @@
 
 #include "../model/transducer.h"
 
-// namespace ac {
-
-using namespace std;
 using namespace boost::filesystem;
 using namespace boost::algorithm;
 
 // Reads data from file into Transducer instance.
-class FileReader{
-
+class Loader{
 public:
-    virtual ~FileReader();
-
-    virtual Transducer* read(const char* filepath, int* status);
+    // load a transducer - returns new instance on heap
+    virtual Transducer* load(const std::string& path);
 };
 
-// } // namespace ac
 
-#endif // _FILEREADER_H
+#endif // _LOADER_H
 

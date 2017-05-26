@@ -12,6 +12,18 @@
 #include "functionitem.h"
 #include "../view/unitaxis.h"
 
+bool PlotItem::isFuncAdmitanceRing(FunctionItem *func)
+{
+    if (!func)
+        return false;
+
+    auto du = func->value()->domain()->unit();
+    auto cu = func->value()->codomain()->unit();
+
+    return (du == Unit::ImpedanceReal && cu == Unit::ImpedanceImag) ||
+           (du == Unit::ImpedanceImag && cu == Unit::ImpedanceReal);
+}
+
 PlotItem::PlotItem() : TreeItemTOwner<Plot>(new Plot), chart_(new QChart)
 {
     //chart_->layout()->setContentsMargins(5,5,5,5);
@@ -38,6 +50,11 @@ PlotItem::~PlotItem()
 QChart* PlotItem::chart() const
 {
     return chart_;
+}
+
+LayerStack& PlotItem::layers()
+{
+    return layers_;
 }
 
 TreeItem* PlotItem::append(TreeItem* item)
@@ -90,7 +107,23 @@ TreeItem* PlotItem::append(TreeItem* item)
     }
     func_item->series()->attachAxis(x_axis);
 
-    return TreeItem::append(item);
+    // from here FunctionItem is valid child of PlotItem
+    auto ret = TreeItem::append(item);
+
+
+    // layer
+    if (isFuncAdmitanceRing(func_item)){
+        layers_.add_layer(new AdmitanceRingLayer(func_item));
+    }
+
+    return ret;
+}
+
+void PlotItem::resize(QSize size)
+{
+    chart_->resize(size);
+    layers_.resize(size);
+
 }
 
 QList<QAbstractSeries*> PlotItem::axis_series(QAbstractAxis* axis)
@@ -170,6 +203,9 @@ void PlotItem::remove(TreeItem *item)
             }
         }
     }
+
+    // remove all layers belonging to a function
+    layers_.remove_func_layers(func_item);
 
     // removeSeries method detaches axes from series!
     chart_->removeSeries(func_item->series());

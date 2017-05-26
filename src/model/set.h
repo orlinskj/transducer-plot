@@ -17,7 +17,11 @@ class Set_t {
 public:
     using value_type = T;
 
+    Set_t(const Unit& u);
     Set_t(std::vector<T>&& values, Unit unit);
+
+    void push(const value_type& value);
+    void calc_extremes();
 
     const std::vector<T>& values() const;
     const Unit& unit() const;

@@ -10,7 +10,9 @@ Transducer::Transducer(const std::string &name,
     source_(source),
     description_(description),
     sets_(sets)
-{ }
+{
+
+}
 
 /*Transducer::Transducer(Transducer &&t) :
     name_(t.name_),
@@ -35,7 +37,7 @@ const Transducer::Description& Transducer::get_description() const
     return description_;
 }
 
-const Set* Transducer::get_set(Unit unit) const
+const Set* Transducer::get_set(const Unit& unit) const
 {
     auto it = std::find_if(sets_.begin(), sets_.end(),
         [unit](const auto& s){

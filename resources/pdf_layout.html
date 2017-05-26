@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Przetwornik {{transducer_name}}</title>
+        <style>
+            /*.bvd-model-cont { float: left; width: 40%; margin: 0 5%; padding: 0; }
+            .bvd-model-cont img { width: 100%; height: auto; }*/
+        </style>
+    </head>
+    <body>
+        <h1>{{transducer_name}}</h1>
+        <h2>Modele zastępcze</h2>
+        <table>
+            <tr>
+                <td align="center"><img class="bvd-model" src="{{bvd_series}}" width=200 height=150></td>
+                <td align="center"><img class="bvd-model" src="{{bvd_parallel}}" width=200 height=150></td>
+            </tr>
+            <tr><td>Model BVD szeregowy</td><td>Model BVD równoległy</td></tr>
+        </table>
+        <br>
+        <br>
+        <table>
+            <thead>
+                <tr><th>Nazwa parametru</th><th>Układ szeregowy</th><th>Układ równoległy</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>częstotliwość rezonansu (<i>f</i>)</td><td>{{param_fs}}</td><td>{{param_fp}}</td></tr>
+                <tr><td>pojemność wejściowa (<i>Co</i>)</td><td>{{param_Cos}}</td><td>{{param_Cop}}</td></tr>
+                <tr><td>rezystancja (<i>R</i>)</td><td>{{param_Rs}}</td><td>{{param_Rp}}</td></tr>
+                <tr><td>indukcyjność (<i>L</i>)</td><td>{{param_Ls}}</td><td>{{param_Lp}}</td></tr>
+                <tr><td>pojemność (<i>C</i>)</td><td>{{param_Cs}}</td><td>{{param_Cp}}</td></tr>
+                <tr><td>dobroć (<i>Q</i>)</td><td>{{param_Qs}}</td><td>{{param_Qp}}</td></tr>
+            </tbody>
+        </table>
+    </body>
+</html>
+
+
+

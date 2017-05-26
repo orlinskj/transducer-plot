@@ -20,6 +20,7 @@
 #include "functiondialog.h"
 #include "transducerdialog.h"
 #include "aboutdialog.h"
+#include "pdfprinter.h"
 //#include "screenshotdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -118,10 +119,7 @@ void MainWindow::slot_file_open()
     if (filename.isEmpty())
         return;
 
-    int status = 1;
-    FileReader file_reader;
-    auto transducer = file_reader.read(filename.toLocal8Bit(),
-                                                   &status);
+    auto transducer = Loader().load(filename.toStdString());
     if (transducer)
     {
         this->add_transducer(transducer);
@@ -139,9 +137,6 @@ void MainWindow::add_transducer(Transducer* transducer)
 
 void MainWindow::seed()
 {
-    FileReader file_reader;
-    //int status;
-
     std::vector<std::string> files;
     #ifdef __linux__
     files.push_back("/home/janek/test/2_P0.txt");
@@ -156,7 +151,7 @@ void MainWindow::seed()
     for(auto file : files)
     {
         int err = 1;
-        auto transducer = file_reader.read(file.c_str(),&err);
+        auto transducer = Loader().load(file);
         if (transducer && !err)
             this->add_transducer(transducer);
     }
@@ -223,6 +218,14 @@ void MainWindow::create_menus()
 
     QObject::connect( ui_->actionHelpAbout, &QAction::triggered,
                       this, [this]{ show_about_dialog(); });
+
+    connect( ui_->actionTransducerToPdf, &QAction::triggered,
+             this, [this](){
+        auto selected = ui_->transducerView->selectionModel()->selectedIndexes().first();
+        if (selected == QModelIndex()) return;
+        auto t = dynamic_cast<TransducerItem*>(selected.data(TreeItemModel::Role).value<TreeItem*>());
+        if (t) PDFPrinter().print(t->value(),"przetwornik.pdf",PDFOptions());
+    });
 }
 
 void MainWindow::show_screenshot_form()

@@ -16,7 +16,6 @@ CONFIG += c++14 console
 QMAKE_CXXFLAGS += -std=c++14 -fext-numeric-literals
 
 SOURCES += \
-    src/io/filereader.cpp \
     src/model/function.cpp \
     src/model/plot.cpp \
     src/model/set.inl \
@@ -49,10 +48,13 @@ SOURCES += \
     src/pathvalidator.cpp \
     src/sizevalidator.cpp \
     src/model/solver.cpp \
-    src/model/transducercalculator.cpp
+    src/io/loader.cpp \
+    src/pdfprinter.cpp \
+    src/error.cpp \
+    src/view/admitanceringlayer.cpp \
+    src/view/layer.cpp
 
 HEADERS += \
-    src/io/filereader.h \
     src/model/function.h \
     src/model/plot.h \
     src/model/set.h \
@@ -84,7 +86,11 @@ HEADERS += \
     src/pathvalidator.h \
     src/sizevalidator.h \
     src/model/solver.h \
-    src/model/transducercalculator.h
+    src/io/loader.h \
+    src/pdfprinter.h \
+    src/error.h \
+    src/view/admitanceringlayer.h \
+    src/view/layer.h
 
 FORMS    += src/mainwindow.ui \
     src/functiondialog.ui \

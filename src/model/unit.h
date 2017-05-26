@@ -6,11 +6,28 @@
 #include <sstream>
 #include <algorithm>
 #include <iomanip>
+#include <map>
 #include <tuple>
 #include <utf8.h>
 
 class Unit {
 public:
+    static Unit from_symbol(const std::string& s);
+    static const Unit& record(const std::string& name, const std::string& symbol, const std::string& unit);
+
+    static Unit None;
+    static Unit Voltage;
+    static Unit Current;
+    static Unit Frequency;
+    static Unit PhaseAngle;
+    static Unit Resistance;
+    static Unit Capacity;
+    static Unit Inductance;
+    static Unit Impedance;
+    static Unit ImpedanceReal;
+    static Unit ImpedanceImag;
+    static Unit Admitance;
+
     Unit() = default;
     Unit(const Unit& u) = default;
     Unit(const std::string& name, const std::string& symbol, const std::string& unit);
@@ -23,15 +40,12 @@ public:
     template<typename T> std::string nice_repr(T,size_t = 6) const;
     template<typename T> T value_from_repr(const std::string& repr) const;
 
-    static Unit from_symbol(const std::string& s);
-    static Unit None;
-
 protected:
     std::string name_;
     std::string symbol_;
     std::string unit_;
 
-    static std::vector<Unit> defaults_;
+    static std::map<std::string, Unit> register_;
     static std::vector<std::tuple<std::string,double>> prefixes_;
 };
 

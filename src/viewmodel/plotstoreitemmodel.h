@@ -27,6 +27,7 @@ signals:
     void plot_removed(PlotItem* plot);
 
 protected:
+    // these pointers are used while updating plot cache
     PlotItem* plot_to_be_changed_;
     PlotItem* plot_to_be_removed_;
     bool  plot_to_be_added_;

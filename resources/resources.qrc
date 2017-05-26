@@ -10,5 +10,6 @@
         <file>glyphicons/glyphicons-444-floppy-disk.png</file>
         <file>icons/bvd-parallel.svg</file>
         <file>icons/bvd-series.svg</file>
+        <file>pdf_layout.html</file>
     </qresource>
 </RCC>

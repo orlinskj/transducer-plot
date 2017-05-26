@@ -12,9 +12,11 @@
 
 // namespace ac{
 
-// Stores all measured set of values
+/**
+ * @brief The Transducer class describes the measured transducer.
+ * It contains all measured and calculated values for transducer.
+ */
 class Transducer {
-
 public:
 
     using Description = std::map<std::string, std::string>;
@@ -27,7 +29,7 @@ public:
     const std::string& get_name() const;
 
     const Description& get_description() const;
-    const Set* get_set(Unit unit) const;
+    const Set* get_set(const Unit &unit) const;
     std::vector<Set>& get_sets();
 
     operator const std::string&() const;
