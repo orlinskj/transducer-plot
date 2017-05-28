@@ -39,14 +39,15 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
 
     // plot store signals
     QObject::connect(store_, &PlotStoreItemModel::plot_changed,
-                     this, [this](PlotItem* p){ Q_UNUSED(p); alter_menu();});
+                     this, [this](PlotItem* p){ Q_UNUSED(p); alter_menu(); alter_axes();});
     QObject::connect(store_, &PlotStoreItemModel::plot_removed,
                      this,
                      [this](PlotItem* p)
     {
         broom_->set_plot(nullptr);
-        if (p->chart() == this->chart())
+        if (p->chart() && p->chart() == chart()){
             scene()->removeItem(p->chart());
+        }
         plot_ = nullptr;
         alter_menu();
     });
@@ -84,6 +85,7 @@ void PlotPresenter::show_plot(PlotItem *plot)
     plot_->layers().resize(size());
 
     alter_menu();
+    alter_axes();
 }
 
 void PlotPresenter::alter_menu()
@@ -143,6 +145,7 @@ void PlotPresenter::resizeEvent(QResizeEvent *event)
     QGraphicsView::resizeEvent(event);
     broom_->update_bounding_rect();
     plot_->layers().resize(event->size());
+    alter_axes();
 }
 
 void PlotPresenter::mousePressEvent(QMouseEvent *event)
@@ -274,6 +277,9 @@ void PlotPresenter::mouseMoveEvent(QMouseEvent *event)
 
 void PlotPresenter::alter_axes()
 {
+    if (!chart() || !chart()->axisX())
+        return;
+
     qreal xmax, xmin, xrange;
 
     auto x_axis = chart()->axisX();

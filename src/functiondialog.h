@@ -12,12 +12,16 @@ namespace Ui {
 class FunctionDialog;
 }
 
+class PlotPresenter;
+
 class FunctionDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit FunctionDialog(QWidget *parent = 0, TreeItemModel* model = nullptr, PlotItem *plot = nullptr);
+    explicit FunctionDialog(QWidget *parent = 0,
+                            TreeItemModel* model = nullptr,
+                            PlotItem *plot = nullptr);
     ~FunctionDialog();
 
 protected slots:

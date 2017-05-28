@@ -1,6 +1,7 @@
 #include "function.h"
 
 #include <sstream>
+#include <functional>
 
 using namespace std;
 
@@ -83,6 +84,40 @@ boost::optional<SetType> Function::value_at(SetType v) const
     }
 
     return boost::optional<SetType>(*m);
+}
+
+std::vector<SetType> Function::values_at(SetType v) const
+{
+    auto dv = domain()->values();
+    auto cv = codomain()->values();
+
+    auto dit = dv.cbegin();
+    auto cit = cv.cbegin();
+
+    std::vector<SetType> res;
+
+    while (dit != dv.cend() - 1){
+        // whether domain is crossing value @v
+        auto dif_left = v - *dit;
+        auto dif_right = v - *(dit+1);
+        if (dif_left * dif_right <= 0){
+            auto da = *dit;
+            auto db = *(dit+1);
+
+            auto ca = *cit;
+            auto cb = *(cit+1);
+
+            auto val = ca + (cb-ca) * std::abs(dif_left/(db-da));
+            res.push_back(val);
+        }
+
+        ++dit;
+        ++cit;
+    }
+
+    std::sort(res.begin(),res.end(),std::greater<SetType>());
+
+    return res;
 }
 
 std::string Function::full_name() const

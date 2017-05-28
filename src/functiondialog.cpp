@@ -5,8 +5,11 @@
 #include "viewmodel/setitem.h"
 #include "viewmodel/transduceritem.h"
 #include "viewmodel/functionitem.h"
+#include "view/plotpresenter.h"
 
-FunctionDialog::FunctionDialog(QWidget *parent, TreeItemModel *model, PlotItem *plot) :
+FunctionDialog::FunctionDialog(QWidget *parent,
+                               TreeItemModel *model,
+                               PlotItem *plot) :
     QDialog(parent),
     ui(new Ui::FunctionDialog)
 {

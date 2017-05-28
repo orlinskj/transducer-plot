@@ -16,7 +16,7 @@ Broom::Broom(QGraphicsItem *parent) :
     enabled_(true)
 {
     setZValue(1000);
-    box_.setWidth(75.0);
+    box_.setWidth(115.0);
     update_bounding_rect();
 }
 
@@ -95,12 +95,27 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    if (!chart())
+        return;
+
+    // getting values
+    std::vector<std::pair<QAbstractSeries*,QString>> vals;
+
+    SetType x_val = chart()->mapToValue(chart()->mapFromScene(x(),0)).x();
+
+    for(auto func : plot_->children())
+    {
+        auto func_item = dynamic_cast<FunctionItem*>(func);
+        auto res = func_item->value()->values_at(x_val);
+
+        for (auto rit=res.cbegin(); rit != res.cend(); ++rit){
+            vals.push_back(std::make_pair(func_item->series(),QString::number(*rit,'g',6)));
+        }
+    }
+
     qreal ymiddle = chart()->mapToScene(chart()->plotArea().center()).y();
     box_.moveTop(ymiddle - box_.height()/2);
-    box_.setHeight(5+3+marker_entry_height_*chart()->series().count());
-
-    if (!plot())
-        return;
+    box_.setHeight(5+3+marker_entry_height_*vals.size());
 
     auto plot_area_scene = chart()->mapToScene(chart()->plotArea()).boundingRect();
     auto clip_rect = this->mapFromScene(plot_area_scene).boundingRect();
@@ -118,6 +133,9 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     QPointF top(0,rect.top());
     painter->drawLine(bottom,top);
 
+    if (vals.empty())
+        return;
+
     // broom rect text field
     painter->setRenderHint(QPainter::Antialiasing, true);
     QPainterPath path;
@@ -128,46 +146,38 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     painter->setFont(marker_font);
 
-    for (auto marker: chart()->legend()->markers())
-    {
-        auto funcs = plot_->children();
-        auto f_it = std::find_if(funcs.begin(), funcs.end(),
-            [marker,this](const TreeItem* t){
-                if(auto f = dynamic_cast<const FunctionItem*>(t))
-                {
-                    //qDebug() << marker->series();
-                    //qDebug() << dynamic_cast<QLineSeries*>(marker->series());
-                    return f->series() == dynamic_cast<QLineSeries*>(marker->series());
-                }
-                return false;
-            });
+    for (const auto& val: vals){
+        auto markers = chart()->legend()->markers();
+        auto marker_it = std::find_if(markers.cbegin(), markers.cend(), [&val](const auto& m){
+            return m->series() == val.first;
+        });
 
-        if (f_it == funcs.end())
-            throw std::runtime_error("function with same series like marker not found");
+        if (marker_it == markers.cend()){
+            qDebug() << "Marker for series not found.";
+            continue;
+        }
 
-        auto func_item = dynamic_cast<FunctionItem*>(*f_it);
-
-        QRectF rect(pos,QSizeF(marker_size_,marker_size_));
-        painter->fillRect(rect,marker->brush());
+        QRectF marker_rect(pos,QSizeF(marker_size_,marker_size_));
+        painter->fillRect(marker_rect,(*marker_it)->brush());
 
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(marker_outline);
-        painter->drawRect(rect);
+        painter->drawRect(marker_rect);
 
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->setPen(marker_value);
 
-        SetType x_val = chart()->mapToValue(chart()->mapFromScene(x(),0)).x();
-        QString text;
-        auto val = func_item->value()->value_at(x_val);
-        if (val)
-            text = QString::number(*val);
-        else
-            text = "-";
+        painter->drawText(pos + QPointF(marker_size_+5,marker_size_), val.second);
 
-        painter->drawText(pos + QPointF(marker_size_+5,marker_size_),text);
+        /*QPointF cch = chart()->mapToPosition(QPointF(x_val, val.second.toDouble()));
+        QPointF c = chart()->mapToScene(cch);
+        qDebug() << c;
+
+        painter->setPen(QPen(Qt::black,2));
+        painter->drawEllipse(c, 5, 5);*/
 
         pos += QPointF(0,marker_entry_height_);
+
     }
 
     painter->setFont(font_bak);

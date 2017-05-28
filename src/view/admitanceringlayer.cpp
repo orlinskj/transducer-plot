@@ -72,12 +72,14 @@ void AdmitanceRingLayer::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
     QPointF sc_middle = plot_->chart()->mapToPosition(middle_);
 
+    qreal llen = 20;
+
     painter->setClipRect(plot_->chart()->plotArea());
     painter->setPen(QPen(Qt::gray, 1, Qt::DashLine));
-    painter->drawLine(sc_middle+QPointF(0,200), sc_middle+QPointF(0,-200));
-    painter->drawLine(sc_middle+QPointF(200,0), sc_middle+QPointF(-200,0));
+    painter->drawLine(sc_middle+QPointF(0,llen), sc_middle+QPointF(0,-llen));
+    painter->drawLine(sc_middle+QPointF(llen,0), sc_middle+QPointF(-llen,0));
 
-    painter->setPen(QPen(Qt::gray, 2, Qt::DashDotLine));
+    painter->setPen(QPen(Qt::magenta, 1, Qt::DashDotLine));
     painter->drawLine(plot_->chart()->mapToPosition(QPointF(0,0)), plot_->chart()->mapToPosition(middle_*2.5));
 }
 
