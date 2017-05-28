@@ -36,6 +36,7 @@ public:
     virtual const std::string& symbol() const;
     virtual const std::string& unit() const;
     virtual std::string longname() const;
+    bool match_unit(const Unit& u) const;
 
     template<typename T> std::string nice_repr(T,size_t = 6) const;
     template<typename T> T value_from_repr(const std::string& repr) const;
@@ -125,8 +126,10 @@ public:
 
     void add_unit(const Unit& u);
     void remove_unit(const Unit& u);
-    bool match_unit(const Unit& u) const;
     bool no_units() const;
+    bool match_unit(const Unit& u) const;
+    bool match_unit(const CombinedUnit& u) const;
+
 private:
     void update();
     std::vector<Unit> units_;

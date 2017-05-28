@@ -16,21 +16,24 @@ class UnitLogValueAxis;
 
 class UnitAxis {
 public:
+    enum class Type {
+        None,
+        Value,
+        LogValue
+    };
+
     UnitAxis() = default;
-    UnitAxis(const CombinedUnit& unit);
+    UnitAxis(const CombinedUnit& unit_);
     UnitAxis(const UnitAxis& axis);
 
-    void add_unit(const Unit& u);
-    void remove_unit(const Unit& u);
-    bool match_unit(const Unit& u);
-    bool no_units() const;
-    std::string name() const;
+    CombinedUnit& unit();
     virtual void update();
+    virtual Type unit_axis_type() const;
 
     static UnitAxis* from_qabstractaxis(QAbstractAxis* axis);
 
 private:
-    CombinedUnit unit;
+    CombinedUnit unit_;
 };
 
 class UnitValueAxis : public QValueAxis, public UnitAxis {
@@ -39,6 +42,7 @@ public:
     UnitValueAxis(const CombinedUnit& unit);
     UnitValueAxis(const UnitAxis& axis);
     void update() override;
+    UnitAxis::Type unit_axis_type() const override;
 };
 
 class UnitLogValueAxis : public QLogValueAxis, public UnitAxis {
@@ -47,6 +51,7 @@ public:
     UnitLogValueAxis(const CombinedUnit& unit);
     UnitLogValueAxis(const UnitAxis& axis);
     void update() override;
+    UnitAxis::Type unit_axis_type() const override;
 };
 
 #endif // UNITAXIS_H

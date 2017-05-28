@@ -1,48 +1,31 @@
 #include "unitaxis.h"
 
 UnitAxis::UnitAxis(const CombinedUnit& unit) :
-    unit(unit)
+    unit_(unit)
 {
     update();
 }
 
 UnitAxis::UnitAxis(const UnitAxis& axis) :
-    unit(axis.unit)
+    unit_(axis.unit_)
 {
     update();
-}
-
-std::string UnitAxis::name() const
-{
-    return unit.longname();
 }
 
 void UnitAxis::update()
-{ }
-
-void UnitAxis::add_unit(const Unit &u)
 {
-    unit.add_unit(u);
-    update();
 }
 
-void UnitAxis::remove_unit(const Unit &u)
+CombinedUnit& UnitAxis::unit()
 {
-    unit.remove_unit(u);
-    update();
+    return unit_;
 }
 
-bool UnitAxis::match_unit(const Unit &u)
+UnitAxis::Type UnitAxis::unit_axis_type() const
 {
-    if (unit.unit() == u.unit())
-        return true;
-    return false;
+    return UnitAxis::Type::None;
 }
 
-bool UnitAxis::no_units() const
-{
-    return unit.no_units();
-}
 
 UnitValueAxis::UnitValueAxis(const CombinedUnit &unit) :
     UnitAxis(unit)
@@ -58,7 +41,12 @@ UnitValueAxis::UnitValueAxis(const UnitAxis &axis) :
 
 void UnitValueAxis::update()
 {
-    this->setTitleText(UnitAxis::name().c_str());
+    this->setTitleText(unit().longname().c_str());
+}
+
+UnitAxis::Type UnitValueAxis::unit_axis_type() const
+{
+    return UnitAxis::Type::Value;
 }
 
 UnitLogValueAxis::UnitLogValueAxis(const CombinedUnit &unit) :
@@ -75,7 +63,12 @@ UnitLogValueAxis::UnitLogValueAxis(const UnitAxis &axis) :
 
 void UnitLogValueAxis::update()
 {
-    this->setTitleText(UnitAxis::name().c_str());
+    this->setTitleText(unit().longname().c_str());
+}
+
+UnitAxis::Type UnitLogValueAxis::unit_axis_type() const
+{
+    return UnitAxis::Type::LogValue;
 }
 
 UnitAxis* UnitAxis::from_qabstractaxis(QAbstractAxis* axis)

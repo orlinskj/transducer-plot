@@ -55,6 +55,11 @@ Unit Unit::from_symbol(const std::string& s)
     }
 }
 
+bool Unit::match_unit(const Unit& u) const
+{
+    return unit_ == u.unit_;
+}
+
 bool operator ==(const Unit& a, const Unit& b)
 {
     return a.name() == b.name() && a.symbol() == b.symbol() && a.unit() == b.unit();
@@ -128,12 +133,20 @@ void CombinedUnit::remove_unit(const Unit &u)
     update();
 }
 
+bool CombinedUnit::match_unit(const CombinedUnit &u) const
+{
+    if (units_.empty() || u.units_.empty())
+        return false;
+
+    return units_.front().match_unit(u.units_.front());
+}
+
 bool CombinedUnit::match_unit(const Unit &u) const
 {
     if (units_.empty())
         return true;
 
-    return units_.front().unit() == u.unit();
+    return units_.front().match_unit(u);
 }
 
 bool CombinedUnit::no_units() const

@@ -46,7 +46,7 @@ void AdmitanceRingLayer::recalc()
         qreal curr_dist = std::abs(distance(normal,z,p));
         qreal curr_middle_dist = distance(middle.normalized(),middle,p);
 
-        qDebug() << "p: " << p << " curr_dist: " << curr_dist;
+        //qDebug() << "p: " << p << " curr_dist: " << curr_dist;
 
         //bool different_side = (curr_middle_dist * origin_middle_dist) <= 0;
 
@@ -59,7 +59,7 @@ void AdmitanceRingLayer::recalc()
     }
 
     f0pos_ = closest;
-    qDebug() << "calced position: " << f0pos_;
+    //qDebug() << "calced position: " << f0pos_;
 }
 
 void AdmitanceRingLayer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -68,7 +68,7 @@ void AdmitanceRingLayer::paint(QPainter *painter, const QStyleOptionGraphicsItem
     QPointF end = plot_->chart()->mapToScene(f0pos_);
 
     painter->drawLine(start, end);
-    qDebug() << "painting from : to    " << start << " : " << end;
+    //qDebug() << "painting from : to    " << start << " : " << end;
 
     QPointF sc_middle = plot_->chart()->mapToPosition(middle_);
 

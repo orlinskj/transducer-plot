@@ -71,7 +71,7 @@ TreeItem* PlotItem::append(TreeItem* item)
     auto axes = chart_->axes(Qt::Vertical);
     auto axis_it = std::find_if(axes.cbegin(), axes.cend(), [func_item](auto axis){
         auto unit_axis = UnitAxis::from_qabstractaxis(axis);
-        if (unit_axis->match_unit(func_item->value()->codomain()->unit()))
+        if (unit_axis->unit().match_unit(func_item->value()->codomain()->unit()))
             return true;
         return false;
     });
@@ -85,10 +85,10 @@ TreeItem* PlotItem::append(TreeItem* item)
             unit_axis = dynamic_cast<UnitLogValueAxis*>(axis);
 
         if (unit_axis)
-            unit_axis->add_unit(func_item->value()->codomain()->unit());
+            unit_axis->unit().add_unit(func_item->value()->codomain()->unit());
         else
             throw std::runtime_error("Chart axis is neither UnitValueAxis nor UnitLogValueAxis");
-        axis->setTitleText(unit_axis->name().c_str());
+        axis->setTitleText(unit_axis->unit().name().c_str());
 
     }
     else
@@ -168,8 +168,8 @@ void PlotItem::remove(TreeItem *item)
 
         if (axis->orientation() == Qt::Vertical)
         {
-            unit_axis->remove_unit(func_item->value()->codomain()->unit());
-            if (unit_axis->no_units())
+            unit_axis->unit().remove_unit(func_item->value()->codomain()->unit());
+            if (unit_axis->unit().no_units())
             {
                 chart_->removeAxis(axis);
                 delete axis;

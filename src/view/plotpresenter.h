@@ -42,6 +42,7 @@ public:
     void keyPressEvent(QKeyEvent *event) override;
 
     void alter_menu();
+    void alter_axes();
     QImage screenshot(int width, int height);
 
 public slots:
@@ -67,6 +68,9 @@ protected:
     // broom control
     bool broom_click_;
     QPointF broom_click_pos_;
+
+    // options
+    //bool same_scale_on_axes_;
 };
 
 // } // namespace ac

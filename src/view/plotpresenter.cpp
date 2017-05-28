@@ -14,6 +14,7 @@
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
 
+#include "../view/unitaxis.h"
 #include "../viewmodel/plotstoreitemmodel.h"
 
 PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
@@ -252,6 +253,7 @@ void PlotPresenter::mouseMoveEvent(QMouseEvent *event)
             double k = 100.0;
             auto delta = event->pos() - zoom_pos_;
             chart()->zoom(k/(k+delta.y()));
+            alter_axes();
             zoom_pos_ = event->pos();
             broom_->update_position();
             plot_->layers().recalc();
@@ -268,6 +270,53 @@ void PlotPresenter::mouseMoveEvent(QMouseEvent *event)
     }
 
     QGraphicsView::mouseMoveEvent(event);
+}
+
+void PlotPresenter::alter_axes()
+{
+    qreal xmax, xmin, xrange;
+
+    auto x_axis = chart()->axisX();
+    auto x_unit_axis = UnitAxis::from_qabstractaxis(x_axis);
+
+    if (x_unit_axis->unit_axis_type() == UnitAxis::Type::Value){
+        QValueAxis* value_axis = dynamic_cast<UnitValueAxis*>(x_unit_axis);
+        xmax = value_axis->max();
+        xmin = value_axis->min();
+    }
+    else{
+        QLogValueAxis* value_axis = dynamic_cast<UnitLogValueAxis*>(x_unit_axis);
+        xmax = value_axis->max();
+        xmin = value_axis->min();
+    }
+
+    for(auto y_axis : chart()->axes(Qt::Vertical))
+    {
+        auto y_unit_axis = UnitAxis::from_qabstractaxis(y_axis);
+        if (y_unit_axis->unit().match_unit(x_unit_axis->unit())){
+            // getting Y range
+            if (y_unit_axis->unit_axis_type() == UnitAxis::Type::Value){
+                QValueAxis* value_axis = dynamic_cast<UnitValueAxis*>(y_unit_axis);
+                xrange = (value_axis->max()-value_axis->min()) * chart()->plotArea().size().width() / chart()->plotArea().size().height();
+            }
+            else{
+                QLogValueAxis* value_axis = dynamic_cast<UnitLogValueAxis*>(y_unit_axis);
+                xrange = (value_axis->max()-value_axis->min()) * chart()->plotArea().size().width() / chart()->plotArea().size().height();
+            }
+
+            // setting calculated range
+            if (x_unit_axis->unit_axis_type() == UnitAxis::Type::Value){
+                QValueAxis* value_axis = dynamic_cast<UnitValueAxis*>(x_unit_axis);
+                value_axis->setRange(xmin,xmin+xrange);
+            }
+            else{
+                QLogValueAxis* value_axis = dynamic_cast<UnitLogValueAxis*>(x_unit_axis);
+                value_axis->setRange(xmin,xmin+xrange);
+            }
+
+            return;
+        }
+    }
 }
 
 void PlotPresenter::context_menu(const QPoint& point)
