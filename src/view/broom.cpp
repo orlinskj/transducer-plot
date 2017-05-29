@@ -113,10 +113,6 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         }
     }
 
-    qreal ymiddle = chart()->mapToScene(chart()->plotArea().center()).y();
-    box_.moveTop(ymiddle - box_.height()/2);
-    box_.setHeight(5+3+marker_entry_height_*vals.size());
-
     auto plot_area_scene = chart()->mapToScene(chart()->plotArea()).boundingRect();
     auto clip_rect = this->mapFromScene(plot_area_scene).boundingRect();
     painter->setClipRect(clip_rect);
@@ -137,6 +133,11 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         return;
 
     // broom rect text field
+    int big_step = 3;
+    qreal ymiddle = chart()->mapToScene(chart()->plotArea().center()).y();
+    box_.moveTop(ymiddle - box_.height()/2);
+    box_.setHeight(5+3+marker_entry_height_*(vals.size()+1)+big_step);
+
     painter->setRenderHint(QPainter::Antialiasing, true);
     QPainterPath path;
     path.addRoundedRect(box_,3,3);
@@ -145,6 +146,16 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     QPointF pos = box_.topLeft() + QPointF(5,7);
 
     painter->setFont(marker_font);
+
+    // drawing domain value
+    painter->setPen(marker_value);
+
+    painter->drawText(pos + QPointF(marker_size_+5,marker_size_), QString::number(x_val));
+    painter->setPen(QColor(0,0,0,120));
+    painter->setRenderHint(QPainter::Antialiasing, false);
+    painter->drawLine(pos + QPointF(0,marker_size_+big_step+2), pos + QPointF(box_.width()-10,marker_size_+big_step+2));
+    pos += QPointF(0,marker_entry_height_+big_step);
+
 
     for (const auto& val: vals){
         auto markers = chart()->legend()->markers();
@@ -168,13 +179,6 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         painter->setPen(marker_value);
 
         painter->drawText(pos + QPointF(marker_size_+5,marker_size_), val.second);
-
-        /*QPointF cch = chart()->mapToPosition(QPointF(x_val, val.second.toDouble()));
-        QPointF c = chart()->mapToScene(cch);
-        qDebug() << c;
-
-        painter->setPen(QPen(Qt::black,2));
-        painter->drawEllipse(c, 5, 5);*/
 
         pos += QPointF(0,marker_entry_height_);
 

@@ -128,7 +128,7 @@
        </widget>
        <widget class="QWidget" name="tabModel">
         <attribute name="title">
-         <string>Model zastępczy</string>
+         <string>Modele zastępcze</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <property name="leftMargin">
@@ -158,6 +158,16 @@
                  <height>16777215</height>
                 </size>
                </property>
+               <item>
+                <property name="text">
+                 <string>Szeregowy</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Równoległy</string>
+                </property>
+               </item>
               </widget>
              </item>
              <item>
@@ -475,18 +485,18 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit"/>
+                  <widget class="QLineEdit" name="pathLineEdit"/>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_2">
+                  <widget class="QPushButton" name="pathPushButton">
                    <property name="maximumSize">
                     <size>
-                     <width>20</width>
+                     <width>25</width>
                      <height>16777215</height>
                     </size>
                    </property>
                    <property name="text">
-                    <string>...</string>
+                    <string>…</string>
                    </property>
                   </widget>
                  </item>

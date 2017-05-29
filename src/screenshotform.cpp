@@ -2,6 +2,7 @@
 #include "ui_screenshotform.h"
 
 #include "view/plotpresenter.h"
+#include "pathfinder.h"
 #include "sizevalidator.h"
 #include <regex>
 #include <QComboBox>
@@ -35,6 +36,9 @@ ScreenshotForm::ScreenshotForm(QWidget *parent, PlotPresenter* presenter) :
 
     connect(ui->comboBoxSize, &QComboBox::currentTextChanged,
             this, &ScreenshotForm::enable_save_button);
+
+    connect(ui->pathPushButton, &QPushButton::clicked,
+            this, [this](){ PathFinder::show(ui->pathLineEdit, tr("Obrazy (*.png)")); });
 }
 
 ScreenshotForm::~ScreenshotForm()
@@ -50,7 +54,7 @@ void ScreenshotForm::save()
     int height = re.cap(2).toInt();
 
     QImage img = presenter_->screenshot(width,height);
-    img.save(ui->lineEditPath->text(),nullptr,-1);
+    img.save(ui->pathLineEdit->text(),nullptr,-1);
     this->hide();
 }
 

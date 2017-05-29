@@ -34,8 +34,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui_->setupUi(this);
 
     setup_view();
-    seed();
-    create_menus();
     init_signals();
 
     // emitting resize event
@@ -80,25 +78,56 @@ void MainWindow::setup_view()
 
 void MainWindow::init_signals()
 {
-    // menus
-    QObject::connect(ui_->actionFileOpen, SIGNAL(triggered()),
-                     this, SLOT(slot_file_open()) );
-    QObject::connect(ui_->plotView, SIGNAL(customContextMenuRequested(const QPoint &)),
-                     this, SLOT(slot_on_tree_view_context_menu(const QPoint &)));
     // buttons
-    QObject::connect(ui_->plotAddButton, SIGNAL(clicked()),
-                     this, SLOT(slot_add_new_plot()));
-    QObject::connect(ui_->plotRemoveButton, SIGNAL(clicked()),
-                     this, SLOT(slot_remove_plot()));
-    QObject::connect(ui_->functionAddButton, SIGNAL(clicked()),
-                     this, SLOT(slot_add_function()));
-    QObject::connect(ui_->functionRemoveButton, SIGNAL(clicked()),
-                     this, SLOT(slot_remove_function()));
-    QObject::connect(ui_->transducerAddButton, &QPushButton::clicked,
-                     this, [this]{ slot_file_open(); });
+    connect(ui_->plotAddButton, &QPushButton::clicked,
+            this, &MainWindow::add_plot);
+
+    connect(ui_->plotRemoveButton, &QPushButton::clicked,
+            this, &MainWindow::remove_plot);
+
+    connect(ui_->functionAddButton, &QPushButton::clicked,
+            this, &MainWindow::add_function);
+
+    connect(ui_->functionRemoveButton, &QPushButton::clicked,
+            this, &MainWindow::remove_function);
+
+    connect(ui_->transducerAddButton, &QPushButton::clicked,
+            this, &MainWindow::add_transducer);
+
+    connect(ui_->transducerRemoveButton, &QPushButton::clicked,
+            this, &MainWindow::remove_transducer);
+
+    // context menus
+    connect(ui_->plotView, &QGraphicsView::customContextMenuRequested,
+            this, &MainWindow::plot_view_menu);
+
+    QAction* action_show_plot = plot_menu_.addAction(tr("Pokaż wykres"));
+    QAction* action_remove_plot = plot_menu_.addAction(tr("Usuń"));
+
+    connect(action_show_plot, &QAction::triggered,
+            this, &MainWindow::show_plot);
+
+    connect(action_remove_plot, &QAction::triggered,
+            this, &MainWindow::remove_plot);
+
+    // menu bar
+    connect(ui_->actionTransducerToPdf, &QAction::triggered,
+            this, [this](){ show_transducer_dialog(2); });
+
+    connect( ui_->actionPlotScreenshot, &QAction::triggered,
+             this, [this](){ screenshot_form_->show(); });
+
+    connect( ui_->actionTransducerTableData, &QAction::triggered,
+             this, [this](){ show_transducer_dialog(0); });
+
+    connect( ui_->actionTransducerModels, &QAction::triggered,
+             this, [this](){ show_transducer_dialog(1); });
+
+    connect( ui_->actionHelpAbout, &QAction::triggered,
+             this, [this]{ show_about_dialog(); });
 }
 
-void MainWindow::slot_on_tree_view_context_menu(const QPoint& point)
+void MainWindow::plot_view_menu(const QPoint& point)
 {
     QModelIndex index = ui_->plotView->indexAt(point);
 
@@ -110,11 +139,11 @@ void MainWindow::slot_on_tree_view_context_menu(const QPoint& point)
 }
 
 
-void MainWindow::slot_file_open()
+void MainWindow::add_transducer()
 {
     QString filename = QFileDialog::getOpenFileName(
                 this, tr("Otwórz plik z danymi"),
-                ".", tr("Pliki tekstowe (*.txt);;Wszystkie pliki (*.*)"));
+                ".", tr("Pliki przetwornika (*.txt *.csv);;Wszystkie pliki (*.*)"));
 
     if (filename.isEmpty())
         return;
@@ -122,20 +151,42 @@ void MainWindow::slot_file_open()
     auto transducer = Loader().load(filename.toStdString());
     if (transducer)
     {
-        this->add_transducer(transducer);
-        ui_->statusBar->showMessage(tr("Wczytano plik ")+filename);
+        transducer_model_.append(new TransducerItem(transducer));
+        ui_->statusBar->showMessage(tr("Wczytano plik")+" "+filename);
     }
     else
-        ui_->statusBar->showMessage(tr("Nie udało się wczytać pliku ")+filename);
+        ui_->statusBar->showMessage(tr("Nie udało się wczytać pliku ")+" "+filename);
 }
 
-void MainWindow::add_transducer(Transducer* transducer)
+void MainWindow::remove_transducer()
 {
-    auto t = new TransducerItem(transducer);
-    transducer_model_.append(t);
+    auto selected = ui_->transducerView->selectionModel()->selectedIndexes();
+    if (selected.count() > 0){
+        auto index = selected.first();
+        auto tree_item = transducer_model_.data(index, TreeItem::Role).value<TreeItem*>();
+        auto transducer_item = dynamic_cast<TransducerItem*>(tree_item);
+
+        // removing all functions with this transducer
+        for(const auto& plot : static_cast<TreeItem&>(plot_store_).children()){
+            for(const auto& func : plot->children()){
+                auto func_item = dynamic_cast<FunctionItem*>(func);
+                if (func_item->value()->transducer() == transducer_item->value()){
+                    plot->remove(func_item);
+                }
+            }
+
+            if (plot->children_count() == 0){
+                static_cast<TreeItem&>(plot_store_).remove(plot);
+            }
+        }
+
+        transducer_model_.remove(transducer_item);
+        ui_->statusBar->showMessage(tr("Przetwornik usunięty"));
+    }
+
 }
 
-void MainWindow::seed()
+/*void MainWindow::seed()
 {
     std::vector<std::string> files;
     #ifdef __linux__
@@ -156,7 +207,7 @@ void MainWindow::seed()
             this->add_transducer(transducer);
     }
 
-    /* some plot, with some function ... */
+    // some plot, with some function ...
     this->slot_add_new_plot();
 
     auto plot = dynamic_cast<PlotItem*>(plot_store_.child(0));
@@ -168,9 +219,9 @@ void MainWindow::seed()
         plot->append(new FunctionItem(func));
     }
     plot_presenter_->show_plot(plot);
-}
+}*/
 
-void MainWindow::slot_add_new_plot()
+void MainWindow::add_plot()
 {
     plot_store_.append(new PlotItem);
 }
@@ -184,7 +235,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     screenshot_form_->resize(frame_width-12,screenshot_height);
 }
 
-void MainWindow::slot_remove_plot()
+void MainWindow::remove_plot()
 {
     auto selection = ui_->plotView->selectionModel();
     auto selected = selection->selectedIndexes();
@@ -195,54 +246,6 @@ void MainWindow::slot_remove_plot()
         if (auto plot = dynamic_cast<PlotItem*>(item))
             plot->kill();
     }
-}
-
-void MainWindow::create_menus()
-{
-    QAction* show_plot = plot_menu_.addAction(tr("Pokaż wykres"));
-    QAction* remove_plot = plot_menu_.addAction(tr("Usuń"));
-
-    QObject::connect(show_plot,SIGNAL(triggered()),
-                     this,SLOT(slot_show_plot()));
-    QObject::connect(remove_plot,SIGNAL(triggered()),
-                     this, SLOT(slot_remove_plot()));
-
-    QObject::connect( ui_->actionPlotScreenshot, &QAction::triggered,
-                      this, [this](){ show_screenshot_form(); });
-
-    QObject::connect( ui_->actionTransducerTableData, &QAction::triggered,
-                      this, [this](){ show_transducer_dialog(0); });
-
-    QObject::connect( ui_->actionTransducerModels, &QAction::triggered,
-                      this, [this](){ show_transducer_dialog(1); });
-
-    QObject::connect( ui_->actionHelpAbout, &QAction::triggered,
-                      this, [this]{ show_about_dialog(); });
-
-    connect( ui_->actionTransducerToPdf, &QAction::triggered,
-             this, [this](){
-        auto selected = ui_->transducerView->selectionModel()->selectedIndexes().first();
-        if (selected == QModelIndex()) return;
-        auto t = dynamic_cast<TransducerItem*>(selected.data(TreeItemModel::Role).value<TreeItem*>());
-        if (t) PDFPrinter().print(t->value(),"przetwornik.pdf",PDFOptions());
-    });
-}
-
-void MainWindow::show_screenshot_form()
-{
-    /*QImage screenshot = plot_presenter_->screenshot(1024,768);
-
-    if (!screenshot_dialog_)
-    {
-        screenshot_dialog_ = new ScreenshotDialog(this,screenshot);
-        QObject::connect(screenshot_dialog_, &QDialog::destroyed,
-                         this, [this](){ screenshot_dialog_ = nullptr; });
-    }
-    else
-        screenshot_dialog_->set_image(screenshot);
-    screenshot_dialog_->show();*/
-    screenshot_form_->show();
-
 }
 
 void MainWindow::show_transducer_dialog(int tab)
@@ -270,7 +273,7 @@ void MainWindow::show_about_dialog()
     about_dialog_->show();
 }
 
-void MainWindow::slot_add_function()
+void MainWindow::add_function()
 {
     auto selection = ui_->plotView->selectionModel();
     auto selected = selection->selectedIndexes();
@@ -294,7 +297,7 @@ void MainWindow::slot_add_function()
     }
 }
 
-void MainWindow::slot_remove_function()
+void MainWindow::remove_function()
 {
     auto selection = ui_->plotView->selectionModel();
     auto selected = selection->selectedIndexes();
@@ -307,7 +310,7 @@ void MainWindow::slot_remove_function()
     }
 }
 
-void MainWindow::slot_show_plot()
+void MainWindow::show_plot()
 {
     auto selection = ui_->plotView->selectionModel();
 

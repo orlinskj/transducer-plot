@@ -24,14 +24,14 @@ public:
     explicit TransducerDialog(QWidget *parent = 0, TreeItemModel* transducer_model = nullptr);
     ~TransducerDialog();
 
-    void set_transducer(TransducerItem* t);
+    void transducer_changed(TransducerItem* t);
     void place_pixmap_labels(const std::vector<Label>& labels);
 
 public slots:
     void export_as();
     void set_tab(int tab);
-    void select_model(const QString& option);
-    void change_export_type(const QString& option);
+    void model_type_changed(int index);
+    void export_type_changed(int index);
     void recalc_model();
     void fixed_capacity_checkbox(int state);
 

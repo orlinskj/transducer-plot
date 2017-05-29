@@ -40,6 +40,7 @@ public:
     void resizeEvent(QResizeEvent *event) override;
 
     void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
 
     void alter_menu();
     void alter_axes();
@@ -58,12 +59,11 @@ protected:
     // dragging chart
     bool drag_enabled_;
     QPointF drag_pos_;
-    Qt::MouseButton drag_button_;
 
     // zooming chart
     bool zoom_enabled_;
     QPointF zoom_pos_;
-    Qt::MouseButton zoom_button_;
+    bool zoom_horizontal_;
 
     // broom control
     bool broom_click_;

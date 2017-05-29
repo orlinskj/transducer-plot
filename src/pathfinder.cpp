@@ -2,25 +2,40 @@
 
 #include <QFileDialog>
 #include <QComboBox>
+#include <QLineEdit>
+#include <QHBoxLayout>
+#include <QDebug>
 
-PathFinder::PathFinder(QLineEdit *line, bool combo) : line_(line), combo_(combo)
+void PathFinder::show(QWidget *widget, QString filter)
 {
+    auto lineedit = dynamic_cast<QLineEdit*>(widget);
+    auto combobox = dynamic_cast<QComboBox*>(widget);
 
-}
+    QString def_path;
 
-void PathFinder::mousePressEvent(QMouseEvent *event)
-{
-    QString path = QFileDialog::getSaveFileName(this,
-                                tr("Find Files"), QDir::currentPath());
+    if (lineedit)
+        def_path = lineedit->text();
+    else if(combobox)
+        def_path = combobox->currentText();
 
-    if (combo_){
+    qDebug() << QFileInfo(def_path).absoluteFilePath();
+
+    QString path = QFileDialog::getSaveFileName(
+                widget,
+                tr("Wskaż plik"),
+                QFileInfo(def_path).absoluteFilePath(),
+                filter);
+
+    if (lineedit){
+        if (!path.isEmpty())
+            lineedit->setText(path);
+    }
+    else if(combobox){
         if (!path.isEmpty()) {
-            auto combobox = dynamic_cast<QComboBox*>(widget_);
-            if (directoryComboBox->findText(directory) == -1)
-                directoryComboBox->addItem(directory);
-            directoryComboBox->setCurrentIndex(directoryComboBox->findText(directory));
+            if (combobox->findText(path) == -1){
+                combobox->addItem(path);
+            }
+            combobox->setCurrentIndex(combobox->findText(path));
         }
     }
-    line_->setText(path);
-    QToolButton::mousePressEvent(event);
 }

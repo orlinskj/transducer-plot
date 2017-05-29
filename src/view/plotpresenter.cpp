@@ -22,7 +22,9 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
     plot_(nullptr),
     store_(store),
     broom_(new Broom),
-    drag_enabled_(false)
+    drag_enabled_(false),
+    zoom_enabled_(false),
+    zoom_horizontal_(false)
 {
     broom_->set_visibility(false);
     scene()->addItem(broom_);
@@ -147,7 +149,8 @@ void PlotPresenter::resizeEvent(QResizeEvent *event)
     }
     QGraphicsView::resizeEvent(event);
     broom_->update_bounding_rect();
-    plot_->layers().resize(event->size());
+    if (plot_)
+        plot_->layers().resize(event->size());
     alter_axes();
 }
 
@@ -161,21 +164,15 @@ void PlotPresenter::mousePressEvent(QMouseEvent *event)
 
         if (event->buttons() & Qt::LeftButton)
         {
-            if (event->modifiers() & Qt::ControlModifier)
+            if (event->modifiers() & Qt::ControlModifier || zoom_horizontal_)
             {
                 zoom_enabled_ = true;
-                zoom_button_ = Qt::LeftButton;
                 broom_->setVisible(false);
             }
-            else if(event->modifiers() & Qt::ShiftModifier)
-            {
-                //zoom_enabled_ = true;
-                //zoom_button_ = Qt::LeftButton;
-            }
+
             else
             {
                 drag_enabled_ = true;
-                drag_button_ = Qt::LeftButton;
                 broom_click_ = true;
                 broom_->setVisible(false);
             }
@@ -187,6 +184,9 @@ void PlotPresenter::keyPressEvent(QKeyEvent *event)
 {
     switch(event->key())
     {
+    case Qt::Key_X:
+        zoom_horizontal_ = true;
+        break;
     case Qt::Key_Left:
         chart()->scroll(2,0);
         break;
@@ -216,14 +216,23 @@ void PlotPresenter::keyPressEvent(QKeyEvent *event)
     broom_->update_position();
 }
 
+void PlotPresenter::keyReleaseEvent(QKeyEvent *event)
+{
+    switch(event->key()){
+    case Qt::Key_X:
+        zoom_horizontal_ = false;
+        break;
+    }
+}
+
 void PlotPresenter::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (!(event->buttons() & drag_button_))
+    if (!(event->buttons() & Qt::LeftButton))
     {
         drag_enabled_ = false;
         broom_->setVisible(true);
     }
-    if (!(event->buttons() & zoom_button_))
+    if (!(event->buttons() & Qt::LeftButton))
     {
         zoom_enabled_ = false;
         broom_->setVisible(true);
@@ -256,13 +265,37 @@ void PlotPresenter::mouseMoveEvent(QMouseEvent *event)
         // zooming
         else if (zoom_enabled_)
         {
-            double k = 100.0;
-            auto delta = event->pos() - zoom_pos_;
-            chart()->zoom(k/(k+delta.y()));
+            double k = 200.0;
+            auto delta = QVector2D(event->pos() - zoom_pos_).y();
+            double factor = k / (k+delta);
+
+            if (zoom_horizontal_){
+                // getting range
+                auto value_axis = dynamic_cast<QValueAxis*>(chart()->axisX());
+
+                if (value_axis){
+                    auto range = (value_axis->max() - value_axis->min());
+                    if (delta != 0){
+                        range = range * factor;
+                    }
+                    qDebug() << "range: " << range << "delta:" << delta;
+                    auto diff = range - (value_axis->max() - value_axis->min());
+                    value_axis->setMin(value_axis->min()+diff/2.0);
+                    value_axis->setMax(value_axis->max()-diff/2.0);
+                }
+                else{
+                    qDebug() << "any type other than QValueAxis is not supported for X axis";
+                }
+            }
+            else{
+                chart()->zoom(factor);
+            }
+
             alter_axes();
             zoom_pos_ = event->pos();
             broom_->update_position();
             plot_->layers().recalc();
+
         }
 
         // broom
@@ -283,19 +316,19 @@ void PlotPresenter::alter_axes()
     if (!chart() || !chart()->axisX())
         return;
 
-    qreal xmax, xmin, xrange;
+    qreal xmin, xrange;
 
     auto x_axis = chart()->axisX();
     auto x_unit_axis = UnitAxis::from_qabstractaxis(x_axis);
 
     if (x_unit_axis->unit_axis_type() == UnitAxis::Type::Value){
         QValueAxis* value_axis = dynamic_cast<UnitValueAxis*>(x_unit_axis);
-        xmax = value_axis->max();
+        //xmax = value_axis->max();
         xmin = value_axis->min();
     }
     else{
         QLogValueAxis* value_axis = dynamic_cast<UnitLogValueAxis*>(x_unit_axis);
-        xmax = value_axis->max();
+        //xmax = value_axis->max();
         xmin = value_axis->min();
     }
 

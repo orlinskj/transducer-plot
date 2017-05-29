@@ -14,6 +14,7 @@
 #include <tuple>
 #include <boost/filesystem.hpp>
 #include "model/solver.h"
+#include "pathfinder.h"
 
 std::vector<TransducerDialog::Label> TransducerDialog::labels_series = {
     TransducerDialog::Label("R",QPointF(245,220),true),
@@ -38,54 +39,50 @@ TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_mo
 {
     ui->setupUi(this);
     setWindowFlags(Qt::Window);
-    // getting first transducer
-    if (transducer_model_->rowCount(QModelIndex()))
-    {
-        auto transducer = dynamic_cast<TransducerItem*>(transducer_model_->child(0));
-        set_transducer(transducer);
-    }
-
-    ui->tableView->verticalHeader()->setDefaultSectionSize(18);
-
-    ui->transducerComboBox->setModel(transducer_model);
-    connect(ui->transducerComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            this, [this](int index){
-        set_transducer(dynamic_cast<TransducerItem*>(transducer_model_->child(index)));
-    });
-
-    connect(ui->tableWidgetCop, &QTableWidget::cellChanged,
-            this, [this](int row, int col){
-        this->recalc_model();
-    });
-
-    connect(ui->fixedCopCheckBox, SIGNAL(stateChanged(int)),
-            this, SLOT(fixed_capacity_checkbox(int)));
 
     ui->graphicsViewModel->setScene(new QGraphicsScene);
     ui->graphicsViewModel->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsViewModel->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    /*connect(ui->saveButton, &QPushButton::clicked,
-            this, &TransducerDialog::export_as);*/
-
-    connect(ui->comboBoxModelType, &QComboBox::currentTextChanged,
-            this, &TransducerDialog::select_model);
-
-    QList<QStandardItem*> items = {
-        new QStandardItem(tr("Szeregowy")),
-        new QStandardItem(tr("Równoległy"))
-    };
-    type_model_.appendColumn(items);
+    ui->transducerComboBox->setModel(transducer_model);
     ui->transducerComboBox->setItemDelegate(new TransducerDelegate);
-    ui->comboBoxModelType->setModel(&type_model_);
+
+    ui->tableView->verticalHeader()->setDefaultSectionSize(18);
 
     ui->tableViewModelParams->verticalHeader()->setDefaultSectionSize(20);
     ui->tableViewModelParams->setModel(&table_params_model_);
     ui->tableViewModelParams->horizontalHeader()->hide();
 
+    // transducer list
+    connect(ui->transducerComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this, [this](int index){ transducer_changed(dynamic_cast<TransducerItem*>(transducer_model_->child(index))); });
+
+    // model parameters
+    connect(ui->tableWidgetCop, &QTableWidget::cellChanged,
+            this, [this](int row, int col){ Q_UNUSED(row); Q_UNUSED(col); this->recalc_model(); });
+
+    connect(ui->fixedCopCheckBox, SIGNAL(stateChanged(int)),
+            this, SLOT(fixed_capacity_checkbox(int)));
+
+    // model type
+    connect(ui->comboBoxModelType, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this, &TransducerDialog::model_type_changed);
+
     // export behaviour
-    connect(ui->exportTypecomboBox, &QComboBox::currentTextChanged,
-            this, &TransducerDialog::change_export_type);
+    connect(ui->exportTypecomboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this, &TransducerDialog::export_type_changed);
+
+    connect(ui->pathPushButton, &QPushButton::clicked,
+            this, [this](){ PathFinder::show(ui->pathLineEdit, tr("Przetwornik (*.pdf *.csv)")); });
+
+
+    // getting first transducer - and set as current if exists
+    if (transducer_model_->rowCount(QModelIndex()))
+        transducer_changed(dynamic_cast<TransducerItem*>(transducer_model_->child(0)));
+
+    // triggering model type change
+    ui->comboBoxModelType->currentIndexChanged(0);
+
 }
 
 TransducerDialog::~TransducerDialog()
@@ -94,38 +91,27 @@ TransducerDialog::~TransducerDialog()
 void TransducerDialog::export_as()
 {
     ///TODO add handling of empty combobox
-    auto transducer_item = dynamic_cast<TransducerItem*>(
+    /*auto transducer_item = dynamic_cast<TransducerItem*>(
                 transducer_model_->child(ui->transducerComboBox->currentIndex()));
-    QString save_file_name = QFileDialog::getSaveFileName(
-                this,"Eksport",QString::fromStdString(transducer_item->value()->get_name()),
-                "plik CSV (*.csv)");
-
-    if (save_file_name.isEmpty())
-        return;
-
-    boost::filesystem::path path(save_file_name.toStdString());
-
-    if (path.extension().empty())
-        path.replace_extension(".csv");
-
 
     TableModelFileHandler file_handler(transducer_table_model_.get());
-    std::string x = path.string();
-    file_handler.save(path.string());
+    file_handler.save(path.string());*/
 }
 
 void TransducerDialog::set_tab(int tab)
 {
-    //if (tab >= 0 && tab < ui->tabWidget->children().size())
     ui->tabWidget->setCurrentIndex(tab);
 }
 
-void TransducerDialog::set_transducer(TransducerItem* t)
+void TransducerDialog::transducer_changed(TransducerItem* t)
 {
+    // reset sets model
     ui->tableView->setModel(nullptr);
     transducer_table_model_.reset(new TransducerTableProxyModel(t));
     ui->tableView->setModel(transducer_table_model_.get());
 
+    // change export default filename
+    ui->pathLineEdit->setText(QString::fromStdString(t->to_string()));
 }
 
 void TransducerDialog::recalc_model()
@@ -206,41 +192,52 @@ void TransducerDialog::fixed_capacity_checkbox(int state)
     recalc_model();
 }
 
-void TransducerDialog::change_export_type(const QString& option)
+void TransducerDialog::export_type_changed(int index)
 {
-    if (option == "PDF"){
+    // PDF
+    if (index == 0){
         ui->tabDataExportCheckbox->setEnabled(true);
         ui->plotsExportComboBox->setEnabled(true);
     }
-    else {
+    // CSV
+    else if(index == 1) {
         ui->tabDataExportCheckbox->setDisabled(true);
         ui->tabDataExportCheckbox->setChecked(true);
 
         ui->plotsExportComboBox->setDisabled(true);
         ui->plotsExportComboBox->setCurrentIndex(0);
     }
+    else{
+        qDebug() << "Unrecognized export type index in QComboBox";
+    }
 }
 
-void TransducerDialog::select_model(const QString& option)
+void TransducerDialog::model_type_changed(int index)
 {
     ui->graphicsViewModel->scene()->clear();
     pixmap_ = nullptr;
-    if (option == tr("Szeregowy"))
+
+    // series BVD model
+    if (index == 0)
     {
         pixmap_ = new QGraphicsPixmapItem(QPixmap(":/icons/bvd-series.svg"));
         pixmap_->setTransformationMode(Qt::SmoothTransformation);
         ui->graphicsViewModel->scene()->addItem(pixmap_);
         place_pixmap_labels(labels_series);
     }
-    else if (option == tr("Równoległy"))
+    // parallel BVD model
+    else if (index == 1)
     {
         pixmap_ = new QGraphicsPixmapItem(QPixmap(":/icons/bvd-parallel.svg"));
         pixmap_->setTransformationMode(Qt::SmoothTransformation);
         ui->graphicsViewModel->scene()->addItem(pixmap_);
         place_pixmap_labels(labels_parallel);
     }
-    pixmap_->setPos(0,0);
+    else{
+        return;
+    }
 
+    pixmap_->setPos(0,0);
     recalc_model();
 }
 

@@ -29,36 +29,34 @@ class AboutDialog;
 
 class MainWindow : public QMainWindow
 {
-
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void add_transducer(Transducer *transducer);
-
 private slots:
     void resizeEvent(QResizeEvent* event);
 
-    void slot_add_new_plot();
-    void slot_remove_plot();
-    void slot_add_function();
-    void slot_remove_function();
-    void slot_file_open();
-    void slot_on_tree_view_context_menu(const QPoint &point);
-    void slot_show_plot();
+    void add_plot();
+    void remove_plot();
+    void show_plot();
+    void plot_view_menu(const QPoint &point);
 
-    void show_screenshot_form();
+    void add_function();
+    void remove_function();
+
+    void add_transducer();
+    void remove_transducer();
+
     void show_transducer_dialog(int tab);
     void show_about_dialog();
 
 private:
     void init_signals();
     void setup_view();
-    void seed();
+    // void seed();
 
-    void create_menus();
 public:
     Ui::MainWindow *ui_;
 private:

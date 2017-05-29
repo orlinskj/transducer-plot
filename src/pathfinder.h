@@ -3,16 +3,12 @@
 
 #include <QToolButton>
 #include <QWidget>
+#include <QObject>
 
-class PathFinder : public QToolButton
+class PathFinder : public QObject
 {
 public:
-    PathFinder(QLineEdit* line, bool combo = false);
-    void mousePressEvent(QMouseEvent* event) override;
-
-private:
-    QWidget* line_;
-    bool combo_;
+    static void show(QWidget* widget, QString filter = "");
 };
 
 #endif // PATHFINDER_H
