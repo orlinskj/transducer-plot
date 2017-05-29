@@ -7,6 +7,8 @@
 #include <memory>
 #include <tuple>
 
+#include "model/solver.h"
+
 namespace Ui {
 class TransducerDialog;
 }
@@ -28,7 +30,7 @@ public:
     void place_pixmap_labels(const std::vector<Label>& labels);
 
 public slots:
-    void export_as();
+    void export_transducer();
     void set_tab(int tab);
     void model_type_changed(int index);
     void export_type_changed(int index);
@@ -39,9 +41,11 @@ private:
     Ui::TransducerDialog *ui;
     std::unique_ptr<TransducerTableProxyModel> transducer_table_model_;
     TreeItemModel* transducer_model_;
-    QStandardItemModel type_model_;
+
     QStandardItemModel table_params_model_;
     QGraphicsPixmapItem* pixmap_;
+
+    BVDSolver solver_;
 
     static std::vector<Label> labels_series;
     static std::vector<Label> labels_parallel;

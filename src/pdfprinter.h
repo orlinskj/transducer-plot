@@ -9,7 +9,7 @@
 
 struct PDFOptions
 {
-    bool models;
+    // bool models;
     std::vector<PlotItem*> plots;
 };
 
@@ -18,6 +18,7 @@ class PDFPrinter
 public:
     void init(Transducer* transducer);
     int print(Transducer *transducer, const std::string& path, PDFOptions options);
+    void add_hook(const std::string& hook, const std::string& val);
     std::string replace_words(const std::string& str) const;
 protected:
     std::map<std::string, std::string> dict_;

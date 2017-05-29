@@ -10,11 +10,31 @@
 #include <string>
 #include <regex>
 
+void PDFPrinter::add_hook(const std::string& hook, const std::string& val)
+{
+    dict_.emplace(std::make_pair(hook,val));
+}
+
 void PDFPrinter::init(Transducer* transducer)
 {
-    dict_.emplace(std::make_pair(std::string("bvd_series"),std::string(":/icons/bvd-series.svg")));
-    dict_.emplace(std::make_pair(std::string("bvd_parallel"),std::string(":/icons/bvd-parallel.svg")));
-    dict_.emplace(std::make_pair(std::string("transducer_name"),transducer->get_name()));
+    add_hook("bvd_series",":/icons/bvd-series.svg");
+    add_hook("bvd_parallel",":/icons/bvd-parallel.svg");
+    add_hook("transducer_name", transducer->get_name());
+
+    // series
+    add_hook("fs", "-");
+    add_hook("Rs", "-");
+    add_hook("Ls", "-");
+    add_hook("Cs", "-");
+    add_hook("Qs", "-");
+
+    // parallel
+    add_hook("fp", "-");
+    add_hook("Rp", "-");
+    add_hook("Lp", "-");
+    add_hook("Cp", "-");
+    add_hook("Qp", "-");
+
 }
 
 std::string PDFPrinter::replace_words(const std::string& str) const

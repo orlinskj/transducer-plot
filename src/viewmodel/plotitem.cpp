@@ -82,7 +82,7 @@ TreeItem* PlotItem::append(TreeItem* item)
             unit_axis->unit().add_unit(func_item->value()->codomain()->unit());
         else
             throw std::runtime_error("Chart axis is neither UnitValueAxis nor UnitLogValueAxis");
-        axis->setTitleText(unit_axis->unit().name().c_str());
+        axis->setTitleText(unit_axis->unit().longname().c_str());
 
     }
     else
@@ -194,6 +194,9 @@ void PlotItem::remove(TreeItem *item)
                 else if (left_count - right_count >= 2)
                     change_axis_alignment(left,Qt::AlignRight);
                 // -------------------------------------------------------------
+            }
+            else{
+                axis->setTitleText(QString::fromStdString(unit_axis->unit().longname()));
             }
         }
     }

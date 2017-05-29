@@ -1,20 +1,25 @@
 #include "transducerdialog.h"
 #include "ui_transducerdialog.h"
+
 #include "viewmodel/treemodel/treeitemmodel.h"
 #include "viewmodel/transducertableproxymodel.h"
 #include "viewmodel/setitem.h"
 #include "view/transducerdelegate.h"
 
+#include "io/csvexporthandler.h"
+#include "io/pdfexporthandler.h"
+#include "io/exportfilehandler.h"
+
+#include "pathfinder.h"
+
 #include <QComboBox>
 #include <QFileDialog>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsTextItem>
-#include "io/tablemodelfilehandler.h"
+
 #include <string>
 #include <tuple>
-#include <boost/filesystem.hpp>
-#include "model/solver.h"
-#include "pathfinder.h"
+#include <memory>
 
 std::vector<TransducerDialog::Label> TransducerDialog::labels_series = {
     TransducerDialog::Label("R",QPointF(245,220),true),
@@ -75,6 +80,8 @@ TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_mo
     connect(ui->pathPushButton, &QPushButton::clicked,
             this, [this](){ PathFinder::show(ui->pathLineEdit, tr("Przetwornik (*.pdf *.csv)")); });
 
+    connect(ui->exportPushButton, &QPushButton::clicked,
+            this, &TransducerDialog::export_transducer);
 
     // getting first transducer - and set as current if exists
     if (transducer_model_->rowCount(QModelIndex()))
@@ -88,14 +95,42 @@ TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_mo
 TransducerDialog::~TransducerDialog()
 { }
 
-void TransducerDialog::export_as()
+void TransducerDialog::export_transducer()
 {
     ///TODO add handling of empty combobox
-    /*auto transducer_item = dynamic_cast<TransducerItem*>(
+    if (ui->transducerComboBox->currentIndex() < 0)
+        return;
+
+    auto transducer_item = dynamic_cast<TransducerItem*>(
                 transducer_model_->child(ui->transducerComboBox->currentIndex()));
 
-    TableModelFileHandler file_handler(transducer_table_model_.get());
-    file_handler.save(path.string());*/
+    std::unique_ptr<ExportFileHandler> export_handler;
+
+    // PDF
+    if (ui->exportTypecomboBox->currentIndex() == 0){
+        PDFExportHandler::Options options;
+        // set options
+        // ...
+        export_handler.reset(new PDFExportHandler(transducer_item->value(), options, &solver_));
+    }
+    // CSV
+    else if(ui->exportTypecomboBox->currentIndex() == 1){
+        CSVExportHandler::Options options;
+        // set options
+        // ...
+        export_handler.reset(new CSVExportHandler(transducer_item->value(), options, transducer_table_model_.get()));
+    }
+    else{
+        // unrecognized option - ERROR!
+        return;
+    }
+
+    if (export_handler->save(ui->pathLineEdit->text().toStdString()) == 0){
+        // OK
+    }
+    else{
+        // ERROR
+    }
 }
 
 void TransducerDialog::set_tab(int tab)
@@ -139,21 +174,20 @@ void TransducerDialog::recalc_model()
     if (!transducer_item)
         return;
 
-    BVDSolver solver;
-    solver.solve(*(transducer_item->value()),input_capacity);
+    solver_.solve(*(transducer_item->value()),input_capacity);
 
     // setting cells' values
     std::vector<std::tuple<qreal,Unit>> vals = {
-        std::make_tuple(solver.f(type),Unit::from_symbol("f")),
-        std::make_tuple(solver.Co(type),Unit::from_symbol("C")),
-        std::make_tuple(solver.R(type),Unit::from_symbol("R")),
-        std::make_tuple(solver.L(type),Unit::from_symbol("L")),
-        std::make_tuple(solver.C(type),Unit::from_symbol("C")),
-        std::make_tuple(solver.Q(type),Unit::None),
-        std::make_tuple(solver.QQ(),Unit::None),
-        std::make_tuple(solver.keff(),Unit::None),
-        std::make_tuple(solver.k33(),Unit::None),
-        std::make_tuple(solver.k(),Unit::None)
+        std::make_tuple(solver_.f(type),Unit::from_symbol("f")),
+        std::make_tuple(solver_.Co(type),Unit::from_symbol("C")),
+        std::make_tuple(solver_.R(type),Unit::from_symbol("R")),
+        std::make_tuple(solver_.L(type),Unit::from_symbol("L")),
+        std::make_tuple(solver_.C(type),Unit::from_symbol("C")),
+        std::make_tuple(solver_.Q(type),Unit::None),
+        std::make_tuple(solver_.QQ(),Unit::None),
+        std::make_tuple(solver_.keff(),Unit::None),
+        std::make_tuple(solver_.k33(),Unit::None),
+        std::make_tuple(solver_.k(),Unit::None)
     };
 
     size_t i = 0;
@@ -197,15 +231,19 @@ void TransducerDialog::export_type_changed(int index)
     // PDF
     if (index == 0){
         ui->tabDataExportCheckbox->setEnabled(true);
-        ui->plotsExportComboBox->setEnabled(true);
+        //ui->plotsExportComboBox->setEnabled(true);
+        ui->plotsCheckBox->setEnabled(true);
     }
     // CSV
     else if(index == 1) {
         ui->tabDataExportCheckbox->setDisabled(true);
         ui->tabDataExportCheckbox->setChecked(true);
 
-        ui->plotsExportComboBox->setDisabled(true);
-        ui->plotsExportComboBox->setCurrentIndex(0);
+        //ui->plotsExportComboBox->setDisabled(true);
+        //ui->plotsExportComboBox->setCurrentIndex(0);
+        ui->plotsCheckBox->setDisabled(true);
+        ui->plotsCheckBox->setChecked(false);
+
     }
     else{
         qDebug() << "Unrecognized export type index in QComboBox";

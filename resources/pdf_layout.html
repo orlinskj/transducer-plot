@@ -12,7 +12,7 @@
     <body>
         <h1>{{transducer_name}}</h1>
         <h2>Modele zastępcze</h2>
-        <table>
+        <table cellpadding="20" cellspacing="20">
             <tr>
                 <td align="center"><img class="bvd-model" src="{{bvd_series}}" width=200 height=150></td>
                 <td align="center"><img class="bvd-model" src="{{bvd_parallel}}" width=200 height=150></td>
@@ -21,19 +21,55 @@
         </table>
         <br>
         <br>
-        <table>
+        <table border="1" cellpadding="5">
             <thead>
                 <tr><th>Nazwa parametru</th><th>Układ szeregowy</th><th>Układ równoległy</th></tr>
             </thead>
             <tbody>
-                <tr><td>częstotliwość rezonansu (<i>f</i>)</td><td>{{param_fs}}</td><td>{{param_fp}}</td></tr>
-                <tr><td>pojemność wejściowa (<i>Co</i>)</td><td>{{param_Cos}}</td><td>{{param_Cop}}</td></tr>
-                <tr><td>rezystancja (<i>R</i>)</td><td>{{param_Rs}}</td><td>{{param_Rp}}</td></tr>
-                <tr><td>indukcyjność (<i>L</i>)</td><td>{{param_Ls}}</td><td>{{param_Lp}}</td></tr>
-                <tr><td>pojemność (<i>C</i>)</td><td>{{param_Cs}}</td><td>{{param_Cp}}</td></tr>
-                <tr><td>dobroć (<i>Q</i>)</td><td>{{param_Qs}}</td><td>{{param_Qp}}</td></tr>
+                <tr><td>częstotliwość rezonansu (<i>f</i>)</td><td>{{fs}}</td><td>{{fp}}</td></tr>
+                <tr><td>pojemność wejściowa (<i>Co</i>)</td><td>{{Cos}}</td><td>{{Cop}}</td></tr>
+                <tr><td>rezystancja (<i>R</i>)</td><td>{{Rs}}</td><td>{{Rp}}</td></tr>
+                <tr><td>indukcyjność (<i>L</i>)</td><td>{{Ls}}</td><td>{{Lp}}</td></tr>
+                <tr><td>pojemność (<i>C</i>)</td><td>{{Cs}}</td><td>{{Cp}}</td></tr>
+                <tr><td>dobroć (<i>Q</i>)</td><td>{{Qs}}</td><td>{{Qp}}</td></tr>
+
+                <tr><td>średnia (geometryczna) dobroć układu (<i>Q</i>)</td><td colspan="2" align="center">{{Q}}</td></tr>
+                <tr><td>efektywny współczynnik sprzężenia elektromechanicznego (<i>keff</i>)</td><td colspan="2" align="center">{{keff}}</td></tr>
+                <tr><td>grubościowy współczynnik sprzężenia elektromechanicznego (<i>k33</i>)</td><td colspan="2" align="center">{{k33}}</td></tr>
+                <tr><td>względny współczynnik sprzężenia elektromechanicznego (<i>k</i>)</td><td colspan="2" align="center">{{k}}</td></tr>
             </tbody>
         </table>
+
+        <!-- this is conditional block -->
+        {% plots
+
+        <!-- for loop -->
+        {: functions
+        <img src={{plot_img}} width="400" height="300">
+
+        <!-- end loop -->
+        :}
+        <!-- end conditional -->
+        %}
+
+        {% tab_data
+
+        <table>
+            <thead>
+                <tr>
+                    {: functions
+                    <tr>{{codomain_name}}</tr>
+                    :}
+                </tr>
+            </thead>
+            <tbody>
+                {:
+                <tr>
+                </tr>
+            </tbody>
+        </table>
+        %}
+
     </body>
 </html>
 

@@ -151,7 +151,7 @@ void Broom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->setPen(marker_value);
 
     painter->drawText(pos + QPointF(marker_size_+5,marker_size_), QString::number(x_val));
-    painter->setPen(QColor(0,0,0,120));
+    painter->setPen(QColor(255,255,255,40));
     painter->setRenderHint(QPainter::Antialiasing, false);
     painter->drawLine(pos + QPointF(0,marker_size_+big_step+2), pos + QPointF(box_.width()-10,marker_size_+big_step+2));
     pos += QPointF(0,marker_entry_height_+big_step);

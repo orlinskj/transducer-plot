@@ -40,7 +40,6 @@ SOURCES += \
     src/viewmodel/treemodel/treeitemt.inl \
     src/view/unitaxis.cpp \
     src/viewmodel/transducertableproxymodel.cpp \
-    src/io/tablemodelfilehandler.cpp \
     src/transducerdialog.cpp \
     src/view/plotitemdelegate.cpp \
     src/aboutdialog.cpp \
@@ -54,7 +53,10 @@ SOURCES += \
     src/view/admitanceringlayer.cpp \
     src/view/layer.cpp \
     src/view/minmaxlayer.cpp \
-    src/pathfinder.cpp
+    src/pathfinder.cpp \
+    src/io/exportfilehandler.cpp \
+    src/io/csvexporthandler.cpp \
+    src/io/pdfexporthandler.cpp
 
 HEADERS += \
     src/model/function.h \
@@ -80,7 +82,6 @@ HEADERS += \
     src/viewmodel/treemodel/treeitemt.h \
     src/view/unitaxis.h \
     src/viewmodel/transducertableproxymodel.h \
-    src/io/tablemodelfilehandler.h \
     src/transducerdialog.h \
     src/view/plotitemdelegate.h \
     src/aboutdialog.h \
@@ -94,7 +95,10 @@ HEADERS += \
     src/view/admitanceringlayer.h \
     src/view/layer.h \
     src/view/minmaxlayer.h \
-    src/pathfinder.h
+    src/pathfinder.h \
+    src/io/exportfilehandler.h \
+    src/io/csvexporthandler.h \
+    src/io/pdfexporthandler.h
 
 FORMS    += src/mainwindow.ui \
     src/functiondialog.ui \
