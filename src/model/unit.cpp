@@ -65,6 +65,11 @@ bool operator ==(const Unit& a, const Unit& b)
     return a.name() == b.name() && a.symbol() == b.symbol() && a.unit() == b.unit();
 }
 
+bool operator !=(const Unit& a, const Unit& b)
+{
+    return a.name() != b.name() || a.symbol() != b.symbol() || a.unit() != b.unit();
+}
+
 std::map<std::string, Unit> Unit::register_;
 
 Unit Unit::None     = Unit::record("","","");

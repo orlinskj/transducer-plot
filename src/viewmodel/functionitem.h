@@ -9,6 +9,8 @@ using namespace QtCharts;
 #include "../model/function.h"
 #include "../viewmodel/treemodel/treeitemt.h"
 
+class PlotItem;
+
 class FunctionItem : public TreeItemT<Function>
 {
 public:

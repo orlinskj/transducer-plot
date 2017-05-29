@@ -31,6 +31,7 @@ public slots:
     void export_as();
     void set_tab(int tab);
     void select_model(const QString& option);
+    void change_export_type(const QString& option);
     void recalc_model();
     void fixed_capacity_checkbox(int state);
 

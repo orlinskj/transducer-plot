@@ -11,6 +11,7 @@
 
 #include "functionitem.h"
 #include "../view/unitaxis.h"
+#include "../view/minmaxlayer.h"
 
 bool PlotItem::isFuncAdmitanceRing(FunctionItem *func)
 {
@@ -28,14 +29,7 @@ PlotItem::PlotItem() : TreeItemTOwner<Plot>(new Plot), chart_(new QChart)
 {
     //chart_->layout()->setContentsMargins(5,5,5,5);
     chart_->setMargins(QMargins(0,0,0,0));
-}
-
-PlotItem::PlotItem(Plot *plot) : chart_(new QChart)
-{
-    chart_->setMaximumSize(QSize(10000,10000));
-    chart_->layout()->setContentsMargins(0,0,0,0);
-    chart_->setMargins(QMargins(2,5,2,2));
-    chart_->setTitle(plot->description().c_str());
+    layers_.add_layer(new MinMaxLayer(this));
 }
 
 PlotItem::~PlotItem()

@@ -51,6 +51,7 @@ protected:
 };
 
 bool operator ==(const Unit& a, const Unit& b);
+bool operator !=(const Unit& a, const Unit& b);
 
 template <typename T> std::string Unit::nice_repr(T value, size_t prec) const
 {

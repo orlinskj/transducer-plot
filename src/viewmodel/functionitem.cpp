@@ -3,6 +3,8 @@
 #include <QValueAxis>
 #include <QLineSeries>
 
+#include "plotitem.h"
+
 FunctionItem::FunctionItem(Function *f) :
     TreeItemT<Function>(f), series_(new QLineSeries)
 {

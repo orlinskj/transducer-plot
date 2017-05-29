@@ -65,8 +65,8 @@ TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_mo
     ui->graphicsViewModel->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsViewModel->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    connect(ui->saveButton, &QPushButton::clicked,
-            this, &TransducerDialog::export_as);
+    /*connect(ui->saveButton, &QPushButton::clicked,
+            this, &TransducerDialog::export_as);*/
 
     connect(ui->comboBoxModelType, &QComboBox::currentTextChanged,
             this, &TransducerDialog::select_model);
@@ -82,6 +82,10 @@ TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_mo
     ui->tableViewModelParams->verticalHeader()->setDefaultSectionSize(20);
     ui->tableViewModelParams->setModel(&table_params_model_);
     ui->tableViewModelParams->horizontalHeader()->hide();
+
+    // export behaviour
+    connect(ui->exportTypecomboBox, &QComboBox::currentTextChanged,
+            this, &TransducerDialog::change_export_type);
 }
 
 TransducerDialog::~TransducerDialog()
@@ -202,6 +206,21 @@ void TransducerDialog::fixed_capacity_checkbox(int state)
     recalc_model();
 }
 
+void TransducerDialog::change_export_type(const QString& option)
+{
+    if (option == "PDF"){
+        ui->tabDataExportCheckbox->setEnabled(true);
+        ui->plotsExportComboBox->setEnabled(true);
+    }
+    else {
+        ui->tabDataExportCheckbox->setDisabled(true);
+        ui->tabDataExportCheckbox->setChecked(true);
+
+        ui->plotsExportComboBox->setDisabled(true);
+        ui->plotsExportComboBox->setCurrentIndex(0);
+    }
+}
+
 void TransducerDialog::select_model(const QString& option)
 {
     ui->graphicsViewModel->scene()->clear();
@@ -209,12 +228,14 @@ void TransducerDialog::select_model(const QString& option)
     if (option == tr("Szeregowy"))
     {
         pixmap_ = new QGraphicsPixmapItem(QPixmap(":/icons/bvd-series.svg"));
+        pixmap_->setTransformationMode(Qt::SmoothTransformation);
         ui->graphicsViewModel->scene()->addItem(pixmap_);
         place_pixmap_labels(labels_series);
     }
     else if (option == tr("Równoległy"))
     {
         pixmap_ = new QGraphicsPixmapItem(QPixmap(":/icons/bvd-parallel.svg"));
+        pixmap_->setTransformationMode(Qt::SmoothTransformation);
         ui->graphicsViewModel->scene()->addItem(pixmap_);
         place_pixmap_labels(labels_parallel);
     }

@@ -248,7 +248,6 @@
     <property name="title">
      <string>Wykres</string>
     </property>
-    <addaction name="actionPlotFit"/>
     <addaction name="actionPlotScreenshot"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -257,7 +256,6 @@
     </property>
     <addaction name="actionHelpAbout"/>
     <addaction name="actionHelpHelp"/>
-    <addaction name="actionHelpOnline"/>
    </widget>
    <widget class="QMenu" name="menuTransducer">
     <property name="title">

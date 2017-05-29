@@ -57,8 +57,11 @@ void PlotStoreItemModel::emit_begin_remove_rows(int first, int last, std::vector
     TreeItemModel::emit_begin_remove_rows(first,last,tree);
 
     // this assumes that plots can only be first level nodes of tree
-    if (!tree || !tree->size())
+    if (!tree || !tree->size()){
         plot_to_be_removed_ = dynamic_cast<PlotItem*>(child(first));
+        emit plot_removed(plot_to_be_removed_);
+        plot_to_be_removed_ = nullptr;
+    }
     else
     {
         TreeItem* item = nullptr;
@@ -77,11 +80,11 @@ void PlotStoreItemModel::emit_begin_remove_rows(int first, int last, std::vector
 void PlotStoreItemModel::emit_end_remove_rows()
 {
     TreeItemModel::emit_end_remove_rows();
-    if (plot_to_be_removed_)
+    /*if (plot_to_be_removed_)
     {
         emit plot_removed(plot_to_be_removed_);
         plot_to_be_removed_ = nullptr;
-    }
+    }*/
     if (plot_to_be_changed_)
     {
         emit plot_changed(plot_to_be_changed_);

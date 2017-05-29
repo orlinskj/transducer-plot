@@ -52,7 +52,9 @@ SOURCES += \
     src/pdfprinter.cpp \
     src/error.cpp \
     src/view/admitanceringlayer.cpp \
-    src/view/layer.cpp
+    src/view/layer.cpp \
+    src/view/minmaxlayer.cpp \
+    src/pathfinder.cpp
 
 HEADERS += \
     src/model/function.h \
@@ -90,7 +92,9 @@ HEADERS += \
     src/pdfprinter.h \
     src/error.h \
     src/view/admitanceringlayer.h \
-    src/view/layer.h
+    src/view/layer.h \
+    src/view/minmaxlayer.h \
+    src/pathfinder.h
 
 FORMS    += src/mainwindow.ui \
     src/functiondialog.ui \

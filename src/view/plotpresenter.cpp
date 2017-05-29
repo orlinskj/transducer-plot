@@ -44,8 +44,11 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
                      this,
                      [this](PlotItem* p)
     {
+        /*qDebug() << broom_ << plot_ << (plot_ ? plot_->chart() : (QChart*)0x001);*/
+        //qDebug() << p;
+        //qDebug() << p->chart();
         broom_->set_plot(nullptr);
-        if (p->chart() && p->chart() == chart()){
+        if (plot_ && p == plot_){
             scene()->removeItem(p->chart());
         }
         plot_ = nullptr;

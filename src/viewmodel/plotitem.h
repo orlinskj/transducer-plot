@@ -21,7 +21,7 @@ public:
     static bool isFuncAdmitanceRing(FunctionItem* func);
 
     PlotItem();
-    PlotItem(Plot* plot);
+    /*PlotItem(Plot* plot);*/
     ~PlotItem();
 
     QChart* chart() const;

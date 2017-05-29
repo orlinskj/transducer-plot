@@ -24,6 +24,7 @@ private:
     qreal distance(QVector2D n, QVector2D t, QVector2D p);
 
     QPointF f0pos_;
+    qreal f0_;
     QPointF middle_;
 };
 
