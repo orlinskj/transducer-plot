@@ -6,6 +6,7 @@
 
 class BVDSolver;
 class TransducerItem;
+class PlotPresenter;
 
 class PDFExportHandler : public ExportFileHandler
 {
@@ -16,7 +17,7 @@ public:
         bool plots;
     };
 
-    PDFExportHandler(TransducerItem* transducer, const Options& options, BVDSolver* solver);
+    PDFExportHandler(TransducerItem* transducer, const Options& options, BVDSolver* solver, PlotPresenter* presenter);
     int save(const std::string &filepath) override;
 
 private:
@@ -27,6 +28,7 @@ private:
     Options options_;
     std::map<std::string, std::string> dict_;
     BVDSolver* solver_;
+    PlotPresenter* presenter_;
 };
 
 #endif // PDFEXPORTHANDLER_H

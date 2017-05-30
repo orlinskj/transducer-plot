@@ -40,22 +40,11 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
     setMouseTracking(true);
 
     // plot store signals
-    QObject::connect(store_, &PlotStoreItemModel::plot_changed,
-                     this, [this](PlotItem* p){ Q_UNUSED(p); alter_menu(); alter_axes();});
-    QObject::connect(store_, &PlotStoreItemModel::plot_removed,
-                     this,
-                     [this](PlotItem* p)
-    {
-        /*qDebug() << broom_ << plot_ << (plot_ ? plot_->chart() : (QChart*)0x001);*/
-        //qDebug() << p;
-        //qDebug() << p->chart();
-        broom_->set_plot(nullptr);
-        if (plot_ && p == plot_){
-            scene()->removeItem(p->chart());
-        }
-        plot_ = nullptr;
-        alter_menu();
-    });
+    connect(store_, &PlotStoreItemModel::plot_changed,
+            this, &PlotPresenter::plot_changed);
+
+    connect(store_, &PlotStoreItemModel::plot_removed,
+            this, &PlotPresenter::plot_removed);
 
     // setting up menu
     menu_.setEnabled(false);
@@ -64,6 +53,21 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
 }
 
 PlotPresenter::~PlotPresenter() {}
+
+void PlotPresenter::plot_changed(PlotItem* p){
+    alter_menu();
+    alter_axes();
+}
+
+void PlotPresenter::plot_removed(PlotItem* p){
+    if (plot_ == p){
+        scene()->removeItem(p->chart());
+        plot_ = nullptr;
+        broom_->set_plot(nullptr);
+    }
+
+    alter_menu();
+}
 
 void PlotPresenter::show_plot(PlotItem *plot)
 {
@@ -81,13 +85,15 @@ void PlotPresenter::show_plot(PlotItem *plot)
 
     plot_ = plot;
 
-    scene()->addItem(plot_->chart());
-    scene()->addItem(&(plot_->layers()));
+    if (plot_){
+        scene()->addItem(plot_->chart());
+        scene()->addItem(&(plot_->layers()));
 
-    plot_->chart()->resize(this->size());
-    plot_->chart()->setAcceptHoverEvents(true);
+        plot_->chart()->resize(this->size());
+        plot_->chart()->setAcceptHoverEvents(true);
 
-    plot_->layers().resize(size());
+        plot_->layers().resize(size());
+    }
 
     alter_menu();
     alter_axes();
@@ -119,6 +125,11 @@ void PlotPresenter::alter_menu()
                         broom_->update_position();
                         });
     }
+}
+
+PlotStoreItemModel *PlotPresenter::store()
+{
+    return store_;
 }
 
 PlotItem* PlotPresenter::plot() const
@@ -377,11 +388,12 @@ QImage PlotPresenter::screenshot(int width, int height)
 
     auto tmp_size = this->size();
     this->resize(width,height);
+
     scene()->render(&painter);
+
     this->resize(tmp_size);
 
-    /*if (!img.save("/home/janek/ss.png","png",70))
-        throw std::runtime_error("Cannot save to a file");*/
+    painter.end();
 
     return img;
 }

@@ -33,6 +33,7 @@ public:
 
     QChart* chart() const;
     PlotItem* plot() const;
+    PlotStoreItemModel* store();
 
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
@@ -48,6 +49,8 @@ public:
 
 public slots:
     void context_menu(const QPoint& point);
+    void plot_removed(PlotItem* plot);
+    void plot_changed(PlotItem* plot);
 
 protected:
     PlotItem* plot_;

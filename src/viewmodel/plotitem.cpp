@@ -4,6 +4,8 @@
 #include <QGraphicsLayout>
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
+#include <QDebug>
+#include <QGraphicsScene>
 
 #include <map>
 #include <regex>
@@ -65,8 +67,9 @@ TreeItem* PlotItem::append(TreeItem* item)
     auto axes = chart_->axes(Qt::Vertical);
     auto axis_it = std::find_if(axes.cbegin(), axes.cend(), [func_item](auto axis){
         auto unit_axis = UnitAxis::from_qabstractaxis(axis);
-        if (unit_axis->unit().match_unit(func_item->value()->codomain()->unit()))
+        if (unit_axis->unit().match_unit(func_item->value()->codomain()->unit())){
             return true;
+        }
         return false;
     });
 
@@ -162,6 +165,7 @@ void PlotItem::remove(TreeItem *item)
 
         if (axis->orientation() == Qt::Vertical)
         {
+            auto temp_unit = func_item->value()->codomain()->unit();
             unit_axis->unit().remove_unit(func_item->value()->codomain()->unit());
             if (unit_axis->unit().no_units())
             {
@@ -211,6 +215,7 @@ void PlotItem::remove(TreeItem *item)
     this->value()->remove_function(func_item->value());
     chart_->setTitle(this->value()->name().c_str());
 
+    // MOST IMPORTANT!
     TreeItem::remove(item);
 }
 

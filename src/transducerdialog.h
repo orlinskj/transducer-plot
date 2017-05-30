@@ -16,6 +16,7 @@ class TransducerDialog;
 class TreeItemModel;
 class TransducerItem;
 class TransducerTableProxyModel;
+class PlotPresenter;
 
 class TransducerDialog : public QDialog
 {
@@ -23,7 +24,7 @@ class TransducerDialog : public QDialog
     using Label = std::tuple<std::string, QPointF, bool>;
 
 public:
-    explicit TransducerDialog(QWidget *parent = 0, TreeItemModel* transducer_model = nullptr);
+    explicit TransducerDialog(QWidget *parent, TreeItemModel* transducer_model, PlotPresenter* presenter);
     ~TransducerDialog();
 
     void transducer_changed(TransducerItem* t);
@@ -46,6 +47,7 @@ private:
     QGraphicsPixmapItem* pixmap_;
 
     BVDSolver solver_;
+    PlotPresenter* presenter_;
 
     static std::vector<Label> labels_series;
     static std::vector<Label> labels_parallel;

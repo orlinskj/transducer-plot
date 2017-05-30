@@ -5,6 +5,7 @@
 #include "viewmodel/transducertableproxymodel.h"
 #include "viewmodel/setitem.h"
 #include "view/transducerdelegate.h"
+#include "view/plotpresenter.h"
 
 #include "io/csvexporthandler.h"
 #include "io/pdfexporthandler.h"
@@ -35,12 +36,13 @@ std::vector<TransducerDialog::Label> TransducerDialog::labels_parallel = {
     TransducerDialog::Label("Co",QPointF(105,220),true)
 };
 
-TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_model) :
+TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_model, PlotPresenter* presenter) :
     QDialog(parent),
     ui(new Ui::TransducerDialog),
     transducer_table_model_(nullptr),
     transducer_model_(transducer_model),
-    pixmap_(nullptr)
+    pixmap_(nullptr),
+    presenter_(presenter)
 {
     ui->setupUi(this);
     setWindowFlags(Qt::Window);
@@ -89,6 +91,7 @@ TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_mo
 
     // triggering model type change
     ui->comboBoxModelType->currentIndexChanged(0);
+    ui->exportTypecomboBox->currentIndexChanged(0);
 
 }
 
@@ -97,9 +100,10 @@ TransducerDialog::~TransducerDialog()
 
 void TransducerDialog::export_transducer()
 {
-    ///TODO add handling of empty combobox
     if (ui->transducerComboBox->currentIndex() < 0)
         return;
+
+    recalc_model();
 
     auto transducer_item = dynamic_cast<TransducerItem*>(
                 transducer_model_->child(ui->transducerComboBox->currentIndex()));
@@ -110,15 +114,17 @@ void TransducerDialog::export_transducer()
     if (ui->exportTypecomboBox->currentIndex() == 0){
         PDFExportHandler::Options options;
         // set options
-        // ...
-        export_handler.reset(new PDFExportHandler(transducer_item->value(), options, &solver_));
+        options.model_data = true;
+        options.plots = ui->plotsCheckBox->isChecked();
+        options.tab_data = ui->tabDataExportCheckbox->isChecked();
+        export_handler.reset(new PDFExportHandler(transducer_item, options, &solver_, presenter_));
     }
     // CSV
     else if(ui->exportTypecomboBox->currentIndex() == 1){
         CSVExportHandler::Options options;
         // set options
         // ...
-        export_handler.reset(new CSVExportHandler(transducer_item->value(), options, transducer_table_model_.get()));
+        export_handler.reset(new CSVExportHandler(transducer_item, options, transducer_table_model_.get()));
     }
     else{
         // unrecognized option - ERROR!
@@ -230,7 +236,8 @@ void TransducerDialog::export_type_changed(int index)
 {
     // PDF
     if (index == 0){
-        ui->tabDataExportCheckbox->setEnabled(true);
+        ui->tabDataExportCheckbox->setDisabled(true);
+        ui->tabDataExportCheckbox->setChecked(false);
         //ui->plotsExportComboBox->setEnabled(true);
         ui->plotsCheckBox->setEnabled(true);
     }

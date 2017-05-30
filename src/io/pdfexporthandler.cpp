@@ -1,19 +1,25 @@
 #include "pdfexporthandler.h"
 
+#include "../viewmodel/plotitem.h"
+#include "../viewmodel/functionitem.h"
 #include "../viewmodel/transduceritem.h"
+#include "../view/plotpresenter.h"
+#include "../viewmodel/plotstoreitemmodel.h"
 #include "../model/solver.h"
 
 #include <QPrinter>
 #include <QFile>
 #include <QTextDocument>
+#include <QTextCursor>
 #include <regex>
 
 PDFExportHandler::PDFExportHandler(
         TransducerItem* transducer,
         const PDFExportHandler::Options& options,
-        BVDSolver* solver
+        BVDSolver* solver,
+        PlotPresenter* presenter
         ) :
-    ExportFileHandler(transducer, "pdf"), options_(options), solver_(solver)
+    ExportFileHandler(transducer, "pdf"), options_(options), solver_(solver), presenter_(presenter)
 { }
 
 void PDFExportHandler::add_hook(const std::string& hook, const std::string& val)
@@ -75,10 +81,17 @@ int PDFExportHandler::save(const std::string &filepath)
     add_hook("k", solver_->k());
 
     // ------------------ printing ------------------
+    QTextDocument doc;
+    QTextCursor cursor(&doc);
 
     QPrinter file_printer;
+    qDebug() << "DPI: " << file_printer.resolution();
+    file_printer.setResolution(120);
     file_printer.setOutputFileName(QString::fromStdString(this->path(filepath)));
-    //QPainter painter(&file_printer);
+
+    doc.setDefaultStyleSheet("* { font-family: 'Arial'; font-size: 18px; }");
+    doc.setPageSize(file_printer.pageRect().size());
+
 
     std::string html;
     QFile pdf_layout(":/pdf_layout.html");
@@ -94,9 +107,44 @@ int PDFExportHandler::save(const std::string &filepath)
 
     pdf_layout.close();
 
-    QTextDocument doc;
-    doc.setDefaultStyleSheet("* { font-family: 'Times'; }");
     doc.setHtml(QString::fromStdString(html));
+    cursor.movePosition(QTextCursor::End);
+
+    // ----------------- inserting plots -----------------
+    if (options_.plots){
+        QSize img_size(900,650);
+
+        // plot backup
+        auto start_plot = presenter_->plot();
+        auto broom_plot = presenter_->broom()->plot();
+        auto freq = transducer_->value()->get_set(Unit::Frequency);
+
+        for (const auto& set : transducer_->value()->get_sets()){
+            if (set.unit() == Unit::Frequency){
+                continue;
+            }
+
+            PlotItem* plot = new PlotItem;
+            presenter_->store()->append(plot);
+            presenter_->show_plot(plot);
+
+            // Function and FunctionItem are deleted during removing from parent
+            auto func_item = new FunctionItem(new Function(transducer_->value(),freq, &set));
+            plot->append(func_item);
+
+            // draw
+            QImage img = presenter_->screenshot(img_size.width(), img_size.height());
+            cursor.insertImage(img);
+            cursor.insertHtml("<br><br>");
+
+            // clean
+            presenter_->store()->remove(plot);
+        }
+
+        // setting back plot
+        presenter_->show_plot(start_plot);
+        //presenter_->store()->remove(plot);
+    }
 
     doc.print(&file_printer);
 

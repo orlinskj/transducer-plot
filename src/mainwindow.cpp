@@ -253,7 +253,7 @@ void MainWindow::show_transducer_dialog(int tab)
 
     if (!transducer_dialog_)
     {
-        transducer_dialog_ = new TransducerDialog(this,&transducer_model_);
+        transducer_dialog_ = new TransducerDialog(this,&transducer_model_, plot_presenter_);
         QObject::connect(transducer_dialog_, &QDialog::destroyed,
                          this, [this](){ transducer_dialog_ = nullptr; });
     }
