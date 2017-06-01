@@ -4,6 +4,8 @@
 
 /resources/drafts
 
+/build
+
 # C++ objects and libs
 
 *.slo

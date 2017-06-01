@@ -12,9 +12,7 @@ TARGET = transducer-plot
 TEMPLATE = app
 
 CONFIG += c++14
-CONFIG(debug): CONFIG += console
-CONFIG(release, debug|release): CONFIG -= console
-
+CONFIG -= console
 
 unix: QMAKE_CXXFLAGS += -std=c++14 -fext-numeric-literals
 win32-gcc: QMAKE_CXXFLAGS += -std=c++14 -fext-numeric-literals
@@ -113,17 +111,14 @@ FORMS    += src/mainwindow.ui \
     src/aboutdialog.ui \
     src/screenshotform.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/release/
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/debug/
-else:unix: LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/
+win32-gcc:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/release/
+win32-gcc:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/debug/
+unix: LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/
 
-INCLUDEPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
-DEPENDPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
+unix: INCLUDEPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
+unix: DEPENDPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
 
 unix: LIBS += -lstdc++fs
-win32-g++: LIBS += -lstdc++fs
-
-DISTFILES +=
 
 RESOURCES += \
     resources/resources.qrc

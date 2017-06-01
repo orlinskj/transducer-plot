@@ -4,7 +4,7 @@
 
 Po uruchomieniu programu użytkownik ma do dyspozycji okno główne programu, zawiera 5 głównych obszarów oraz pasek menu.
 
-<img src="okno-główne-obszary">
+![Okno główne - obszary](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/main-window-areas.png "Obszary okna głównego")
 
 ### Pasek menu
 
@@ -12,7 +12,7 @@ Po uruchomieniu programu użytkownik ma do dyspozycji okno główne programu, za
 
 Aby zrobić zrzut ekranu aktualnie wyświetlanego wykresu, należy z paska menu wybrać `Wykres->Zrzut ekranu`. Następnie program wyświetli panel zawierający dostępne opcje.
 
-<img src="zrzut-ekranu-panel-oznaczenia">
+![Panel zrzutu ekranu](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/screenshot-panel.png "Panel zrzutu ekranu")
 
 Górne pole tekstowe [1] służy do wprowadzania nazwy pliku. Klikając w przycisk `…` [2] obok pola tekstowego użytkownik może otworzyć okno do wybrania pliku, które znacznie ułatwia wybieranie żądanej lokalizacji.
 
@@ -42,7 +42,7 @@ Możliwe jest również przybliżenie lub oddalenie wyłączenie w osi poziomej.
 
 Przesuwanie kursora myszy przesuwa również Miotłę. Miotła służy do szybkiego podglądu wartości na krzywych, z którymi się przecina. Górna wartość liczbowa wyświetlana na miotle odpowiada wartości ze zbioru dziedziny na której aktualnie się ona znajduje. Wartości znajdujące się niżej opisują wartości na poszczególnych krzywych.
 
-<img src="miotła">
+![Miotła](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/broom.png "Miotła")
 
 Miotłę można również "przyczepić" w żądanym miejscu wykresu klikając `lewy przycisk myszy` w żądanym miejscu. Kolejne kliknięcie tego same przycisku w dowolnym miejscu na wykresie spowoduje "odklejenie" Miotły.
 
@@ -58,7 +58,7 @@ Lista wykresów prezentuje wszystkie wykresy utworzone w programie. Każdy z wyk
 
 Każdy z wykresów można rozwinąć w celu pokazania listy wszystkich funkcji, które zawiera. Aby rozwinąć lub rozwinąć wykres, należy kliknąć w przełącznik w postaci trójkąta [1] znajdujący się w lewej części pola.
 
-<img src="wykres-przełącznik">
+![Oznaczenie wyświetlanego wykresu](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/plot-showed.png "Oznaczenie aktualnie wyświetlanego wykresu")
 
 ### Przyciski
 
@@ -66,17 +66,21 @@ Przyciski służą do zarządania zasobami w programie, za ich pomocą możemy d
 
 **Dodawanie/usuwanie przetwornika**
 
-W celu dodania przetwornika należy kliknąć przycisk `t+`, następnie program wyświetli pole wyboru pliku, po czym należy wybrać żądany plik przetwornika.
+W celu dodania przetwornika należy kliknąć przycisk ![Przycisk dodaj przetwornik][add-transdcuer], następnie program wyświetli pole wyboru pliku, po czym należy wybrać żądany plik przetwornika.
+[add-transdcuer]: https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/add-transducer-button.png "Przycisk ładujący nowy przetwornik"
+
+W celu usunięcia przetwornika należy najechać kursorem myszy na dany przetwornik. Program wyświetli wtedy przycisk z ikoną krzyża służący do usuwania. Usunięcie przetwornika usuwa także wszystkie krzywe, które były stworzone z jego udziałem.
 
 **Dodawanie/usuwanie wykresu**
 
-W celu dodania wykresu należy kliknąć przycisk `p+`, po naciśnięciu którego system doda nowy wykres do listy.
+W celu dodania wykresu należy kliknąć przycisk ![Przycisk dodaj przetwornik][add-plot], po naciśnięciu którego system doda nowy wykres do listy.
+[add-plot]: https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/add-plot-button.png "Przycisk tworzący nowy wykres"
 
 **Dodawanie/usuwanie krzywych**
 
-W celu dodania funkcji, należy zaznaczyć wykres na liście, do którego chcemy dodać funkcję. Zaznaczony wykres zostanie podświetlony na inny kolor. Następnie należy kliknąć przycisk `f+`, po naciśnięciu którego program wyświetli nowe okno z wyborem przetwornika i zbiorów dla nowej krzywej.
+W celu dodania funkcji, należy zaznaczyć wykres na liście, do którego chcemy dodać funkcję. Zaznaczony wykres zostanie podświetlony na inny kolor. Następnie należy kliknąć przycisk ![Przycisk dodaj funkcję][add-function], po naciśnięciu którego program wyświetli nowe okno z wyborem przetwornika i zbiorów dla nowej krzywej.
 
-<img src="nowa-krzywa">
+[add-function]: https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/add-function-button.png "Przycisk tworzący nową funkcję"
 
 W górnej części należy wybrać przetwornik, dla którego chcemy utworzyć krzywą. Z pól na dole należy wybrać - klikając na odpowiednie pola - zbiory tworzące dziedzinę i przeciwdziedzinę krzywej. Po kliknięciu przycisku `Dodaj` program zamknie okno wyboru nowej krzywej i doda ją do wybranego wcześniej wykresu.
 
@@ -86,19 +90,19 @@ Lista przetworników prezentuje wszystkie załadowane do programu pliki przetwor
 
 ## Okno przetwornika
 
-<img src="okno-przetwornik">
+![Okno przetwornika](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/transducer-dialog.png "Okno przetwornika")
 
 Okno przetwornika służy do podglądu przetwornika. W górnej jego części znajduje się pole wyboru [1], w którym użytkownik może wybrać, dane którego przetwornika chce wyświetlać. Poniżej znajdują się 3 zakładki [2] udostępniające różne informacje i akcje.
 
 ### Dane tabelaryczne
 
-<img src="dane-tabelaryczne">
+![Zakładka dane tabelaryczne](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/tab-tabular-data.png "Zakładka dane tabelaryczne")
 
 Zakładka `Dane tabelaryczne` wyświetla wszystkie zbiory danych dostępne dla przetwornika w postaci tabeli.
 
 ### Modele zastępcze
 
-<img src="modele-zastępcze">
+![Zakładka modele zastępcze](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/tab-models.png "Zakładka modele zastępcze")
 
 Zakładka `Modele zastępcze` służy do podglądu wyliczonych parametrów modelu BVD przetwornika. W prawej części zakładki [2] wyświetlane są wartości parametrów dla wybranego przetwornika.
 
@@ -114,7 +118,7 @@ Aby zadać zmierzoną wartość pojemności wejściowej przetwornika, należy za
 
 ### Eksport
 
-<img src="eksport">
+![Zakładka eksportu](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/tab-export.png "Zakładka eksportu")
 
 Zakładka `Eksport` służy do generowania dokumentów opisujących przetwornik.
 
