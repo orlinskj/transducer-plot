@@ -5,6 +5,13 @@
 #include "treeitem.h"
 #include <vector>
 
+/// NOTE: this class is currently not used in code!
+/// NOTE: this class is not working properly yet!
+
+/**
+ * @brief The BranchFilterProxyModel class
+ * @desc Filters model to specified branch only.
+ */
 class BranchFilterProxyModel : public QAbstractProxyModel
 {
 public:

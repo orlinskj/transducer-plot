@@ -42,17 +42,23 @@ private slots:
     void remove_plot();
     void show_plot();
     void plot_view_menu(const QPoint &point);
+    void plot_view_double_clicked(const QModelIndex& index);
 
     void add_function();
     void remove_function();
 
     void add_transducer();
     void remove_transducer();
+    void transducer_to_be_removed(const QModelIndex& parent, int first, int last);
 
     void show_transducer_dialog(int tab);
     void show_about_dialog();
 
+    void on_pushButton_clicked();
+
 private:
+    //bool eventFilter(QObject *watched, QEvent *event);
+    //bool event(QEvent *event);
     void init_signals();
     void setup_view();
     // void seed();
@@ -66,6 +72,7 @@ private:
 
     //  stores plots and their functions
     PlotStoreItemModel plot_store_;
+    //QStandardItemModel plot_store2_;
 
     // presents plot on QChartView
     PlotPresenter* plot_presenter_;

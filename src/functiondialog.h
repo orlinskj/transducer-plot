@@ -33,8 +33,8 @@ private slots:
 private:
     Ui::FunctionDialog *ui;
 
-    //FlattenTreeProxyModel domain_model_;
-    BranchFilterProxyModel domain_model_;
+    // FlattenTreeProxyModel domain_model_;
+    // BranchFilterProxyModel domain_model_;
     TreeItemModel sets_model_;
 
     PlotItem* plot_;

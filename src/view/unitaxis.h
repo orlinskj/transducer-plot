@@ -12,8 +12,12 @@ class UnitValueAxis;
 class UnitLogValueAxis;
 
 // NOTE: That is not the best design, because QValueAxis and QLogValueAxis
-// does not derive virtually from QbstractAxis...
+// does not derive virtually from QAbstractAxis
 
+/**
+ * @brief The UnitAxis class
+ * @desc Represents axis with attached units. Helps with handling multiple units on one axis and displays them nicely.
+ */
 class UnitAxis {
 public:
     enum class Type {

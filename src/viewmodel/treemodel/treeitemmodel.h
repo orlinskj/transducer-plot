@@ -6,6 +6,10 @@
 
 #include "treeitem.h"
 
+/**
+ * @brief The TreeItemModel class
+ * @desc Stores items which inherits from TreeItem. It supports both owning and non-owning version of items.
+ */
 class TreeItemModel : public QAbstractItemModel, public TreeItem
 {
 public:
@@ -17,11 +21,14 @@ public:
     virtual QModelIndex parent(const QModelIndex &child) const override;
     virtual int rowCount(const QModelIndex &parent) const override;
     virtual int columnCount(const QModelIndex &parent) const override;
+    virtual bool removeRows(int row, int count, const QModelIndex &parent) override;
 
-    void emit_begin_insert_rows(int first, int last, std::vector<int>* tree);
-    void emit_end_insert_rows();
-    void emit_begin_remove_rows(int first, int last, std::vector<int>* tree);
-    void emit_end_remove_rows();
+    void emit_begin_insert_rows(int first, int last, TreeItem* parent) override;
+    void emit_end_insert_rows(int first, int last, TreeItem* parent) override;
+    void emit_begin_remove_rows(int first, int last, TreeItem* parent) override;
+    void emit_end_remove_rows(int first, int last, TreeItem* parent) override;
+
+    QModelIndex index(TreeItem* item) const;
 };
 
 Q_DECLARE_METATYPE(TreeItem*)

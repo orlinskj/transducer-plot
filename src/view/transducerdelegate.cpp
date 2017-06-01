@@ -16,29 +16,42 @@ void TransducerDelegate::paint(QPainter *p, const QStyleOptionViewItem &option, 
     QString name  = transducer->get_name().c_str();
     QString path = transducer->get_source().c_str();
 
-    QFont small_font = QFont(option.font);
-    small_font.setPointSize(8);
+    QFont transducer_font = QFont(option.font);
+    transducer_font.setPointSize(transducer_font_size);
+    QColor transducer_color = option.palette.text().color();
 
-    if (option.state & QStyle::State_Selected)
+    QFont path_font = QFont(option.font);
+    path_font.setPointSize(path_font_size);
+    QColor path_color = option.palette.mid().color();
+
+    if (option.state & QStyle::State_Selected){
         p->fillRect(option.rect, option.palette.highlight());
+        path_color = option.palette.highlightedText().color();
+    }
+    else if(option.state & QStyle::State_MouseOver){
+        p->fillRect(option.rect, Qt::black);
+    }
 
-    p->setPen(option.palette.text().color());
-    p->setFont(option.font);
-    p->drawText(option.rect.adjusted(2,0,0,0),Qt::AlignLeft, name);
+    p->setPen(transducer_color);
+    p->setFont(transducer_font);
 
-    if (option.state & QStyle::State_Selected)
-        p->setPen(option.palette.highlightedText().color());
-    else
-        p->setPen(option.palette.mid().color());
+    constexpr int t_yoffset = transducer_font_size + (transducer_height - transducer_font_size)/2;
+    QPoint t_start = option.rect.topLeft() + QPoint(transducer_xoffset, t_yoffset);
+    p->drawText(t_start, name);
 
-    p->setFont(small_font);
-    p->drawText(option.rect.adjusted(2,16,0,0), Qt::AlignLeft, path);
+    p->setFont(path_font);
+    p->setPen(path_color);
 
+    constexpr int p_yoffset = transducer_height + path_font_size + (path_height - path_font_size)/2;
+    QPoint p_start = option.rect.topLeft() + QPoint(path_xoffset, p_yoffset);
+    p->drawText(p_start, path);
+
+    p->setPen(option.palette.alternateBase().color());
+    p->drawLine(option.rect.bottomLeft(), option.rect.bottomRight());
 }
 
 QSize TransducerDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(index);
-    //return QSize(option.rect.width(), option.decorationSize.height()+8);
-    return QSize(option.rect.width(), 32);
+    return QSize(option.rect.width(), transducer_height + path_height + margin_bottom);
 }

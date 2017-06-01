@@ -3,91 +3,45 @@
 #include <memory>
 #include <QModelIndex>
 
-PlotStoreItemModel::PlotStoreItemModel(QObject* parent) :
-    TreeItemModel(parent)
-{
-    plot_to_be_changed_ = nullptr;
-    plot_to_be_removed_ = nullptr;
-    plot_to_be_added_ = false;
-}
+PlotStoreItemModel::PlotStoreItemModel(QObject* parent) : TreeItemModel(parent){ }
 
 PlotStoreItemModel::~PlotStoreItemModel() { }
 
-void PlotStoreItemModel::emit_begin_insert_rows(int first, int last, std::vector<int>* tree)
+void PlotStoreItemModel::emit_begin_insert_rows(int first, int last, TreeItem* parent)
 {
-    TreeItemModel::emit_begin_insert_rows(first,last,tree);
+    TreeItemModel::emit_begin_insert_rows(first,last,parent);
+}
 
-    if (tree && tree->size())
-    {
-        TreeItem* item = nullptr;
-        while (tree->size())
-        {
-            item = item ? item->child(tree->back()) : child(tree->back());
-            if (auto plot = dynamic_cast<PlotItem*>(item))
-            {
-                plot_to_be_changed_ = plot;
-                break;
-            }
-            tree->pop_back();
-        }
+void PlotStoreItemModel::emit_end_insert_rows(int first, int last, TreeItem* parent)
+{
+    TreeItemModel::emit_end_insert_rows(first,last,parent);
+
+    auto plot_item = dynamic_cast<PlotItem*>(parent);
+
+    if (plot_item){
+        emit plot_changed(plot_item);
     }
-    else
-    {
-        plot_to_be_added_ = true;
+    else if(parent){
+        emit plot_added(dynamic_cast<PlotItem*>(parent->child(first)));
     }
 }
 
-void PlotStoreItemModel::emit_end_insert_rows()
+void PlotStoreItemModel::emit_begin_remove_rows(int first, int last, TreeItem* parent)
 {
-    TreeItemModel::emit_end_insert_rows();
-    if (plot_to_be_changed_)
-    {
-        emit plot_changed(plot_to_be_changed_);
-        plot_to_be_changed_ = nullptr;
-    }
-    if (plot_to_be_added_)
-    {
-        emit plot_changed(dynamic_cast<PlotItem*>(child(children_count()-1)));
-        plot_to_be_added_ = false;
-    }
+    TreeItemModel::emit_begin_remove_rows(first,last,parent);
+    removed_ = dynamic_cast<PlotItem*>(parent->child(first));
 }
 
-void PlotStoreItemModel::emit_begin_remove_rows(int first, int last, std::vector<int>* tree)
+void PlotStoreItemModel::emit_end_remove_rows(int first, int last, TreeItem* parent)
 {
-    TreeItemModel::emit_begin_remove_rows(first,last,tree);
+    TreeItemModel::emit_end_remove_rows(first,last,parent);
 
-    // this assumes that plots can only be first level nodes of tree
-    if (!tree || !tree->size()){
-        plot_to_be_removed_ = dynamic_cast<PlotItem*>(child(first));
-        emit plot_removed(plot_to_be_removed_);
-        plot_to_be_removed_ = nullptr;
-    }
-    else
-    {
-        TreeItem* item = nullptr;
-        for (;!tree->empty();tree->pop_back())
-        {
-            item = child(tree->back());
-            if (auto plot = dynamic_cast<PlotItem*>(item))
-            {
-                plot_to_be_changed_ = plot;
-                break;
-            }
-        }
-    }
-}
+    auto plot_item = dynamic_cast<PlotItem*>(parent);
 
-void PlotStoreItemModel::emit_end_remove_rows()
-{
-    TreeItemModel::emit_end_remove_rows();
-    /*if (plot_to_be_removed_)
-    {
-        emit plot_removed(plot_to_be_removed_);
-        plot_to_be_removed_ = nullptr;
-    }*/
-    if (plot_to_be_changed_)
-    {
-        emit plot_changed(plot_to_be_changed_);
-        plot_to_be_changed_ = nullptr;
+    if (plot_item){
+        emit plot_changed(plot_item);
+    }
+    else if(parent && parent->is_root()){
+        emit plot_removed(removed_);
     }
 }

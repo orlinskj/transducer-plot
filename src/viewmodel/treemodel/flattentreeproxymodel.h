@@ -5,6 +5,13 @@
 #include "treeitem.h"
 #include "treeitemmodel.h"
 
+/// NOTE: this class is currently not used in code!
+/// NOTE: this class is not working properly yet!
+
+/**
+ * @brief The FlattenTreeProxyModel class
+ * @desc Proxy model which flats tree model to a flat list model.
+ */
 class FlattenTreeProxyModel : public QAbstractProxyModel
 {
 public:

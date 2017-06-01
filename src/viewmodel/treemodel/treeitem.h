@@ -12,6 +12,10 @@ class TreeItem;
 
 using TreeItem_ptr = std::unique_ptr<TreeItem>;
 
+/**
+ * @brief The TreeItem class
+ * @desc Tree node item.
+ */
 class TreeItem
 {
 public:
@@ -20,39 +24,47 @@ public:
     TreeItem(TreeItem *parent = nullptr);
     virtual ~TreeItem();
 
-    virtual int children_count() const;
-    virtual int ancestor_count() const;
+    int children_count() const;
+    int ancestor_count() const;
 
-    virtual int child_index(const TreeItem *child) const;
-    virtual int index() const;
-    virtual int absolute_index(TreeItem* relative=nullptr) const;
-    virtual const std::vector<TreeItem*>& children();
+    int child_index(const TreeItem *child) const;
+    int index() const;
+    int absolute_index(TreeItem* relative=nullptr) const;
+    const std::vector<TreeItem*>& children();
 
-    virtual TreeItem* child(int index) const;
-    virtual TreeItem* parent() const;
-    virtual const TreeItem* absolute_child(int index) const;
-    virtual void path_to_root(std::vector<TreeItem*>* path) const;
+    TreeItem* child(int index) const;
+    TreeItem* parent() const;
+    const TreeItem* absolute_child(int index) const;
+    void path_to_root(std::vector<TreeItem*>* path) const;
+    bool is_root() const;
+    TreeItem* root();
 
     virtual void remove(TreeItem* item);
     virtual TreeItem* append(TreeItem* item);
-    virtual void kill();
-    virtual void kill_children();
+    void kill();
+    void kill_children();
 
-    // these are only for Qt
-    virtual void emit_begin_insert_rows(int first, int last, std::vector<int>* tree);
-    virtual void emit_end_insert_rows();
-    virtual void emit_begin_remove_rows(int first, int last, std::vector<int>* tree);
-    virtual void emit_end_remove_rows();
+    // signals can be used in subclasses for framework specific signalling
+    virtual void emit_begin_insert_rows(int first, int last, TreeItem* parent);
+    virtual void emit_end_insert_rows(int first, int last, TreeItem* parent);
+    virtual void emit_begin_remove_rows(int first, int last, TreeItem* parent);
+    virtual void emit_end_remove_rows(int first, int last, TreeItem* parent);
 
     virtual std::string to_string() const;
 
+    template <typename T>
+    static T* from_qmodelindex(const QModelIndex& index);
+
 protected:
     TreeItem* parent_;
-    std::vector<TreeItem_ptr> children_;
+    std::vector<TreeItem*> children_;
     int ancestor_count_; // cached
-
-    std::vector<TreeItem*> children_weak_;
-    bool children_weak_valid_;
 };
+
+template <typename T>
+T* TreeItem::from_qmodelindex(const QModelIndex& index)
+{
+    return dynamic_cast<T*>(index.data(TreeItem::Role).value<TreeItem*>());
+}
 
 #endif // TREENODEITEM_H

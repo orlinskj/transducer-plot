@@ -14,7 +14,11 @@ using namespace QtCharts;
 
 class FunctionItem;
 
-
+/**
+ * @brief The PlotItem class
+ * @desc Adapter around Plot class which stores all needed data for displaying plot in the GUI.
+ * It stores QtCharts::QChart and LayerStack internally. Intended for use in TreeItemModel.
+ */
 class PlotItem : public TreeItemTOwner<Plot>
 {
 public:
@@ -32,6 +36,8 @@ public:
     void remove(TreeItem* item) override; // from TreeItem
 
     void resize(QSize size);
+
+    static PlotItem* from_qmodelindex(const QModelIndex& index);
 
 protected:
     QList<QAbstractSeries*> axis_series(QAbstractAxis* axis);

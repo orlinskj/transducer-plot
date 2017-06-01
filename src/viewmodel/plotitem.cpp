@@ -14,6 +14,7 @@
 #include "functionitem.h"
 #include "../view/unitaxis.h"
 #include "../view/minmaxlayer.h"
+#include "../viewmodel/treemodel/treeitemmodel.h"
 
 bool PlotItem::isFuncAdmitanceRing(FunctionItem *func)
 {
@@ -236,5 +237,11 @@ void PlotItem::change_axis_type(QAbstractAxis* axis)
     chart_->addAxis(new_axis,alignment);
     for (auto series : attached_series)
         series->attachAxis(new_axis);
+}
+
+PlotItem* PlotItem::from_qmodelindex(const QModelIndex &index)
+{
+    return TreeItem::from_qmodelindex<PlotItem>(index);
+    //return dynamic_cast<PlotItem*>(index.data(TreeItem::Role).value<TreeItem*>());
 }
 

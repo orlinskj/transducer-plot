@@ -21,6 +21,10 @@ using namespace QtCharts;
 
 class PlotStoreItemModel;
 
+/**
+ * @brief The PlotPresenter class
+ * @desc Widget which displays on the viewport one plot at a time.
+ */
 class PlotPresenter : public QGraphicsView
 {
     Q_OBJECT
@@ -46,6 +50,9 @@ public:
     void alter_menu();
     void alter_axes();
     QImage screenshot(int width, int height);
+
+signals:
+    void plot_showed(PlotItem* plot, PlotItem* prev);
 
 public slots:
     void context_menu(const QPoint& point);

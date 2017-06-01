@@ -11,6 +11,11 @@ using namespace QtCharts;
 
 class PlotItem;
 
+/**
+ * @brief The FunctionItem class
+ * @desc Adapter around Function class which stores all needed data for displaying function in the GUI.
+ * It stores QtCharts::QLineSeries internally. Intended for use in TreeItemModel.
+ */
 class FunctionItem : public TreeItemT<Function>
 {
 public:

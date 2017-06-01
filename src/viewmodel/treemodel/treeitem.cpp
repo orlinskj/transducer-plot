@@ -3,9 +3,12 @@
 #include <algorithm>
 
 TreeItem::TreeItem(TreeItem *parent) :
-    parent_(parent), ancestor_count_(0), children_weak_valid_(false) { }
+    parent_(parent), ancestor_count_(0) { }
 
-TreeItem::~TreeItem() { }
+TreeItem::~TreeItem() {
+    for (const auto& item : children_)
+        delete item;
+}
 
 int TreeItem::children_count() const
 {
@@ -19,10 +22,10 @@ int TreeItem::ancestor_count() const
 
 int TreeItem::child_index(const TreeItem *child) const
 {
-    auto it = std::find_if(children_.begin(), children_.end(),
-                           [child](const TreeItem_ptr& p){ return p.get()==child; });
-    if (it != children_.end())
-        return int(it-children_.begin());
+    auto it = std::find_if(children_.cbegin(), children_.cend(),
+                           [child](const TreeItem* p){ return p == child; });
+    if (it != children_.cend())
+        return std::distance(children_.cbegin(), it);
 
     return -1;
 }
@@ -63,8 +66,8 @@ int TreeItem::absolute_index(TreeItem *relative) const
 
 TreeItem* TreeItem::child(int index) const
 {
-    if (index >= 0 && index < int(children_.size()))
-        return children_.at(index).get();
+    if (index >= 0 && index < children_count())
+        return children_.at(index);
     else
         return nullptr;
 }
@@ -99,30 +102,30 @@ const TreeItem* TreeItem::absolute_child(int index) const
 
 void TreeItem::remove(TreeItem* item)
 {
-    auto it = std::find_if(children_.begin(), children_.end(),
-                           [item](const TreeItem_ptr& p){ return item == p.get(); });
+    auto it = std::find_if(children_.cbegin(), children_.cend(),
+                           [item](const TreeItem* p){ return item == p; });
 
-    if (it != children_.end())
+    if (it != children_.cend())
     {
-        int row = child_index(it->get());
-        emit_begin_remove_rows(row, row, nullptr);
+        int row = child_index(*it);
+        emit_begin_remove_rows(row,row,this);
         children_.erase(it);
-        for (TreeItem* it=this; it!=nullptr; it=it->parent())
-            it->ancestor_count_--;
-        children_weak_valid_ = false;
-        emit_end_remove_rows();
+        qDebug() << "item erased" << item;
+        for (TreeItem* tit=this; tit!=nullptr; tit=tit->parent())
+            tit->ancestor_count_--;
+        emit_end_remove_rows(row,row,this);
     }
 }
 
 TreeItem* TreeItem::append(TreeItem* item)
 {
-    emit_begin_insert_rows(children_count(),children_count(), nullptr);
+    int row = children_count();
+    emit_begin_insert_rows(row,row,this);
     item->parent_ = static_cast<TreeItem*>(this);
-    children_.push_back(TreeItem_ptr(item));
-    for(TreeItem* it=this; it!=nullptr; it=it->parent())
-        it->ancestor_count_++;
-    children_weak_valid_ = false;
-    emit_end_insert_rows();
+    children_.push_back(item);
+    for(TreeItem* tit=this; tit!=nullptr; tit=tit->parent())
+        tit->ancestor_count_++;
+    emit_end_insert_rows(row,row,this);
     return item;
 }
 
@@ -130,6 +133,19 @@ void TreeItem::path_to_root(std::vector<TreeItem *>* path) const
 {
     for(TreeItem* it=parent(); it!=nullptr; it=it->parent())
         path->push_back(it);
+}
+
+bool TreeItem::is_root() const
+{
+    return !parent();
+}
+
+TreeItem* TreeItem::root()
+{
+    if (parent())
+        return parent()->root();
+    else
+        return this;
 }
 
 void TreeItem::kill()
@@ -142,10 +158,10 @@ void TreeItem::kill_children()
 {
     if (!children_.empty())
     {
-        emit_begin_remove_rows(0,children_count()-1,nullptr);
+        int last = children_count() - 1;
+        emit_begin_remove_rows(0,last,this);
         children_.clear();
-        children_weak_valid_ = false;
-        emit_end_remove_rows();
+        emit_end_remove_rows(0,last,this);
     }
 }
 
@@ -156,53 +172,31 @@ std::string TreeItem::to_string() const
 
 const std::vector<TreeItem*>& TreeItem::children()
 {
-    if (!children_weak_valid_)
-    {
-        children_weak_.clear();
-        for(auto &ptr : children_)
-            children_weak_.push_back(ptr.get());
-        children_weak_valid_ = true;
-    }
-
-    return children_weak_;
+    return children_;
 }
 
-// ------ only for Qt ---------------------
+// ---------------------------- SIGNALS ---------------------
 
-void TreeItem::emit_begin_insert_rows(int first, int last, std::vector<int>* tree)
+void TreeItem::emit_begin_insert_rows(int first, int last, TreeItem* parent)
 {
     if (parent_)
-    {
-        std::unique_ptr<std::vector<int> > tree_ptr(new std::vector<int>());
-        if (!tree)
-            tree = tree_ptr.get();
-
-        tree->push_back(this->index());
-        parent_->emit_begin_insert_rows(first, last, tree);
-    }
+        parent_->emit_begin_insert_rows(first, last, parent);
 }
 
-void TreeItem::emit_end_insert_rows()
+void TreeItem::emit_end_insert_rows(int first, int last, TreeItem* parent)
 {
     if (parent_)
-        parent_->emit_end_insert_rows();
+        parent_->emit_end_insert_rows(first,last,parent);
 }
 
-void TreeItem::emit_begin_remove_rows(int first, int last, std::vector<int>* tree)
+void TreeItem::emit_begin_remove_rows(int first, int last, TreeItem* parent)
 {
     if (parent_)
-    {
-        std::unique_ptr<std::vector<int>> tree_ptr{ new std::vector<int>()};
-        if (!tree)
-            tree = tree_ptr.get();
-
-        tree->push_back(this->index());
-        parent_->emit_begin_remove_rows(first, last, tree);
-    }
+        parent_->emit_begin_remove_rows(first,last,parent);
 }
 
-void TreeItem::emit_end_remove_rows()
+void TreeItem::emit_end_remove_rows(int first, int last, TreeItem* parent)
 {
     if (parent_)
-        parent_->emit_end_remove_rows();
+        parent_->emit_end_remove_rows(first,last,parent);
 }

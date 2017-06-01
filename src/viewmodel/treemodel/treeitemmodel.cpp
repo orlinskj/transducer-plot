@@ -25,6 +25,14 @@ QModelIndex TreeItemModel::index(int row, int column, const QModelIndex &parent)
     return QModelIndex();
 }
 
+QModelIndex TreeItemModel::index(TreeItem *item) const
+{
+    if (item && item != this)
+        return createIndex(item->index(),0,(void*)item);
+    else
+        return QModelIndex();
+}
+
 QVariant TreeItemModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid())
@@ -41,19 +49,21 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const
 
 QModelIndex TreeItemModel::parent(const QModelIndex &child) const
 {
+    qDebug() << "QModelIndex(" << child.row() << child.column() << child.internalPointer() << ").parent()";
     if (child.isValid())
     {
-        TreeItem* parent_item = nullptr;
         auto item = static_cast<TreeItem*>(child.internalPointer());
-        if (item)
-             parent_item = item->parent();
-        else
+
+        if (!item || item == this)
             return QModelIndex();
 
-        if (parent_item == this)
+        TreeItem* parent_item = item->parent();
+        if (parent_item->is_root())
             return QModelIndex();
-        int row = parent_item->parent()->child_index(parent_item);
-        return createIndex(row,0, (void*)parent_item);
+
+        int row = parent_item->index();
+        if (row != -1)
+            return createIndex(row,0, (void*)parent_item);
     }
 
     return QModelIndex();
@@ -76,38 +86,51 @@ int TreeItemModel::columnCount(const QModelIndex &parent) const
     return 1;
 }
 
-void TreeItemModel::emit_begin_insert_rows(int first, int last, std::vector<int> *tree)
+bool TreeItemModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    QModelIndex index = QModelIndex();
-    if (tree)
-    {
-        for(auto it=tree->cbegin(); it!=tree->cend(); it++)
-        {
-            index = this->index(*it,0,index);
-        }
+    TreeItem* parent_item = nullptr;
+
+    if (parent == QModelIndex()){
+        parent_item = this;
     }
+    else{
+        parent_item = static_cast<TreeItem*>(parent.internalPointer());
+    }
+
+    std::vector<TreeItem*> removed;
+
+    int curr_row = row;
+    while(curr_row-row < count){
+        removed.push_back(parent_item->child(curr_row));
+        curr_row++;
+    }
+
+    for (const auto& item : removed){
+        if (item)
+            item->kill();
+    }
+
+    return true;
+}
+
+void TreeItemModel::emit_begin_insert_rows(int first, int last, TreeItem* parent)
+{
+    auto index = this->index(parent);
     beginInsertRows(index, first, last);
 }
 
-void TreeItemModel::emit_end_insert_rows()
+void TreeItemModel::emit_end_insert_rows(int first, int last, TreeItem* parent)
 {
     endInsertRows();
 }
 
-void TreeItemModel::emit_begin_remove_rows(int first, int last, std::vector<int> *tree)
+void TreeItemModel::emit_begin_remove_rows(int first, int last, TreeItem* parent)
 {
-    QModelIndex index = QModelIndex();
-    if (tree)
-    {
-        for(auto it=tree->cbegin(); it!=tree->cend(); it++)
-        {
-            index = this->index(*it,0,index);
-        }
-    }
+    auto index = this->index(parent);
     beginRemoveRows(index, first, last);
 }
 
-void TreeItemModel::emit_end_remove_rows()
+void TreeItemModel::emit_end_remove_rows(int first, int last, TreeItem* parent)
 {
     endRemoveRows();
 }

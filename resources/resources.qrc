@@ -11,5 +11,14 @@
         <file>icons/bvd-parallel.svg</file>
         <file>icons/bvd-series.svg</file>
         <file>pdf_layout.html</file>
+        <file>glyphicons/glyphicons-208-remove.png</file>
+        <file>icons/v-function.png</file>
+        <file>icons/v-transducer.png</file>
+        <file>glyphicons/remove-white.png</file>
+        <file>glyphicons/remove.png</file>
+        <file>glyphicons/eye.png</file>
+        <file>glyphicons/eye-small.png</file>
+        <file>glyphicons/remove-red.png</file>
+        <file>glyphicons/remove-grey.png</file>
     </qresource>
 </RCC>

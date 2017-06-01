@@ -8,7 +8,12 @@
 
 // namespace treemodel {
 
-template<typename T> class TreeItemT : public TreeItem
+/**
+ * @brief The TreeItemT<T> class
+ * @desc Stores item but not owns the pointer.
+ */
+template<typename T>
+class TreeItemT : public TreeItem
 {
 public:
     TreeItemT(T* value = nullptr, TreeItem* parent = nullptr);
@@ -25,7 +30,13 @@ protected:
     T* value_;
 };
 
-template<typename T> class TreeItemTOwner : public TreeItem
+
+/**
+ * @brief The TreeItemTOwner<T> class
+ * @desc Stores item and owns the pointer.
+ */
+template<typename T>
+class TreeItemTOwner : public TreeItem
 {
 public:
     TreeItemTOwner(T* value = nullptr, TreeItem* parent = nullptr);

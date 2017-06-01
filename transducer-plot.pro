@@ -56,7 +56,10 @@ SOURCES += \
     src/pathfinder.cpp \
     src/io/exportfilehandler.cpp \
     src/io/csvexporthandler.cpp \
-    src/io/pdfexporthandler.cpp
+    src/io/pdfexporthandler.cpp \
+    src/view/itemlistview.cpp \
+    src/view/itemtreeview.cpp \
+    src/view/itemdeletebutton.cpp
 
 HEADERS += \
     src/model/function.h \
@@ -98,7 +101,10 @@ HEADERS += \
     src/pathfinder.h \
     src/io/exportfilehandler.h \
     src/io/csvexporthandler.h \
-    src/io/pdfexporthandler.h
+    src/io/pdfexporthandler.h \
+    src/view/itemlistview.h \
+    src/view/itemtreeview.h \
+    src/view/itemdeletebutton.h
 
 FORMS    += src/mainwindow.ui \
     src/functiondialog.ui \

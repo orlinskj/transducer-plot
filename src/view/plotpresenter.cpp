@@ -62,6 +62,7 @@ void PlotPresenter::plot_changed(PlotItem* p){
 void PlotPresenter::plot_removed(PlotItem* p){
     if (plot_ == p){
         scene()->removeItem(p->chart());
+        scene()->removeItem(&(p->layers()));
         plot_ = nullptr;
         broom_->set_plot(nullptr);
     }
@@ -83,6 +84,7 @@ void PlotPresenter::show_plot(PlotItem *plot)
     if (chart())
         this->scene()->removeItem(chart());
 
+    auto prev = plot_;
     plot_ = plot;
 
     if (plot_){
@@ -97,6 +99,8 @@ void PlotPresenter::show_plot(PlotItem *plot)
 
     alter_menu();
     alter_axes();
+
+    emit plot_showed(plot, prev);
 }
 
 void PlotPresenter::alter_menu()

@@ -116,7 +116,7 @@ int PDFExportHandler::save(const std::string &filepath)
 
         // plot backup
         auto start_plot = presenter_->plot();
-        auto broom_plot = presenter_->broom()->plot();
+        //auto broom_plot = presenter_->broom()->plot();
         auto freq = transducer_->value()->get_set(Unit::Frequency);
 
         for (const auto& set : transducer_->value()->get_sets()){
