@@ -102,7 +102,8 @@ HEADERS += \
     src/io/pdfexporthandler.h \
     src/view/itemlistview.h \
     src/view/itemtreeview.h \
-    src/view/itemdeletebutton.h
+    src/view/itemdeletebutton.h \
+    src/utf8/source/utf8.h
 
 FORMS    += src/mainwindow.ui \
     src/functiondialog.ui \

@@ -8,7 +8,8 @@
 #include <iomanip>
 #include <map>
 #include <tuple>
-#include <utf8.h>
+
+#include "../utf8/source/utf8.h"
 
 class Unit {
 public:

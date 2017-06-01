@@ -55,8 +55,11 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
 PlotPresenter::~PlotPresenter() {}
 
 void PlotPresenter::plot_changed(PlotItem* p){
-    alter_menu();
-    alter_axes();
+    if (plot() == p)
+    {
+        alter_menu();
+        alter_axes();
+    }
 }
 
 void PlotPresenter::plot_removed(PlotItem* p){
