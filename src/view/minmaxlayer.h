@@ -5,6 +5,10 @@
 
 class PlotItem;
 
+/**
+ * @brief The MinMaxLayer class
+ * @desc Stores min-max range for every function. Item is being displayed in top-left corner of plot area.
+ */
 class MinMaxLayer : public Layer
 {
 public:

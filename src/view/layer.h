@@ -9,8 +9,8 @@ class PlotItem;
 class FunctionItem;
 
 /**
- * @brief The Layer class is used to show layer of some additional graphics objects
- * on a chart.
+ * @brief The Layer class
+ * @desc Stores additional graphic items which are displayed on the chart.
  */
 class Layer : public QGraphicsItem
 {

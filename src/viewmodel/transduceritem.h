@@ -4,6 +4,10 @@
 #include "treemodel/treeitemt.h"
 #include "../model/transducer.h"
 
+/**
+ * @brief The TransducerItem class
+ * @desc Adapter for Transduer class which allows to store it in TreeItemModel.
+ */
 class TransducerItem : public TreeItemTOwner<Transducer>
 {
 public:
