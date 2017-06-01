@@ -166,13 +166,14 @@ void TransducerDialog::recalc_model()
     auto transducer_item = dynamic_cast<TransducerItem*>(
                 transducer_model_->child(ui->transducerComboBox->currentIndex()));
 
-    boost::optional<SolverType> input_capacity = boost::none;
+    std::pair<bool, SolverType> input_capacity = std::make_pair(false,0);
     auto Cop_item = ui->tableWidgetCop->item(0,0);
     if (ui->fixedCopCheckBox->isChecked() == true && Cop_item)
     {
         std::string Co_cell = Cop_item->data(Qt::DisplayRole).toString().toStdString();
-        input_capacity = Unit::from_symbol("C").value_from_repr<SolverType>(Co_cell);
-        qDebug() << "input capacity = " << *input_capacity;
+
+        input_capacity.first = true;
+        input_capacity.second = Unit::Capacity.value_from_repr<SolverType>(Co_cell);
     }
 
     table_params_model_.clear();

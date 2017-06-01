@@ -1,8 +1,8 @@
 #include "pathvalidator.h"
 
 #include <fstream>
-#include <boost/filesystem.hpp>
 #include <QDebug>
+#include <QDir>
 
 PathValidator::PathValidator(QObject* parent) :
     QValidator(parent)
@@ -10,15 +10,15 @@ PathValidator::PathValidator(QObject* parent) :
 
 QValidator::State PathValidator::validate(QString &text, int &pos) const
 {
-    auto path = boost::filesystem::absolute(text.toStdString());
-    bool exists = boost::filesystem::exists(path);
+    auto dir_path = QDir(text);
 
-    std::ofstream file(path.string(),std::ios_base::ate);
+    std::ofstream file(dir_path.absolutePath().toStdString(), std::ios_base::ate);
     if (file)
     {
         file.close();
-        if (!exists)
-            boost::filesystem::remove(path);
+        if (!dir_path.exists()){
+            qDebug() << "File removed? : " << dir_path.remove("");
+        }
         return QValidator::Acceptable;
     }
     else

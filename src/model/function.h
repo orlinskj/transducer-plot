@@ -2,7 +2,6 @@
 #define FUNCTION_H
 
 #include <string>
-#include <boost/optional.hpp>
 
 #include "transducer.h"
 #include "set.h"
@@ -23,7 +22,6 @@ public:
     const Transducer *transducer() const;
 
     const Plot* plot() const;
-    boost::optional<SetType> value_at(SetType v) const;
     std::vector<SetType> values_at(SetType v) const;
 
     operator std::string() const;

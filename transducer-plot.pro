@@ -48,7 +48,6 @@ SOURCES += \
     src/sizevalidator.cpp \
     src/model/solver.cpp \
     src/io/loader.cpp \
-    src/pdfprinter.cpp \
     src/error.cpp \
     src/view/admitanceringlayer.cpp \
     src/view/layer.cpp \
@@ -93,7 +92,6 @@ HEADERS += \
     src/sizevalidator.h \
     src/model/solver.h \
     src/io/loader.h \
-    src/pdfprinter.h \
     src/error.h \
     src/view/admitanceringlayer.h \
     src/view/layer.h \
@@ -119,8 +117,8 @@ else:unix: LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/
 INCLUDEPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
 DEPENDPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
 
-unix: LIBS += -lboost_system -lboost_filesystem
-win32-g++: LIBS += -lboost_system-mt -lboost_filesystem-mt
+unix: LIBS += -lstdc++fs
+win32-g++: LIBS += -lstdc++fs
 
 DISTFILES +=
 

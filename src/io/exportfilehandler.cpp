@@ -1,8 +1,8 @@
 #include "exportfilehandler.h"
 
 #include "../viewmodel/transduceritem.h"
-#include <boost/filesystem.hpp>
 #include <QDebug>
+#include <experimental/filesystem>
 
 ExportFileHandler::ExportFileHandler(TransducerItem* transducer, const std::string& ext) :
     transducer_(transducer),
@@ -11,12 +11,13 @@ ExportFileHandler::ExportFileHandler(TransducerItem* transducer, const std::stri
 
 std::string ExportFileHandler::path(const std::string& filepath)
 {
-    boost::filesystem::path path(filepath);
+    using path = std::experimental::filesystem::path;
+    path fpath(filepath);
 
-    if (path.extension().string() != ext_){
-        path += ext_;
+    if (fpath.extension() != ext_){
+        fpath += ext_;
     }
 
-    return path.string();
+    return fpath;
 }
 

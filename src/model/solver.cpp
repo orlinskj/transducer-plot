@@ -1,23 +1,23 @@
 #include "solver.h"
 
-#include <boost/math/constants/constants.hpp>
+#include <cmath>
 
-bool BVDSolver::solve(const Transducer& t, boost::optional<SolverType> input_capacity)
+bool BVDSolver::solve(const Transducer& t, const std::pair<bool, SolverType>& input_capacity)
 {
     // getting frequency set
-    auto freq_unit = Unit::from_symbol("f");
+    auto freq_unit = Unit::Frequency;
     auto freq_set = t.get_set(freq_unit);
     if (!freq_set)
         throw std::runtime_error("Transducer does not contain frequency data set.");
 
     // getting impedance set
-    auto impedance_unit = Unit::from_symbol("|Z|");
+    auto impedance_unit = Unit::Impedance;
     auto impedance_set = t.get_set(impedance_unit);
     if (!impedance_set)
         throw std::runtime_error("Transducer does not contain impedance magnitude data set.");
 
     // getting impedance imaginary set
-    auto imaginary_unit = Unit::from_symbol("Im");
+    auto imaginary_unit = Unit::ImpedanceImag;
     auto imaginary_set = t.get_set(imaginary_unit);
     if (!imaginary_set)
         throw std::runtime_error("Transducer does not contain impedance imaginary fraction data set.");
@@ -27,17 +27,14 @@ bool BVDSolver::solve(const Transducer& t, boost::optional<SolverType> input_cap
     auto fs_index = std::get<1>(impedance_set->min());
     auto fp_index = std::get<1>(impedance_set->max());
 
-    SolverType pi = boost::math::constants::pi<SolverType>();
-    //SolverType pi = 3.14159;
-
     fs_ = freq_set->values().at(fs_index);
     fp_ = freq_set->values().at(fp_index);
-    SolverType ws = 2 * pi * fs_;
-    SolverType wp = 2 * pi * fp_;
+    SolverType ws = 2 * M_PI * fs_;
+    SolverType wp = 2 * M_PI * fp_;
 
     // calculating transducer input capacity
-    if (input_capacity)
-        Cop_ = *input_capacity;
+    if (input_capacity.first)
+        Cop_ = input_capacity.second;
     else
     {
         SolverType min_f = freq_set->values().at(0);
@@ -71,9 +68,8 @@ bool BVDSolver::solve(const Transducer& t, boost::optional<SolverType> input_cap
     QQ_ = std::sqrt(Qs_*Qp_);
 
     // calculating coefficients
-    SolverType half_pi = boost::math::constants::half_pi<SolverType>();
-    //SolverType half_pi = 1.570796;
-    k33_ = std::sqrt(half_pi*fs_/fp_*std::tan((fp_-fs_)/fp_*half_pi));
+
+    k33_ = std::sqrt(M_PI_2*fs_/fp_*std::tan((fp_-fs_)/fp_*M_PI_2));
     keff_ = std::sqrt((fp_*fp_-fs_*fs_)/(fs_*fs_));
     k_ = (keff_/k33_)*(keff_/k33_);
 

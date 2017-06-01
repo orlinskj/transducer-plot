@@ -1,20 +1,34 @@
 #ifndef _LOADER_H
 #define _LOADER_H
 
-//#include <iostream>
-#include <fstream>
 #include <string>
-#include <cstring>
-#include <memory>
-#include <boost/filesystem/path.hpp>
-#include <boost/algorithm/string.hpp>
-
 #include "../model/transducer.h"
 
-using namespace boost::filesystem;
-using namespace boost::algorithm;
+namespace strtrim{
+    // trim from start
+    inline std::string& ltrim(std::string &s) {
+        s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+                std::not1(std::ptr_fun<int, int>(std::isspace))));
+        return s;
+    }
 
-// Reads data from file into Transducer instance.
+    // trim from end
+    inline std::string& rtrim(std::string &s) {
+        s.erase(std::find_if(s.rbegin(), s.rend(),
+                std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+        return s;
+    }
+
+    // trim from both ends
+    inline std::string& trim(std::string &s) {
+        return ltrim(rtrim(s));
+    }
+}
+
+/**
+ * @brief The Loader class
+ * @desc Reads data from file into Transudcer instance.
+ */
 class Loader{
 public:
     // load a transducer - returns new instance on heap

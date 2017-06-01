@@ -35,57 +35,6 @@ const Plot* Function::plot() const
     return plot_;
 }
 
-boost::optional<SetType> Function::value_at(SetType v) const
-{
-    auto dv = domain()->values();
-    auto cv = codomain()->values();
-
-    auto beg = dv.begin();
-    auto end = dv.end();
-    auto m = beg;
-
-    SetType eps{1e-8};
-
-    while(true)
-    {
-        // middle between beg and end
-        m = beg + (end - beg - 1)/2;
-
-        if (*m < v-eps)
-            beg = m;
-        else if (*m > v+eps)
-            end = m + 1;
-        else
-            break;
-
-        if (end - beg <= 2)
-        {
-            if ((v-*beg) * (v-*(end-1)) > 0.0)
-                return boost::none;
-            else
-            {
-                /*if (std::abs(v-*beg) < std::abs(v-*m))
-                    return boost::optional<SetType>(cv.at(beg-dv.begin()));
-                else
-                    return boost::optional<SetType>(cv.at(m-dv.begin()));*/
-
-                // interpolate between anchors (beg) and (end-1)
-                auto dv_a = *beg;
-                auto dv_b = *(end-1);
-
-                auto cv_a = cv.at(beg - dv.begin());
-                auto cv_b = cv.at(end-1 - dv.begin());
-
-                return boost::optional<SetType>(
-                            cv_a + (cv_b-cv_a) * (v-dv_a) / (dv_b-dv_a)
-                            );
-            }
-        }
-    }
-
-    return boost::optional<SetType>(*m);
-}
-
 std::vector<SetType> Function::values_at(SetType v) const
 {
     auto dv = domain()->values();

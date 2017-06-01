@@ -1,11 +1,17 @@
 #include "loader.h"
 
+#include <QtCore>
+
 #include <locale>
 #include <regex>
-#include <QtCore>
+#include <fstream>
 #include <cmath>
 #include "../error.h"
-#include <boost/algorithm/string.hpp>
+#include <experimental/filesystem> // as of may June 2017 filesystem in not in ISO C++
+
+#include <algorithm>
+#include <functional>
+#include <cctype>
 
 void complete_sets(std::vector<Set>& sets)
 {
@@ -137,8 +143,10 @@ Transducer* Loader::load(const std::string& file_path)
     if (!stream)
         return nullptr;
 
+    using path = std::experimental::filesystem::path;
+
     std::string source = file_path;
-    std::string name = path(file_path).stem().generic_string();
+    std::string name = path(file_path).stem();
 
     std::vector<Unit> units;
     std::vector<std::vector<Set::value_type>> values;
@@ -179,7 +187,7 @@ Transducer* Loader::load(const std::string& file_path)
                     // Trim whitespaces from both sides.
                     // It helps to avoid \r char at the end of string
                     // left by getline() on windows (CRLF!)
-                    trim(token);
+                    strtrim::trim(token);
 
                     if(token.empty())
                     {

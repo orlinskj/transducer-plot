@@ -2,7 +2,7 @@
 #define SOLVER_H
 
 #include <cmath>
-#include <boost/optional.hpp>
+#include <utility>
 #include "transducer.h"
 
 using SolverType = double;
@@ -15,7 +15,7 @@ public:
         Parallel
     };
 
-    bool solve(const Transducer& t, boost::optional<SolverType> input_capacity);
+    bool solve(const Transducer& t, const std::pair<bool, SolverType> &input_capacity);
 
     SolverType Co(Type type) const;
     SolverType R(Type type) const;

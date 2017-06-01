@@ -7,7 +7,6 @@
 #include <QLegendMarker>
 #include <QLineSeries>
 
-#include <boost/optional.hpp>
 #include "../viewmodel/functionitem.h"
 
 Broom::Broom(QGraphicsItem *parent) :

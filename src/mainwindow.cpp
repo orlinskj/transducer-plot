@@ -20,7 +20,6 @@
 #include "functiondialog.h"
 #include "transducerdialog.h"
 #include "aboutdialog.h"
-#include "pdfprinter.h"
 //#include "screenshotdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -81,20 +80,11 @@ void MainWindow::init_signals()
     connect(ui_->plotAddButton, &QPushButton::clicked,
             this, &MainWindow::add_plot);
 
-    /*connect(ui_->plotRemoveButton, &QPushButton::clicked,
-            this, &MainWindow::remove_plot);*/
-
     connect(ui_->functionAddButton, &QPushButton::clicked,
             this, &MainWindow::add_function);
 
-    /*connect(ui_->functionRemoveButton, &QPushButton::clicked,
-            this, &MainWindow::remove_function);*/
-
     connect(ui_->transducerAddButton, &QPushButton::clicked,
             this, &MainWindow::add_transducer);
-
-    /*connect(ui_->transducerRemoveButton, &QPushButton::clicked,
-            this, &MainWindow::remove_transducer);*/
 
     // context menus
     connect(ui_->plotView, &QGraphicsView::customContextMenuRequested,

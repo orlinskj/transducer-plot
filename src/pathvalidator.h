@@ -3,6 +3,12 @@
 
 #include <QValidator>
 
+/// NOTE: currently not used in code
+
+/**
+ * @brief The PathValidator class
+ * @desc Checks whether directory is writeable.
+ */
 class PathValidator : public QValidator
 {
 public:

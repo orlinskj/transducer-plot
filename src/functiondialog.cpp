@@ -19,7 +19,7 @@ FunctionDialog::FunctionDialog(QWidget *parent,
 
     plot_ = plot;
 
-    domain_model_.setSourceModel(model);
+    // domain_model_.setSourceModel(model);
     //ui->domainView->setModel(&domain_model_);
     //ui->codomainView->setModel(&domain_model_);
 

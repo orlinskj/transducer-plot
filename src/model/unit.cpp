@@ -2,8 +2,8 @@
 
 #include <algorithm>
 #include <sstream>
-#include <boost/assert.hpp>
 #include <iostream>
+#include <cassert>
 #include "../error.h"
 
 const Unit& Unit::record(const std::string& name, const std::string& symbol, const std::string& unit)
@@ -119,11 +119,7 @@ void CombinedUnit::add_unit(const Unit &u)
 {
     if (!units_.empty())
     {
-        std::stringstream ss;
-        ss << "Units " << units_.front().name() << " and "
-           << u.name() << " don't match";
-        std::string msg = ss.str();
-        BOOST_ASSERT_MSG(units_.front().unit() == u.unit(), msg.c_str());
+        assert(units_.front().unit() == u.unit());
     }
 
     units_.push_back(u);
