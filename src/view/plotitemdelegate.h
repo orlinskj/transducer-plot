@@ -11,6 +11,11 @@
 
 class PlotPresenter;
 
+/**
+ * @brief The PlotItemDelegate class
+ *
+ * Used for painting items in plot view.
+ */
 class PlotItemDelegate : public QStyledItemDelegate
 {
 public:

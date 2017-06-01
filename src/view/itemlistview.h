@@ -4,6 +4,11 @@
 #include <QListView>
 #include "itemdeletebutton.h"
 
+/**
+ * @brief The ItemListView class
+ *
+ * Displays items as list and shows delete button for hovered item.
+ */
 class ItemListView : public QListView
 {
 public:

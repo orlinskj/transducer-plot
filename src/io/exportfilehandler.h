@@ -10,9 +10,9 @@ class ExportFileHandler
 public:
     ExportFileHandler(TransducerItem* transducer, const std::string& ext);
     virtual int save(const std::string& path) = 0;
+    std::string path(const std::string& filepath);
 
 protected:
-    std::string path(const std::string& filepath);
 
     TransducerItem* transducer_;
     std::string ext_;

@@ -49,7 +49,7 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const
 
 QModelIndex TreeItemModel::parent(const QModelIndex &child) const
 {
-    qDebug() << "QModelIndex(" << child.row() << child.column() << child.internalPointer() << ").parent()";
+    // qDebug() << "QModelIndex(" << child.row() << child.column() << child.internalPointer() << ").parent()";
     if (child.isValid())
     {
         auto item = static_cast<TreeItem*>(child.internalPointer());

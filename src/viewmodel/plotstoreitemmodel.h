@@ -9,7 +9,8 @@
 
 /**
  * @brief The PlotStoreItemModel class
- * @desc Model storing PlotItem and FunctionItem objects. Emits signals on every plot update.
+ *
+ * Model storing PlotItem and FunctionItem objects. Emits signals on every plot update.
  */
 class PlotStoreItemModel : public TreeItemModel
 {

@@ -401,7 +401,7 @@
   </action>
   <action name="actionHelpHelp">
    <property name="text">
-    <string>Pomoc PDF</string>
+    <string>Pomoc</string>
    </property>
   </action>
   <action name="actionHelpOnline">

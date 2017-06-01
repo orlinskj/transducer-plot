@@ -17,6 +17,8 @@
 #include <QFileDialog>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsTextItem>
+#include <QMessageBox>
+#include <QDesktopServices>
 
 #include <string>
 #include <tuple>
@@ -142,11 +144,53 @@ void TransducerDialog::export_transducer()
         return;
     }
 
-    if (export_handler->save(ui->pathLineEdit->text().toStdString()) == 0){
-        // OK
+    QString path = QString::fromStdString(
+                export_handler->path(QDir(ui->pathLineEdit->text()).absolutePath().toStdString()));
+    bool save = false;
+
+    // checking whether file exists
+    if (QDir().exists(QDir(path).absolutePath())){
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(
+                    this,
+                    tr("Zastąp plik"),
+                    tr("Plik o podanej ścieżce")+" "+path+" "+tr("istnieje. Nadpisać plik?"),
+                    QMessageBox::Yes|QMessageBox::No);
+
+        if (reply == QMessageBox::Yes) {
+            save = true;
+        }
     }
-    else{
-        // ERROR
+    else {
+        save = true;
+    }
+
+    if (save){
+        if (export_handler->save(ui->pathLineEdit->text().toStdString()) == 0){
+            QMessageBox msg(
+                        QMessageBox::Icon::Information,
+                        "Sukces",
+                        "Plik przetwornika został zpisany pod ścieżką "+path,
+                        QMessageBox::Button::Close,
+                        this);
+
+            QPushButton* open_button = msg.addButton(tr("Otwórz plik"), QMessageBox::ActionRole);
+            msg.exec();
+
+            if (msg.clickedButton() == open_button) {
+                // open file
+                QDesktopServices::openUrl(QUrl(path));
+            }
+        }
+        else{
+            QMessageBox msg(
+                        QMessageBox::Icon::Critical,
+                        "Błąd eksportu",
+                        "Błąd eksportu pliku przetwornika. Sprawdź czy posiadasz prawo zapisu pod podaną ścieżką.",
+                        QMessageBox::Button::Ok,
+                        this);
+            msg.show();
+        }
     }
 }
 
@@ -325,3 +369,14 @@ void TransducerDialog::place_pixmap_labels(const std::vector<TransducerDialog::L
         }
     }
 }
+/*
+FileOpenButton::FileOpenButton(QWidget *parent, QString path) :
+    QPushButton(parent), path_(path)
+{
+    setText("Otwórz plik");
+}
+
+bool FileOpenButton::hitButton(const QPoint &pos) const
+{
+    QDesktopServices::openUrl(QUrl(path_));
+}*/

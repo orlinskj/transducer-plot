@@ -20,11 +20,17 @@ void PathFinder::show(QWidget *widget, QString filter)
 
     qDebug() << QFileInfo(def_path).absoluteFilePath();
 
-    QString path = QFileDialog::getSaveFileName(
-                widget,
-                tr("Wskaż plik"),
-                QFileInfo(def_path).absoluteFilePath(),
-                filter);
+    QFileDialog dialog(widget, tr("Wskaż plik"), QFileInfo(def_path).absoluteFilePath(), filter);
+    dialog.setOption(QFileDialog::DontConfirmOverwrite);
+    dialog.setViewMode(QFileDialog::List);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+
+    QString path;
+    if (dialog.exec()){
+        if (!dialog.selectedFiles().empty())
+            path = dialog.selectedFiles().first();
+    }
 
     if (lineedit){
         if (!path.isEmpty())

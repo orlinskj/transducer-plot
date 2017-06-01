@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QStandardItemModel>
 #include <QGraphicsPixmapItem>
+#include <QPushButton>
+
 #include <memory>
 #include <tuple>
 
@@ -52,6 +54,16 @@ private:
     static std::vector<Label> labels_series;
     static std::vector<Label> labels_parallel;
 };
+
+/*class FileOpenButton : public QPushButton
+{
+public:
+    FileOpenButton(QWidget* parent, QString path);
+protected:
+    QString path_;
+
+    bool hitButton(const QPoint &pos) const override;
+};*/
 
 
 #endif // TABLEDATADIALOG_H

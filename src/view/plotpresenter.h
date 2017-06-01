@@ -23,7 +23,8 @@ class PlotStoreItemModel;
 
 /**
  * @brief The PlotPresenter class
- * @desc Widget which displays on the viewport one plot at a time.
+ *
+ * Displays on the viewport one plot at a time.
  */
 class PlotPresenter : public QGraphicsView
 {

@@ -16,7 +16,8 @@ class UnitLogValueAxis;
 
 /**
  * @brief The UnitAxis class
- * @desc Represents axis with attached units. Helps with handling multiple units on one axis and displays them nicely.
+ *
+ * Represents axis with attached units. Helps with handling multiple units on one axis and displaying them nicely.
  */
 class UnitAxis {
 public:

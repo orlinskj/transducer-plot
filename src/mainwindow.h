@@ -51,6 +51,8 @@ private slots:
     void show_transducer_dialog(int tab);
     void show_about_dialog();
 
+    void show_help();
+
 private:
     void init_signals();
     void setup_view();

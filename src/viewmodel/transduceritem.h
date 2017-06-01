@@ -6,7 +6,8 @@
 
 /**
  * @brief The TransducerItem class
- * @desc Adapter for Transduer class which allows to store it in TreeItemModel.
+ *
+ * Adapter for Transduer class which allows to store it in TreeItemModel.
  */
 class TransducerItem : public TreeItemTOwner<Transducer>
 {

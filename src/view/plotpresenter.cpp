@@ -26,6 +26,8 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
     zoom_enabled_(false),
     zoom_horizontal_(false)
 {
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     broom_->set_visibility(false);
     scene()->addItem(broom_);
 

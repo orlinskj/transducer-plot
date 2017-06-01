@@ -16,7 +16,8 @@ class FunctionItem;
 
 /**
  * @brief The PlotItem class
- * @desc Adapter around Plot class which stores all needed data for displaying plot in the GUI.
+ *
+ * Adapter around Plot class which stores all needed data for displaying plot in the GUI.
  * It stores QtCharts::QChart and LayerStack internally. Intended for use in TreeItemModel.
  */
 class PlotItem : public TreeItemTOwner<Plot>

@@ -10,7 +10,8 @@ using namespace QtCharts;
 
 /**
  * @brief The Broom class
- * @desc Moveable graphical item displaying function values from current x position on the chart domain.
+ *
+ * Moveable graphical item. Displays function values from current x position on the chart domain.
  */
 class Broom : public QGraphicsItem
 {

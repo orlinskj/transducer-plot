@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include <QBoxLayout>
 #include <QGraphicsLayout>
+#include <QDesktopServices>
 
 #include "view/transducerdelegate.h"
 #include "view/plotitemdelegate.h"
@@ -110,17 +111,20 @@ void MainWindow::init_signals()
     connect(ui_->actionTransducerToPdf, &QAction::triggered,
             this, [this](){ show_transducer_dialog(2); });
 
-    connect( ui_->actionPlotScreenshot, &QAction::triggered,
-             this, [this](){ screenshot_form_->show(); });
+    connect(ui_->actionPlotScreenshot, &QAction::triggered,
+            this, [this](){ screenshot_form_->show(); });
 
-    connect( ui_->actionTransducerTableData, &QAction::triggered,
-             this, [this](){ show_transducer_dialog(0); });
+    connect(ui_->actionTransducerTableData, &QAction::triggered,
+            this, [this](){ show_transducer_dialog(0); });
 
-    connect( ui_->actionTransducerModels, &QAction::triggered,
-             this, [this](){ show_transducer_dialog(1); });
+    connect(ui_->actionTransducerModels, &QAction::triggered,
+            this, [this](){ show_transducer_dialog(1); });
 
-    connect( ui_->actionHelpAbout, &QAction::triggered,
-             this, [this]{ show_about_dialog(); });
+    connect(ui_->actionHelpAbout, &QAction::triggered,
+            this, [this]{ show_about_dialog(); });
+
+    connect(ui_->actionHelpHelp, &QAction::triggered,
+            this, &MainWindow::show_help);
 
     // mouse actions
 
@@ -315,4 +319,10 @@ void MainWindow::show_plot()
         if (auto plot = dynamic_cast<PlotItem*>(item))
             plot_presenter_->show_plot(plot);
     }
+}
+
+void MainWindow::show_help()
+{
+    if (!QDesktopServices::openUrl(QUrl("user-manual.pdf")))
+        QDesktopServices::openUrl(QUrl("https://github.com/orlinskj/transducer-plot/blob/master/doc/user-manual.md"));
 }

@@ -7,7 +7,8 @@ class ItemDeleteButton;
 
 /**
  * @brief The ItemTreeView class
- * @desc Tree view class with delete button displayed for hovered item.
+ *
+ * Tree view class with delete button displayed for hovered item.
  */
 class ItemTreeView : public QTreeView
 {

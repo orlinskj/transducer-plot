@@ -149,7 +149,7 @@
             <number>6</number>
            </property>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0,0,0,1,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0,0,0,1">
              <item>
               <widget class="QComboBox" name="comboBoxModelType">
                <property name="maximumSize">
@@ -271,35 +271,6 @@
                 </size>
                </property>
               </spacer>
-             </item>
-             <item>
-              <widget class="QToolButton" name="toolButtonCopyValues">
-               <property name="minimumSize">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <property name="cursor">
-                <cursorShape>PointingHandCursor</cursorShape>
-               </property>
-               <property name="toolTip">
-                <string>Kopiuj wszystkie wartości do schowka</string>
-               </property>
-               <property name="text">
-                <string>...</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../resources/resources.qrc">
-                 <normaloff>:/glyphicons/glyphicons-512-copy.png</normaloff>:/glyphicons/glyphicons-512-copy.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>18</width>
-                 <height>18</height>
-                </size>
-               </property>
-              </widget>
              </item>
             </layout>
            </item>
@@ -492,8 +463,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../resources/resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

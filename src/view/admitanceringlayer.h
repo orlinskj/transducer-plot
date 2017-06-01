@@ -8,6 +8,11 @@
 
 class FunctionItem;
 
+/**
+ * @brief The AdmitanceRingLayer class
+ *
+ * Stores and handles painting all graphical items used to describe admitance ring plot.
+ */
 class AdmitanceRingLayer : public Layer
 {
 public:

@@ -10,7 +10,8 @@ class FunctionItem;
 
 /**
  * @brief The Layer class
- * @desc Stores additional graphic items which are displayed on the chart.
+ *
+ * Stores additional graphic items which are displayed on the chart.
  */
 class Layer : public QGraphicsItem
 {

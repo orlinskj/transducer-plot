@@ -5,8 +5,11 @@
 #include <QPersistentModelIndex>
 #include <QAbstractItemView>
 
-class ItemView;
-
+/**
+ * @brief The ItemDeleteButton class
+ *
+ * Button displayed by ItemListView and ItemTreeView on top of hovered items.
+ */
 class ItemDeleteButton : public QPushButton
 {
 public:

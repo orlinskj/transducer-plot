@@ -6,6 +6,7 @@
 #include "sizevalidator.h"
 #include <regex>
 #include <QComboBox>
+#include <QMessageBox>
 
 ScreenshotForm::ScreenshotForm(QWidget *parent, PlotPresenter* presenter) :
     QWidget(parent),
@@ -54,8 +55,25 @@ void ScreenshotForm::save()
     int height = re.cap(2).toInt();
 
     QImage img = presenter_->screenshot(width,height);
-    img.save(ui->pathLineEdit->text(),nullptr,-1);
-    this->hide();
+    QString path = QDir(ui->pathLineEdit->text()).absolutePath();
+
+    if (QDir().exists(path)){
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(
+                    this,
+                    tr("Zastąp plik"),
+                    tr("Plik o podanej ścieżce")+" "+path+" "+tr("istnieje. Nadpisać plik?"),
+                    QMessageBox::Yes|QMessageBox::No);
+
+        if (reply == QMessageBox::Yes) {
+            img.save(ui->pathLineEdit->text(),nullptr,-1);
+            this->hide();
+        }
+    }
+    else {
+        img.save(ui->pathLineEdit->text(),nullptr,-1);
+        this->hide();
+    }
 }
 
 void ScreenshotForm::enable_save_button(const QString&)

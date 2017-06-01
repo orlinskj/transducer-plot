@@ -6,6 +6,11 @@
 
 // namespace ac{
 
+/**
+ * @brief The TransducerDelegate class
+ *
+ * Paints transducers in transducer list view.
+ */
 class TransducerDelegate : public QStyledItemDelegate
 {
 public:

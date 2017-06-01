@@ -11,7 +11,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = transducer-plot
 TEMPLATE = app
 
-CONFIG += c++14 console
+CONFIG += c++14
+CONFIG(debug): CONFIG += console
+CONFIG(release, debug|release): CONFIG -= console
+
 
 unix: QMAKE_CXXFLAGS += -std=c++14 -fext-numeric-literals
 win32-gcc: QMAKE_CXXFLAGS += -std=c++14 -fext-numeric-literals
@@ -34,7 +37,6 @@ SOURCES += \
     src/viewmodel/plotstoreitemmodel.cpp \
     src/viewmodel/setitem.cpp \
     src/viewmodel/transduceritem.cpp \
-    src/viewmodel/transducersetproxymodel.cpp \
     src/functiondialog.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
@@ -79,7 +81,6 @@ HEADERS += \
     src/viewmodel/plotstoreitemmodel.h \
     src/viewmodel/setitem.h \
     src/viewmodel/transduceritem.h \
-    src/viewmodel/transducersetproxymodel.h \
     src/functiondialog.h \
     src/mainwindow.h \
     src/viewmodel/treemodel/treeitemt.h \
