@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <functional>
+#include <cmath>
 
 using namespace std;
 

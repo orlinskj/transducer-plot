@@ -29,7 +29,7 @@ void TransducerDelegate::paint(QPainter *p, const QStyleOptionViewItem &option, 
         path_color = option.palette.highlightedText().color();
     }
     else if(option.state & QStyle::State_MouseOver){
-        p->fillRect(option.rect, Qt::black);
+        // this works only on windows for now (?)
     }
 
     p->setPen(transducer_color);

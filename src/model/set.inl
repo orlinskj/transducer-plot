@@ -28,7 +28,7 @@ Set_t<T>::Set_t(std::vector<T>&& values, Unit unit) :
 }
 
 template <typename T>
-void Set_t<T>::push(const Set_t<T>::value_type& v)
+void Set_t<T>::push(const T& v)
 {
     values_.push_back(v);
 }

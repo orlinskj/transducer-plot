@@ -145,7 +145,7 @@ void PlotItem::change_axis_alignment(QAbstractAxis* axis, Qt::Alignment align)
         series->attachAxis(axis);
 }
 
-void PlotItem::remove(TreeItem *item)
+TreeItem::iterator PlotItem::remove(TreeItem *item)
 {
     // 1. detach axes from series
     // 2. check whether axes from step 1 have any series attached
@@ -217,7 +217,7 @@ void PlotItem::remove(TreeItem *item)
     chart_->setTitle(this->value()->name().c_str());
 
     // MOST IMPORTANT!
-    TreeItem::remove(item);
+    return TreeItem::remove(item);
 }
 
 void PlotItem::change_axis_type(QAbstractAxis* axis)

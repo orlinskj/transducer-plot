@@ -13,7 +13,8 @@ TEMPLATE = app
 
 CONFIG += c++14 console
 
-QMAKE_CXXFLAGS += -std=c++14 -fext-numeric-literals
+unix: QMAKE_CXXFLAGS += -std=c++14 -fext-numeric-literals
+win32-gcc: QMAKE_CXXFLAGS += -std=c++14 -fext-numeric-literals
 
 SOURCES += \
     src/model/function.cpp \

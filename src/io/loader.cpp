@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <functional>
 #include <cctype>
+#include <string>
 
 void complete_sets(std::vector<Set>& sets)
 {
@@ -146,7 +147,7 @@ Transducer* Loader::load(const std::string& file_path)
     using path = std::experimental::filesystem::path;
 
     std::string source = file_path;
-    std::string name = path(file_path).stem();
+    std::string name = path(file_path).stem().generic_string();
 
     std::vector<Unit> units;
     std::vector<std::vector<Set::value_type>> values;
@@ -214,14 +215,15 @@ Transducer* Loader::load(const std::string& file_path)
                 }
                 else
                 {
-                    if (decimal_point == '.')
-                        replace( token.begin(), token.end(), ',', '.');
-                    else
-                        replace( token.begin(), token.end(), '.', ',');
+                    // prepare string for atof()
+                    replace( token.begin(), token.end(), decimal_point,  '.');
 
                     if (token_index < values.size())
                     {
-                        double value = stod(token);
+                        // stod() caused issues between unix/win due to locale
+                        //double value = std::stod(token);
+                        double value = std::atof(token.c_str());
+
                         values[token_index].push_back( value );
                     }
                 }

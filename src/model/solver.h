@@ -1,6 +1,7 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
+#define _USE_MATH_DEFINES // msvc2015 needs this
 #include <cmath>
 #include <utility>
 #include "transducer.h"

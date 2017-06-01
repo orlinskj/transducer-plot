@@ -250,6 +250,11 @@
                 <property name="text">
                  <string>Coₚ</string>
                 </property>
+                <property name="font">
+                 <font>
+                  <family>MS Shell Dlg 2</family>
+                 </font>
+                </property>
                </row>
                <column/>
               </widget>

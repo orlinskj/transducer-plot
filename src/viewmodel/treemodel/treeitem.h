@@ -20,6 +20,7 @@ class TreeItem
 {
 public:
     static constexpr int Role = Qt::UserRole + 1;
+    using iterator = std::vector<TreeItem*>::iterator;
 
     TreeItem(TreeItem *parent = nullptr);
     virtual ~TreeItem();
@@ -39,7 +40,7 @@ public:
     bool is_root() const;
     TreeItem* root();
 
-    virtual void remove(TreeItem* item);
+    virtual iterator remove(TreeItem* item);
     virtual TreeItem* append(TreeItem* item);
     void kill();
     void kill_children();

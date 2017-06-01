@@ -22,6 +22,15 @@
 #include <tuple>
 #include <memory>
 
+// windows does not support UTF in QLabel
+#ifdef _WIN32
+    #define SUBSCRIPT_P "p"
+    #define SUBSCRIPT_S "s"
+#elif
+    #define SUBSCRIPT_P "ₚ"
+    #define SUBSCRIPT_S "ₛ"
+#endif
+
 std::vector<TransducerDialog::Label> TransducerDialog::labels_series = {
     TransducerDialog::Label("R",QPointF(245,220),true),
     TransducerDialog::Label("L",QPointF(245,90),true),
@@ -59,6 +68,8 @@ TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_mo
     ui->tableViewModelParams->verticalHeader()->setDefaultSectionSize(20);
     ui->tableViewModelParams->setModel(&table_params_model_);
     ui->tableViewModelParams->horizontalHeader()->hide();
+
+    ui->tableWidgetCop->verticalHeaderItem(0)->setText(QString("Co")+QString(SUBSCRIPT_P));
 
     // transducer list
     connect(ui->transducerComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
@@ -213,9 +224,11 @@ void TransducerDialog::recalc_model()
         "Q",    "keff", "k33",  "k"
     };
 
-    QString script_index = "ₚ";
-    if (type == BVDSolver::Type::Series)
-        script_index = "ₛ";
+    QString script_index(SUBSCRIPT_P);
+
+    if (type == BVDSolver::Type::Series){
+        script_index = QString(SUBSCRIPT_S);
+    }
 
     for (auto it = header_items.begin(); it != header_items.begin()+6; ++it)
         *it += script_index;

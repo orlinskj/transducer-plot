@@ -33,7 +33,7 @@ public:
     void change_axis_type(QAbstractAxis* axis);
 
     TreeItem* append(TreeItem* item) override; // from TreeItem
-    void remove(TreeItem* item) override; // from TreeItem
+    TreeItem::iterator remove(TreeItem* item) override; // from TreeItem
 
     void resize(QSize size);
 

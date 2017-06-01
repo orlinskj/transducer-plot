@@ -17,7 +17,6 @@
 
 #include "screenshotform.h"
 
-using namespace std;
 using namespace QtCharts;
 
 namespace Ui {
@@ -45,23 +44,16 @@ private slots:
     void plot_view_double_clicked(const QModelIndex& index);
 
     void add_function();
-    void remove_function();
 
     void add_transducer();
-    void remove_transducer();
     void transducer_to_be_removed(const QModelIndex& parent, int first, int last);
 
     void show_transducer_dialog(int tab);
     void show_about_dialog();
 
-    void on_pushButton_clicked();
-
 private:
-    //bool eventFilter(QObject *watched, QEvent *event);
-    //bool event(QEvent *event);
     void init_signals();
     void setup_view();
-    // void seed();
 
 public:
     Ui::MainWindow *ui_;

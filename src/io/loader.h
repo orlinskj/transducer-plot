@@ -2,6 +2,9 @@
 #define _LOADER_H
 
 #include <string>
+#include <functional> // trim
+#include <algorithm> // trim
+#include <cctype> // trim
 #include "../model/transducer.h"
 
 namespace strtrim{

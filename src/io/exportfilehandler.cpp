@@ -18,6 +18,6 @@ std::string ExportFileHandler::path(const std::string& filepath)
         fpath += ext_;
     }
 
-    return fpath;
+    return fpath.generic_string();
 }
 

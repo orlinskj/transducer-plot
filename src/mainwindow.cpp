@@ -72,6 +72,13 @@ void MainWindow::setup_view()
     screenshot_form_ = new ScreenshotForm(ui_->frame, plot_presenter_);
     screenshot_form_->raise();
 
+    // font fix for windows
+    #ifdef _WIN32
+    ui_->functionAddButton->setMaximumWidth(60);
+    ui_->plotAddButton->setMaximumWidth(60);
+    ui_->transducerAddButton->setMaximumWidth(77);
+    #endif
+
 }
 
 void MainWindow::init_signals()
@@ -156,34 +163,6 @@ void MainWindow::plot_view_double_clicked(const QModelIndex& index){
     }
 }
 
-/*bool MainWindow::event(QEvent *event)
-{
-    if (event->type() == QEvent::MouseMove){
-        QMouseEvent* mev = static_cast<QMouseEvent*>(event);
-        if (ui_->plotView->viewport()->rect().contains(mev->pos())){
-            qDebug() << "inside " << mev->pos();
-        }
-    }
-    return QMainWindow::event(event);
-}*/
-
-/*bool MainWindow::eventFilter(QObject *obj, QEvent *event)
-{
-    if (event->type() == QEvent::MouseMove){
-        qDebug() << "mouse move";
-        QMouseEvent* mev = static_cast<QMouseEvent*>(event);
-
-        auto rect = ui_->plotView->rect();
-        rect.moveTo(ui_->plotView->pos());
-        if (rect.contains(mev->pos())){
-            ui_->plotView->mouseMoveEvent(mev);
-            return true;
-        }
-    }
-    return QMainWindow::eventFilter(obj, event);
-}*/
-
-
 void MainWindow::add_transducer()
 {
     QString filename = QFileDialog::getOpenFileName(
@@ -209,33 +188,6 @@ void MainWindow::add_transducer()
     qDebug() << transducer_model_.child(0)->children_count();
 }
 
-void MainWindow::remove_transducer()
-{
-    /*auto selected = ui_->transducerView->selectionModel()->selectedIndexes();
-    if (selected.count() > 0){
-        auto index = selected.first();
-        auto tree_item = transducer_model_.data(index, TreeItem::Role).value<TreeItem*>();
-        auto transducer_item = dynamic_cast<TransducerItem*>(tree_item);
-
-        // removing all functions with this transducer
-        for(const auto& plot : static_cast<TreeItem&>(plot_store_).children()){
-            for(const auto& func : plot->children()){
-                auto func_item = dynamic_cast<FunctionItem*>(func);
-                if (func_item->value()->transducer() == transducer_item->value()){
-                    plot->remove(func_item);
-                }
-            }
-
-            if (plot->children_count() == 0){
-                static_cast<TreeItem&>(plot_store_).remove(plot);
-            }
-        }
-
-        transducer_model_.remove(transducer_item);
-        ui_->statusBar->showMessage(tr("Przetwornik usunięty"));
-    }*/
-}
-
 void MainWindow::transducer_to_be_removed(const QModelIndex &parent, int first, int last)
 {
     if (last - first != 0){
@@ -246,59 +198,36 @@ void MainWindow::transducer_to_be_removed(const QModelIndex &parent, int first, 
     auto tree_item = transducer_model_.data(index, TreeItem::Role).value<TreeItem*>();
     auto transducer_item = dynamic_cast<TransducerItem*>(tree_item);
 
-    // removing all functions with this transducer
-    for(const auto& plot : static_cast<TreeItem&>(plot_store_).children()){
+    // removing all functions for this transducer
+    auto& plots = static_cast<TreeItem&>(plot_store_).children();
+    auto plot_it = plots.begin();
+
+    while (plot_it != plots.end()){
         bool removed = false;
 
-        for(const auto& func : plot->children()){
-            auto func_item = dynamic_cast<FunctionItem*>(func);
+        auto& funcs = (*plot_it)->children();
+        auto func_it = funcs.begin();
+
+        while (func_it != funcs.end()){
+            auto func_item = dynamic_cast<FunctionItem*>(*func_it);
             if (func_item->value()->transducer() == transducer_item->value()){
-                plot->remove(func_item);
+                func_it = (*plot_it)->remove(func_item);
                 removed = true;
+            }
+            else{
+                ++func_it;
             }
         }
 
-        if (plot->children_count() == 0 && removed){
-            static_cast<TreeItem&>(plot_store_).remove(plot);
+        if ((*plot_it)->children_count() == 0 && removed){
+            plot_it = static_cast<TreeItem&>(plot_store_).remove(*plot_it);
+        }
+        else{
+            ++plot_it;
         }
     }
-    //ui_->statusBar->showMessage(tr("Przetwornik usunięty"));
+    ui_->statusBar->showMessage(tr("Przetwornik usunięty"));
 }
-
-/*void MainWindow::seed()
-{
-    std::vector<std::string> files;
-    #ifdef __linux__
-    files.push_back("/home/janek/test/2_P0.txt");
-    files.push_back("/home/janek/test/2_P1.txt");
-    files.push_back("/home/janek/test/2_P4.txt");
-    #elif _WIN32
-    files.push_back("C:\\test\\2_P0.txt");
-    files.push_back("C:\\test\\2_P1.txt");
-    files.push_back("C:\\test\\2_P4.txt");
-    #endif
-
-    for(auto file : files)
-    {
-        int err = 1;
-        auto transducer = Loader().load(file);
-        if (transducer && !err)
-            this->add_transducer(transducer);
-    }
-
-    // some plot, with some function ...
-    this->slot_add_new_plot();
-
-    auto plot = dynamic_cast<PlotItem*>(plot_store_.child(0));
-    auto tadapter = dynamic_cast<TransducerItem*>(transducer_model_.child(0));
-    if (tadapter)
-    {
-        auto transducer = (*tadapter)();
-        auto func = new Function(transducer,&transducer->get_sets()[0], &transducer->get_sets()[1]);
-        plot->append(new FunctionItem(func));
-    }
-    plot_presenter_->show_plot(plot);
-}*/
 
 void MainWindow::add_plot()
 {
@@ -376,19 +305,6 @@ void MainWindow::add_function()
     }
 }
 
-void MainWindow::remove_function()
-{
-    auto selection = ui_->plotView->selectionModel();
-    auto selected = selection->selectedIndexes();
-
-    if(selected.length() == 1)
-    {
-        auto item = selected.at(0).data(TreeItemModel::Role).value<TreeItem*>();
-        if (auto func = dynamic_cast<FunctionItem*>(item))
-            func->kill();
-    }
-}
-
 void MainWindow::show_plot()
 {
     auto selection = ui_->plotView->selectionModel();
@@ -399,10 +315,4 @@ void MainWindow::show_plot()
         if (auto plot = dynamic_cast<PlotItem*>(item))
             plot_presenter_->show_plot(plot);
     }
-}
-
-void MainWindow::on_pushButton_clicked()
-{
-    auto index = transducer_model_.index(0,0);
-    transducer_model_.removeRows(index.row(),1,index.parent());
 }

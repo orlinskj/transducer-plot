@@ -100,21 +100,25 @@ const TreeItem* TreeItem::absolute_child(int index) const
     return child(child_index)->absolute_child(index);
 }
 
-void TreeItem::remove(TreeItem* item)
+TreeItem::iterator TreeItem::remove(TreeItem* item)
 {
     auto it = std::find_if(children_.cbegin(), children_.cend(),
                            [item](const TreeItem* p){ return item == p; });
+
+    iterator next_it = children_.end();
 
     if (it != children_.cend())
     {
         int row = child_index(*it);
         emit_begin_remove_rows(row,row,this);
-        children_.erase(it);
+        next_it = children_.erase(it);
         qDebug() << "item erased" << item;
         for (TreeItem* tit=this; tit!=nullptr; tit=tit->parent())
             tit->ancestor_count_--;
         emit_end_remove_rows(row,row,this);
     }
+
+    return next_it;
 }
 
 TreeItem* TreeItem::append(TreeItem* item)

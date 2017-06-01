@@ -1,7 +1,5 @@
 #include "solver.h"
 
-#include <cmath>
-
 bool BVDSolver::solve(const Transducer& t, const std::pair<bool, SolverType>& input_capacity)
 {
     // getting frequency set
