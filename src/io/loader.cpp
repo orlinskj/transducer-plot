@@ -13,6 +13,7 @@
 #include <functional>
 #include <cctype>
 #include <string>
+#include <sstream>
 
 void complete_sets(std::vector<Set>& sets)
 {
@@ -153,6 +154,11 @@ Transducer* Loader::load(const std::string& file_path)
     std::vector<std::vector<Set::value_type>> values;
     Transducer::Description description;
 
+    // stream and locale for reading numbers
+    std::stringstream num_stream;
+    std::locale loc("");
+    num_stream.imbue(std::locale(loc, new Loader::dot_sep));
+
     std::string line_buffer = "";
     size_t pos;
     bool is_first_data_line_readed = false;
@@ -222,7 +228,12 @@ Transducer* Loader::load(const std::string& file_path)
                     {
                         // stod() caused issues between unix/win due to locale
                         //double value = std::stod(token);
-                        double value = std::atof(token.c_str());
+                        double value = 0.0;
+                        num_stream.str(token);
+                        num_stream.seekg(0);
+                        num_stream >> value;
+                        //double value = std::atof(token.c_str());
+                        qDebug() << token.c_str() << value;
 
                         values[token_index].push_back( value );
                     }
@@ -244,4 +255,9 @@ Transducer* Loader::load(const std::string& file_path)
     complete_sets(sets);
 
     return new Transducer(name,source,std::move(description),std::move(sets));
+}
+
+std::numpunct<char>::char_type Loader::dot_sep::do_decimal_point() const
+{
+    return '.';
 }

@@ -11,8 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = transducer-plot
 TEMPLATE = app
 
-CONFIG += c++14
-CONFIG -= console
+CONFIG += c++14 console
+#CONFIG -= console
 
 unix: QMAKE_CXXFLAGS += -std=c++14 -fext-numeric-literals
 win32-gcc: QMAKE_CXXFLAGS += -std=c++14 -fext-numeric-literals

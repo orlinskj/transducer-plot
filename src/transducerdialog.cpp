@@ -28,7 +28,7 @@
 #ifdef _WIN32
     #define SUBSCRIPT_P "p"
     #define SUBSCRIPT_S "s"
-#elif
+#else
     #define SUBSCRIPT_P "ₚ"
     #define SUBSCRIPT_S "ₛ"
 #endif

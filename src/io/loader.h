@@ -33,9 +33,15 @@ namespace strtrim{
  * @desc Reads data from file into Transudcer instance.
  */
 class Loader{
+    struct dot_sep : std::numpunct<char> {
+    protected:
+        virtual char_type do_decimal_point() const;
+    };
+
 public:
     // load a transducer - returns new instance on heap
     virtual Transducer* load(const std::string& path);
+
 };
 
 
