@@ -2,7 +2,7 @@
 
 ## Okno główne
 
-Po uruchomieniu programu użytkownik ma do dyspozycji okno główne programu, zawiera 3 główne obszary, przyciski do zarządzania zasobami oraz pasek menu.
+Po uruchomieniu programu użytkownik ma do dyspozycji okno główne programu, zawiera 3 główne obszary, przyciski do zarządzania zasobami oraz pasek menu (ukryty na zrzucie ekranu poniżej).
 
 ![Okno główne - obszary](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/main-window-areas.png "Obszary okna głównego")
 
@@ -77,23 +77,19 @@ Przyciski służą do zarządania zasobami w programie, za ich pomocą możemy d
 
 **Dodawanie/usuwanie przetwornika**
 
-W celu dodania przetwornika należy kliknąć przycisk ![Przycisk dodaj przetwornik][add-transdcuer], następnie program wyświetli pole wyboru pliku, po czym należy wybrać żądany plik przetwornika.
-[add-transdcuer]: https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/add-transducer-button.png "Przycisk ładujący nowy przetwornik"
+W celu dodania przetwornika należy kliknąć przycisk ![Przycisk dodaj przetwornik](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/add-transducer-button.png "Przycisk ładujący nowy przetwornik"), następnie program wyświetli pole wyboru pliku, po czym należy wybrać żądany plik przetwornika.
 
 W celu usunięcia przetwornika należy najechać kursorem myszy na dany przetwornik. Program wyświetli wtedy przycisk z ikoną krzyża służący do usuwania. Usunięcie przetwornika usuwa także wszystkie krzywe, które były stworzone z jego udziałem.
 
 **Dodawanie/usuwanie wykresu**
 
-W celu dodania wykresu należy kliknąć przycisk ![Przycisk dodaj przetwornik][add-plot], po naciśnięciu którego system doda nowy wykres do listy.
-[add-plot]: https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/add-plot-button.png "Przycisk tworzący nowy wykres"
+W celu dodania wykresu należy kliknąć przycisk ![Przycisk dodaj przetwornik](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/add-plot-button.png "Przycisk tworzący nowy wykres"), po naciśnięciu którego system doda nowy wykres do listy.
 
 W celu usunięcia wykresu należy najechać kursorem myszy na dany wykres na liście. Program wyświetli wtedy przycisk z ikoną krzyża służący do usuwania. Kliknięcie w przycisk usuwa wykres wraz ze wszystkimi funkcjami.
 
 **Dodawanie/usuwanie krzywych**
 
-W celu dodania funkcji, należy zaznaczyć wykres na liście, do którego chcemy dodać funkcję. Zaznaczony wykres zostanie podświetlony na inny kolor. Następnie należy kliknąć przycisk ![Przycisk dodaj funkcję][add-function], po naciśnięciu którego program wyświetli nowe okno z wyborem przetwornika i zbiorów dla nowej krzywej.
-
-[add-function]: https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/add-function-button.png "Przycisk tworzący nową funkcję"
+W celu dodania funkcji, należy zaznaczyć wykres na liście, do którego chcemy dodać funkcję. Zaznaczony wykres zostanie podświetlony na inny kolor. Następnie należy kliknąć przycisk ![Przycisk dodaj funkcję](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/add-function-button.png "Przycisk tworzący nową funkcję"), po naciśnięciu którego program wyświetli nowe okno z wyborem przetwornika i zbiorów dla nowej krzywej.
 
 W górnej części należy wybrać przetwornik, dla którego chcemy utworzyć krzywą. Z pól na dole należy wybrać - klikając na odpowiednie pola - zbiory tworzące dziedzinę i przeciwdziedzinę krzywej. Po kliknięciu przycisku `OK` program zamknie okno wyboru nowej krzywej i doda ją do wybranego wcześniej wykresu.
 
