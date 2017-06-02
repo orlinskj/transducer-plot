@@ -2,7 +2,7 @@
 
 ## Okno główne
 
-Po uruchomieniu programu użytkownik ma do dyspozycji okno główne programu, zawiera 5 głównych obszarów oraz pasek menu.
+Po uruchomieniu programu użytkownik ma do dyspozycji okno główne programu, zawiera 3 główne obszary, przyciski do zarządzania zasobami oraz pasek menu.
 
 ![Okno główne - obszary](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/main-window-areas.png "Obszary okna głównego")
 
@@ -10,23 +10,23 @@ Po uruchomieniu programu użytkownik ma do dyspozycji okno główne programu, za
 
 #### Zrzut ekranu
 
-Aby zrobić zrzut ekranu aktualnie wyświetlanego wykresu, należy z paska menu wybrać `Wykres->Zrzut ekranu`. Następnie program wyświetli panel zawierający dostępne opcje.
+Aby zrobić zrzut ekranu z aktualnie wyświetlanego wykresu, należy z paska menu wybrać `Wykres -> Zrzut ekranu`. Następnie program wyświetli panel zawierający dostępne opcje.
 
 ![Panel zrzutu ekranu](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/screenshot-panel.png "Panel zrzutu ekranu")
 
 Górne pole tekstowe służy do wprowadzania nazwy pliku. Klikając w przycisk `…` obok pola tekstowego użytkownik może otworzyć okno do wybrania pliku, które znacznie ułatwia wybieranie żądanej lokalizacji.
 
-Dolne pole tekstowe służy do wprowadzania żądanych rozmiarów dla zrzutu ekranu. Użytkownik może wybrać istniejący rozmiar z listy, lub wprowadzić swój, zatwierdzając klawiszem `enter`.
+Dolne pole tekstowe służy do wprowadzania żądanych rozmiarów dla zrzutu ekranu. Użytkownik może wybrać istniejący rozmiar z listy, lub wprowadzić swój, zatwierdzając klawiszem `Enter`.
 
 Przyciski po prawo służą do zapisania obrazu na dysku (przycisk z ikoną dyskietki) lub zamknięcia panelu zrzutu ekranu (przycisk z ikoną krzyżyka).
 
 #### Przetwornik
 
-Opcje menu dostępne pod kategorią `Przetwornik` otwierają [Okno przetwornika](okno-przetwornika) na żądanej zakładce.
+Opcje menu dostępne pod kategorią `Przetwornik` otwierają okno przetwornika na żądanej zakładce.
 
 #### Pomoc
 
-Z poziomu kategorii `Pomoc` możemy wyświetlić okno zaierające podstawowe informacje o programie `Pomoc->O programie` oraz uzyskać pomoc na temat programu. Kliknięcie przycisku `Pomoc->Pomoc (online)` otwiera z poziomu przeglądarki internetowej plik, który aktualnie czytasz.
+Z poziomu kategorii `Pomoc` możemy wyświetlić okno zaierające podstawowe informacje o programie `Pomoc -> O programie` oraz uzyskać pomoc na temat programu. Kliknięcie przycisku `Pomoc -> Pomoc` otwiera tekst który aktualnie czytasz.
 
 ### Podgląd wykresu
 
@@ -34,9 +34,9 @@ Podgląd wykresu jest obszarem, na którym rysowane są wykresy.
 
 **Przybliżanie i oddalanie**
 
-Przybliżenia lub oddalenia narysowanego wykresu można dokonać przytrzymując lewy klawisz `Ctrl` oraz klikają na wykresie `lewy przycisk myszy` jednocześnie przeciągając kursor w osi pionowej. Ruch do góry przybliża wykres, ruch do dołu oddala.
+Przybliżenia lub oddalenia narysowanego wykresu można dokonać przytrzymując lewy klawisz `Ctrl` oraz klikają na wykresie `Lewy przycisk myszy` jednocześnie przeciągając kursor w osi pionowej. Ruch do góry przybliża wykres, ruch do dołu oddala.
 
-Możliwe jest również przybliżenie lub oddalenie wyłączenie w osi poziomej. W celu takiego przybliżenia należy przytrzymać klawisz `x` oraz kliknąć na wykresie `lewy przycisk myszy` oraz jednocześnie przeciągnąć kursor myszy w osi pionowej.
+Możliwe jest również przybliżenie lub oddalenie wyłączenie w osi poziomej. W celu takiego przybliżenia należy przytrzymać klawisz `x` oraz kliknąć na wykresie `Lewy przycisk myszy` oraz jednocześnie przeciągnąć kursor myszy w osi pionowej.
 
 **Podgląd wartości (miotła)**
 
@@ -44,19 +44,30 @@ Przesuwanie kursora myszy przesuwa również Miotłę. Miotła służy do szybki
 
 ![Miotła](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/broom.png "Miotła")
 
-Miotłę można również "przyczepić" w żądanym miejscu wykresu klikając `lewy przycisk myszy` w żądanym miejscu. Kolejne kliknięcie tego same przycisku w dowolnym miejscu na wykresie spowoduje "odklejenie" Miotły.
+Miotłę można również "przyczepić" w żądanym miejscu wykresu klikając `Lewy przycisk myszy` w żądanym miejscu. Kolejne kliknięcie tego same przycisku w dowolnym miejscu na wykresie spowoduje "odklejenie" Miotły.
 
 **Zmiana rodzaju osi (liniowa/logarytmiczna)**
 
-Klikając `prawy przycisk myszy` na podglądzie wykresu, uzyskamy dostęp do menu kontekstowego z poziomu, którego możemy zmienić rodzaj każdej z osi pionowych wykresu liniowy/logarytmiczny.
+Klikając `Prawy przycisk myszy` na podglądzie wykresu, uzyskamy dostęp do menu kontekstowego, z poziomu którego możemy zmienić rodzaj każdej z osi pionowych wykresu (liniowa/logarytmiczna).
+
+**Oznaczenia na kole admitancji**
+
+Po utworzeniu wykresu koła admitancji (`Re->Im` lub `Im->Re`) program automatycznie dodaje do tego wykresu stosowne oznaczenia.
+
+![Oznaczenia na kole admitancji](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/admitance-ring.png "Oznaczenia na kole admitancji")
+
+Na na wykresie koła admitancji rysowane są:
+- środek tego koła (przecinające się szare linie)
+- półprosta wychodząca z początku układu współrzędnych i przechodząca przez środek koła (różowa linia)
+- punkt przecięcia półprostej z kołem wraz z oznaczoną częstotliwością w tym punkcie
 
 ### Lista wykresów
 
 Lista wykresów prezentuje wszystkie wykresy utworzone w programie. Każdy z wykresów może posiadać dowolną liczbę krzywych, pod warunkiem, że wszystkie krzywe przedstawiają funkcje określone na tej samej dziedzinie.
 
-**Rozwinięcie wykresu (podląd funkcji)**
+**Pokazanie wykresu**
 
-Każdy z wykresów można rozwinąć w celu pokazania listy wszystkich funkcji, które zawiera. Aby rozwinąć lub rozwinąć wykres, należy kliknąć w przełącznik w postaci trójkąta znajdujący się w lewej części pola.
+Każdy z wykresów można pokazać na podglądzie klikając dwa razy `Lewy przycisk myszy` na wybranym wykresie. Aktualnie wyświetlany wykres jest oznaczony na liście wykresów za pomocą ikony oka.
 
 ![Oznaczenie wyświetlanego wykresu](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/plot-showed.png "Oznaczenie aktualnie wyświetlanego wykresu")
 
@@ -76,6 +87,8 @@ W celu usunięcia przetwornika należy najechać kursorem myszy na dany przetwor
 W celu dodania wykresu należy kliknąć przycisk ![Przycisk dodaj przetwornik][add-plot], po naciśnięciu którego system doda nowy wykres do listy.
 [add-plot]: https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/add-plot-button.png "Przycisk tworzący nowy wykres"
 
+W celu usunięcia wykresu należy najechać kursorem myszy na dany wykres na liście. Program wyświetli wtedy przycisk z ikoną krzyża służący do usuwania. Kliknięcie w przycisk usuwa wykres wraz ze wszystkimi funkcjami.
+
 **Dodawanie/usuwanie krzywych**
 
 W celu dodania funkcji, należy zaznaczyć wykres na liście, do którego chcemy dodać funkcję. Zaznaczony wykres zostanie podświetlony na inny kolor. Następnie należy kliknąć przycisk ![Przycisk dodaj funkcję][add-function], po naciśnięciu którego program wyświetli nowe okno z wyborem przetwornika i zbiorów dla nowej krzywej.
@@ -83,6 +96,8 @@ W celu dodania funkcji, należy zaznaczyć wykres na liście, do którego chcemy
 [add-function]: https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/add-function-button.png "Przycisk tworzący nową funkcję"
 
 W górnej części należy wybrać przetwornik, dla którego chcemy utworzyć krzywą. Z pól na dole należy wybrać - klikając na odpowiednie pola - zbiory tworzące dziedzinę i przeciwdziedzinę krzywej. Po kliknięciu przycisku `OK` program zamknie okno wyboru nowej krzywej i doda ją do wybranego wcześniej wykresu.
+
+W celu usunięcia krzywej funkcji należy najechać kursorem myszy na daną funckję na liście. Program wyświetli wtedy przycisk z ikoną krzyża służący do usuwania. Kliknięcie w przycisk usuwa funkcję z wykresu.
 
 ### Lista przetworników
 
