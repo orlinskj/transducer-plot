@@ -14,15 +14,15 @@ Aby zrobić zrzut ekranu aktualnie wyświetlanego wykresu, należy z paska menu 
 
 ![Panel zrzutu ekranu](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/screenshot-panel.png "Panel zrzutu ekranu")
 
-Górne pole tekstowe [1] służy do wprowadzania nazwy pliku. Klikając w przycisk `…` [2] obok pola tekstowego użytkownik może otworzyć okno do wybrania pliku, które znacznie ułatwia wybieranie żądanej lokalizacji.
+Górne pole tekstowe służy do wprowadzania nazwy pliku. Klikając w przycisk `…` obok pola tekstowego użytkownik może otworzyć okno do wybrania pliku, które znacznie ułatwia wybieranie żądanej lokalizacji.
 
-Dolne pole tekstowe [3] służy do wprowadzania żądanych rozmiarów dla zrzutu ekranu. Użytkownik może wybrać istniejący rozmiar z listy, lub wprowadzić swój, zatwierdzając klawiszem `enter`.
+Dolne pole tekstowe służy do wprowadzania żądanych rozmiarów dla zrzutu ekranu. Użytkownik może wybrać istniejący rozmiar z listy, lub wprowadzić swój, zatwierdzając klawiszem `enter`.
 
-Przyciski po prawo [4] służą do zapisania obrazu na dysku (przycisk z ikoną dyskietki) lub zamknięcia panelu zrzutu ekranu (przycisk z ikoną krzyżyka).
+Przyciski po prawo służą do zapisania obrazu na dysku (przycisk z ikoną dyskietki) lub zamknięcia panelu zrzutu ekranu (przycisk z ikoną krzyżyka).
 
 #### Przetwornik
 
-Opcje menu dostępne pod kategorią `Przetwornik` otwierają okno przetwornika [LINK] na żądanej zakładce.
+Opcje menu dostępne pod kategorią `Przetwornik` otwierają [Okno przetwornika](okno-przetwornika) na żądanej zakładce.
 
 #### Pomoc
 
@@ -56,7 +56,7 @@ Lista wykresów prezentuje wszystkie wykresy utworzone w programie. Każdy z wyk
 
 **Rozwinięcie wykresu (podląd funkcji)**
 
-Każdy z wykresów można rozwinąć w celu pokazania listy wszystkich funkcji, które zawiera. Aby rozwinąć lub rozwinąć wykres, należy kliknąć w przełącznik w postaci trójkąta [1] znajdujący się w lewej części pola.
+Każdy z wykresów można rozwinąć w celu pokazania listy wszystkich funkcji, które zawiera. Aby rozwinąć lub rozwinąć wykres, należy kliknąć w przełącznik w postaci trójkąta znajdujący się w lewej części pola.
 
 ![Oznaczenie wyświetlanego wykresu](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/plot-showed.png "Oznaczenie aktualnie wyświetlanego wykresu")
 
@@ -82,7 +82,7 @@ W celu dodania funkcji, należy zaznaczyć wykres na liście, do którego chcemy
 
 [add-function]: https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/add-function-button.png "Przycisk tworzący nową funkcję"
 
-W górnej części należy wybrać przetwornik, dla którego chcemy utworzyć krzywą. Z pól na dole należy wybrać - klikając na odpowiednie pola - zbiory tworzące dziedzinę i przeciwdziedzinę krzywej. Po kliknięciu przycisku `Dodaj` program zamknie okno wyboru nowej krzywej i doda ją do wybranego wcześniej wykresu.
+W górnej części należy wybrać przetwornik, dla którego chcemy utworzyć krzywą. Z pól na dole należy wybrać - klikając na odpowiednie pola - zbiory tworzące dziedzinę i przeciwdziedzinę krzywej. Po kliknięciu przycisku `OK` program zamknie okno wyboru nowej krzywej i doda ją do wybranego wcześniej wykresu.
 
 ### Lista przetworników
 
@@ -92,7 +92,7 @@ Lista przetworników prezentuje wszystkie załadowane do programu pliki przetwor
 
 ![Okno przetwornika](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/transducer-dialog.png "Okno przetwornika")
 
-Okno przetwornika służy do podglądu przetwornika. W górnej jego części znajduje się pole wyboru [1], w którym użytkownik może wybrać, dane którego przetwornika chce wyświetlać. Poniżej znajdują się 3 zakładki [2] udostępniające różne informacje i akcje.
+Okno przetwornika służy do podglądu danych przetwornika oraz eksportu. W górnej jego części znajduje się pole wyboru, w którym użytkownik może wybrać, dane którego przetwornika chce wyświetlać. Poniżej znajdują się 3 zakładki udostępniające różne informacje i akcje.
 
 ### Dane tabelaryczne
 
@@ -104,17 +104,21 @@ Zakładka `Dane tabelaryczne` wyświetla wszystkie zbiory danych dostępne dla p
 
 ![Zakładka modele zastępcze](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/tab-models.png "Zakładka modele zastępcze")
 
-Zakładka `Modele zastępcze` służy do podglądu wyliczonych parametrów modelu BVD przetwornika. W prawej części zakładki [2] wyświetlane są wartości parametrów dla wybranego przetwornika.
+Zakładka `Modele zastępcze` służy do podglądu wyliczonych parametrów modelu BVD przetwornika. W prawej części zakładki wyświetlane są wartości parametrów dla wybranego przetwornika.
 
 **Zmiana typu modelu zastępczego**
 
-Użytkownik może wybrać rodzaj modelu (`Szeregowy`/`Równoległy`) z poziomu pola wyboru z górnej lewej części zakładki [1].
+Użytkownik może wybrać rodzaj modelu (`Szeregowy`/`Równoległy`) z poziomu pola wyboru z górnej lewej części zakładki.
 
 **Wprowadzanie ustalonej pojemności wejściowej**
 
 Domyślnie program wylicza pojemność wejściową `Cp` przetwornika na podstawie, dostarczonych danych pomiarowych dostępnych dla najniższej odczytanej częstotliwości.
 
-Aby zadać zmierzoną wartość pojemności wejściowej przetwornika, należy zaznaczyć pole `Ustalona pojemność wejściowa` [3], a następnie wpisać w polu po prawo [4] zadaną wartość tego parametru. Pole przyjmuje wartości w notacji dziesiętnej i naukowej, uwzględnia także przedrostki jednostek, w związku z czy wszystkie wartości z następujących są poprawne i wyrażają tą samą wartość: `10nF`, `1e-8`, `0.00000001`.
+Aby zadać zmierzoną wartość pojemności wejściowej przetwornika, należy zaznaczyć pole `Ustalona pojemność wejściowa`, a następnie wpisać w polu po prawo zadaną wartość tego parametru.
+
+![Pole ustalona pojemność wejściowa](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/tab-models-set-cop.png "Pole ustalona pojemność wejściowa")
+
+Pole przyjmuje wartości w notacji dziesiętnej i naukowej, uwzględnia także przedrostki jednostek, w związku z czy wszystkie wartości z następujących są poprawne i wyrażają tą samą wartość: `10nF`, `1e-8`, `0.00000001`.
 
 ### Eksport
 
@@ -124,7 +128,7 @@ Zakładka `Eksport` służy do generowania dokumentów opisujących przetwornik.
 
 **Zmiana formatu wyjściowego**
 
-Użytkownik ma do wyboru dwa formaty wyjściowe: PDF (Portable Document Format) oraz CSV (Comma-Separated Values) dostępne do wyboru w polu wyboru [1].
+Użytkownik ma do wyboru dwa formaty wyjściowe: PDF (Portable Document Format) oraz CSV (Comma-Separated Values) dostępne do wyboru w polu wyboru w górnym prawym rogu zakładki.
 
 Dokument w formacie PDF może zawierać wyliczone wartości parametrów modelu zastępczego oraz obrazy przedstawiające wszystkie krzywe w dziedzinie częstotliwości dostępne dla przetwornika.
 
@@ -132,4 +136,4 @@ Dokument w formacie CSV może zawierać jedynie dane tabelaryczne przetwornika. 
 
 **Eksport do pliku**
 
-W celu wyeksportowania informacji na temat przetwornika należy wybrać żądany format eksportu, następnie wybrać żądane opcje eksportu [2]. Nazwa pliku do eksporu jest wprowadzana w polu tekstowym na dole [3]. W celu wygodnego wybrania żądanej lokalizacji za pomocą okna wyboru pliku, należy kliknąć przycisk `…` znajdujący się w prawej części pola tekstowego [4].
+W celu wyeksportowania informacji na temat przetwornika należy wybrać żądany format eksportu, następnie wybrać żądane opcje eksportu. Nazwa pliku do eksportu jest wprowadzana w polu tekstowym na dole. W celu wygodnego wybrania żądanej lokalizacji za pomocą okna wyboru pliku, należy kliknąć przycisk `…` znajdujący się w prawej części pola tekstowego.

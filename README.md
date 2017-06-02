@@ -4,4 +4,4 @@ _GUI application for characteristics analysis of electrical ultrasound transduce
 
 Aplikacja służąca do analizy charakterystyk przetworników ultradźwiękowych.
 
-![Okno aplikacji](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/mainwindow.png "Okno główne aplikacji")
+![Okno aplikacji](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/main-window.png "Okno główne aplikacji")
