@@ -57,6 +57,8 @@ void ScreenshotForm::save()
     QImage img = presenter_->screenshot(width,height);
     QString path = QDir(ui->pathLineEdit->text()).absolutePath();
 
+    bool save = false;
+
     if (QDir().exists(path)){
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(
@@ -66,13 +68,25 @@ void ScreenshotForm::save()
                     QMessageBox::Yes|QMessageBox::No);
 
         if (reply == QMessageBox::Yes) {
-            img.save(ui->pathLineEdit->text(),nullptr,-1);
-            this->hide();
+            save = true;
         }
     }
     else {
-        img.save(ui->pathLineEdit->text(),nullptr,-1);
-        this->hide();
+        save = true;
+    }
+
+    if (save){
+        if (img.save(path,nullptr,-1)){
+            this->hide();
+        }
+        else{
+            QMessageBox::critical(
+                        this,
+                        tr("Błąd zapisu"),
+                        tr("Nie udało się zapisać do pliku")+" "+path+". "
+                        +tr("Zły format pliku (tylko jpg|bmp|png) lub brak praw do zapisu pod podaną ścieżką."),
+                        QMessageBox::Close);
+        }
     }
 }
 

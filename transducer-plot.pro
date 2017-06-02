@@ -11,7 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = transducer-plot
 TEMPLATE = app
 
-CONFIG += c++14 console
+CONFIG += c++14
+CONFIG -= console
 #CONFIG -= console
 
 unix: QMAKE_CXXFLAGS += -std=c++14 -fext-numeric-literals
@@ -103,7 +104,8 @@ HEADERS += \
     src/view/itemlistview.h \
     src/view/itemtreeview.h \
     src/view/itemdeletebutton.h \
-    src/utf8/source/utf8.h
+    src/utf8/source/utf8.h \
+    src/transducerplotversion.h
 
 FORMS    += src/mainwindow.ui \
     src/functiondialog.ui \
