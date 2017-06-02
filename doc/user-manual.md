@@ -2,7 +2,7 @@
 
 ## Okno główne
 
-Po uruchomieniu programu użytkownik ma do dyspozycji okno główne programu, zawiera 3 główne obszary, przyciski do zarządzania zasobami oraz pasek menu (ukryty na zrzucie ekranu poniżej).
+Po uruchomieniu programu użytkownik ma do dyspozycji okno główne programu, które zawiera 3 główne obszary, przyciski do zarządzania zasobami oraz pasek menu (ukryty na zrzucie ekranu poniżej).
 
 ![Okno główne - obszary](https://raw.githubusercontent.com/orlinskj/transducer-plot/master/doc/img/main-window-areas.png "Obszary okna głównego")
 
@@ -30,7 +30,7 @@ Z poziomu kategorii `Pomoc` możemy wyświetlić okno zaierające podstawowe inf
 
 ### Podgląd wykresu
 
-Podgląd wykresu jest obszarem, na którym rysowane są wykresy.
+Podgląd wykresu jest obszarem, na którym rysowane są wykresy. Zajmuje on większą część okna głównego.
 
 **Przybliżanie i oddalanie**
 
@@ -63,7 +63,7 @@ Na na wykresie koła admitancji rysowane są:
 
 ### Lista wykresów
 
-Lista wykresów prezentuje wszystkie wykresy utworzone w programie. Każdy z wykresów może posiadać dowolną liczbę krzywych, pod warunkiem, że wszystkie krzywe przedstawiają funkcje określone na tej samej dziedzinie.
+Lista wykresów prezentuje wszystkie wykresy utworzone w programie. Lista znajduje się z prawej strony, w górej części okna głównego. Każdy z wykresów może posiadać dowolną liczbę krzywych, pod warunkiem, że wszystkie krzywe przedstawiają funkcje określone na tej samej dziedzinie.
 
 **Pokazanie wykresu**
 
@@ -97,7 +97,7 @@ W celu usunięcia krzywej funkcji należy najechać kursorem myszy na daną func
 
 ### Lista przetworników
 
-Lista przetworników prezentuje wszystkie załadowane do programu pliki przetworników. Pod nazwą przetwornika wyświetla się ścieżka bezwzględna do jego pliku.
+Lista przetworników prezentuje wszystkie załadowane do programu pliki przetworników. List znajduje się po prawej, w dolnej części okna głównego. Pod nazwą przetwornika wyświetla się ścieżka bezwzględna do jego pliku.
 
 ## Okno przetwornika
 
