@@ -6,7 +6,16 @@
 class Error : public std::logic_error
 {
 public:
-    Error(const std::string& what);
+    enum class Type {
+        Info,
+        Error
+    };
+
+    Error(const std::string& what, Type type = Type::Error);
+
+    Type type() const;
+protected:
+    Type type_;
 };
 
 #endif // ERROR_H

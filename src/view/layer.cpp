@@ -69,9 +69,10 @@ void LayerStack::remove_layer(Layer *layer)
 
 void LayerStack::remove_func_layers(FunctionItem *func)
 {
-    for(auto it=layers_.begin(); it!=layers_.end(); ){
+    auto it = layers_.begin();
+    while(it!=layers_.end()){
         if ((*it)->func() == func){
-            layers_.erase(it);
+            it = layers_.erase(it);
         }
         else{
             ++it;

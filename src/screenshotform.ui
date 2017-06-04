@@ -113,7 +113,7 @@
              <bool>true</bool>
             </property>
             <property name="frame">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -225,7 +225,7 @@
           </property>
           <property name="icon">
            <iconset resource="../resources/resources.qrc">
-            <normaloff>:/glyphicons/glyphicons-208-remove.png</normaloff>:/glyphicons/glyphicons-208-remove.png</iconset>
+            <normaloff>:/glyphicons/remove.png</normaloff>:/glyphicons/remove.png</iconset>
           </property>
           <property name="iconSize">
            <size>

@@ -52,12 +52,9 @@ void complete_sets(std::vector<Set>& sets)
                 ++U;
                 ++I;
             }
-
-            qInfo() << "  " << QObject::tr("calculated successfully from")
-                     << " " << QObject::tr("voltage") << "/" << QObject::tr("current");
         }
         else{
-            qInfo() << "  " << QObject::tr("couldn't calculate it - voltage or current set not present");
+            throw Error(QObject::tr("Nie udało się wyznaczyć zbioru dla impedancji. Brak zbioru dla napięcia i/lub natężenia.").toStdString(), Error::Type::Error);
         }
     }
 
@@ -78,12 +75,9 @@ void complete_sets(std::vector<Set>& sets)
                 ++Z;
                 ++Th;
             }
-
-            qInfo() << "  " << QObject::tr("calculated successfully from")
-                     << " cosinus(" << QObject::tr("impedance") << ") * " << QObject::tr("phase angle");
         }
         else{
-            qInfo() << "  " << QObject::tr("couldn't calculate it - voltage or current set not present");
+            throw Error(QObject::tr("Nie udało się wyznaczyć części rzeczywistej impedancji. Brak zbioru dla kąta fazowego i/lub impedancji.").toStdString(), Error::Type::Error);
         }
     }
     if (!valid(imp_imag_it)){
@@ -102,12 +96,9 @@ void complete_sets(std::vector<Set>& sets)
                 ++Z;
                 ++Th;
             }
-
-            qInfo() << "  " << QObject::tr("calculated successfully from")
-                     << " sinus(" << QObject::tr("impedance") << ") * " << QObject::tr("phase angle");
         }
         else{
-            qInfo() << "  " << QObject::tr("couldn't calculate it - voltage or current set not present");
+            throw Error(QObject::tr("Nie udało się wyznaczyć części urojonej impedancji. Brak zbioru dla kąta fazowego i/lub impedancji.").toStdString(), Error::Type::Error);
         }
     }
 
@@ -126,11 +117,9 @@ void complete_sets(std::vector<Set>& sets)
                 set.push(val);
                 ++Z;
             }
-
-            qInfo() << "  " << QObject::tr("calculated successfully from") << " " << QObject::tr("impedance");
         }
         else{
-            qInfo() << "  " << QObject::tr("couldn't calculate it - impedance set not present");
+            throw Error(QObject::tr("Nie udało się wyznaczyć admitancji. Brak zbioru dla impedancji.").toStdString(), Error::Type::Error);
         }
     }
 }
@@ -143,7 +132,7 @@ Transducer* Loader::load(const std::string& file_path)
     char decimal_point = std::use_facet<std::numpunct<char> >(l).decimal_point();
 
     if (!stream)
-        return nullptr;
+        throw Error(QObject::tr("Błąd otwarcia pliku przetwornika.").toStdString());
 
     using path = std::experimental::filesystem::path;
 
@@ -234,7 +223,7 @@ Transducer* Loader::load(const std::string& file_path)
                         num_stream.seekg(0);
                         num_stream >> value;
                         //double value = std::atof(token.c_str());
-                        qDebug() << token.c_str() << value;
+                        //qDebug() << token.c_str() << value;
 
                         values[token_index].push_back( value );
                     }

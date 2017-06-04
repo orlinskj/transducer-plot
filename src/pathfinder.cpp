@@ -18,8 +18,6 @@ void PathFinder::show(QWidget *widget, QString filter)
     else if(combobox)
         def_path = combobox->currentText();
 
-    qDebug() << QFileInfo(def_path).absoluteFilePath();
-
     QFileDialog dialog(widget, tr("Wskaż plik"), QFileInfo(def_path).absoluteFilePath(), filter);
     dialog.setOption(QFileDialog::DontConfirmOverwrite);
     dialog.setViewMode(QFileDialog::List);

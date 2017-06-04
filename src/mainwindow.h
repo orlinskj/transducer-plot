@@ -81,6 +81,8 @@ private:
     ScreenshotForm* screenshot_form_;
     FunctionForm* function_form_;
 
+    int previous_stacked_index_;
+
     QMenu plot_menu_;
 };
 

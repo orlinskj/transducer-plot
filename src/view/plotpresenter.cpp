@@ -33,6 +33,7 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     setFocusPolicy(Qt::ClickFocus);
     setMouseTracking(true);
+    setSceneRect(QRect(QPoint(0,0), size())); // it looks unnecessary but its crucial!
 
     broom_->set_visibility(false);
     scene()->addItem(broom_);
@@ -61,7 +62,7 @@ void PlotPresenter::plot_changed(PlotItem* p){
 }
 
 void PlotPresenter::plot_removed(PlotItem* p){
-    if (plot_ == p){
+    if (plot() == p){
         scene()->removeItem(p->chart());
         scene()->removeItem(&(p->layers()));
         plot_ = nullptr;
@@ -168,6 +169,8 @@ void PlotPresenter::resizeEvent(QResizeEvent *event)
     if (plot_)
         plot_->layers().resize(event->size());
     alter_axes();
+
+    setSceneRect(QRect(QPoint(),event->size()));
 }
 
 void PlotPresenter::mousePressEvent(QMouseEvent *event)

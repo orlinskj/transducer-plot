@@ -55,6 +55,26 @@ LayerStack& PlotItem::layers()
     return layers_;
 }
 
+TreeItem* PlotItem::find_same_as(TreeItem *item)
+{
+    auto input_func = dynamic_cast<FunctionItem*>(item);
+    if (!input_func)
+        return nullptr;
+
+    for (auto item : this->children()){
+        auto func_item = dynamic_cast<FunctionItem*>(item);
+        if (!func_item)
+            continue;
+        auto func = func_item->value();
+
+        if (func->domain() == input_func->value()->domain() &&
+            func->codomain() == input_func->value()->codomain())
+            return func_item;
+    }
+
+    return nullptr;
+}
+
 TreeItem* PlotItem::append(TreeItem* item)
 {
     auto func_item = dynamic_cast<FunctionItem*>(item);
@@ -62,6 +82,10 @@ TreeItem* PlotItem::append(TreeItem* item)
     auto existing_func = dynamic_cast<FunctionItem*>(this->child(0));
     if (existing_func && existing_func->value()->domain()->unit().unit() != func_item->value()->domain()->unit().unit()){
         throw Error(QObject::tr("Nie udało się dodać funkcji. Aplikacja nie obsługuje osi X wykresu z wieloma różnymi jednostkami.").toStdString());
+    }
+
+    if (find_same_as(item)){
+        throw Error(QObject::tr("Wybrana funkcja istnieje już na wykresie").toStdString(), Error::Type::Info);
     }
 
     Qt::AlignmentFlag positions[] = { Qt::AlignLeft, Qt::AlignRight };

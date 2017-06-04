@@ -32,6 +32,7 @@ public:
     QChart* chart() const;
     LayerStack& layers();
     void change_axis_type(QAbstractAxis* axis);
+    TreeItem* find_same_as(TreeItem* item);
 
     TreeItem* append(TreeItem* item) override; // from TreeItem
     TreeItem::iterator remove(TreeItem* item) override; // from TreeItem

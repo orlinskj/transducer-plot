@@ -112,7 +112,6 @@ TreeItem::iterator TreeItem::remove(TreeItem* item)
         int row = child_index(*it);
         emit_begin_remove_rows(row,row,this);
         next_it = children_.erase(it);
-        qDebug() << "item erased" << item;
         for (TreeItem* tit=this; tit!=nullptr; tit=tit->parent())
             tit->ancestor_count_--;
         emit_end_remove_rows(row,row,this);

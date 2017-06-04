@@ -30,15 +30,16 @@ MainWindow::MainWindow(QWidget *parent) :
     plot_presenter_(new PlotPresenter(&plot_store_)),
     transducer_dialog_(nullptr),
     about_dialog_(nullptr),
-    screenshot_form_(nullptr)
+    screenshot_form_(nullptr),
+    previous_stacked_index_(0)
 {
     ui_->setupUi(this);
 
     setup_view();
     init_signals();
 
-    // emitting resize event
     show();
+    // emitting resize event - it will scale properly screenshotform
     QResizeEvent r(size(),size());
     resizeEvent(&r);
 }
@@ -54,7 +55,6 @@ void MainWindow::setup_view()
     ui_->transducerView->setModel(&transducer_model_);
     ui_->transducerView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui_->transducerView->setItemDelegate(new TransducerDelegate);
-    //ui_->transducerView->setDragEnabled(true);
 
     ui_->plotView->setModel(&plot_store_);
     ui_->plotView->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -69,7 +69,16 @@ void MainWindow::setup_view()
     ff_layout->setMargin(0);
     ff_layout->setSpacing(0);
     auto ff_parent = ui_->stackedWidget->widget(FunctionFormWidgetIndex);
-    function_form_ = new FunctionForm(ff_parent,ui_->transducerView, ui_->plotView, plot_presenter_);
+    function_form_ = new FunctionForm(
+                ff_parent,ui_->transducerView,
+                ui_->plotView,
+                plot_presenter_,
+                [this](PlotItem* plot){
+                    ui_->stackedWidget->setCurrentIndex(PlotPresenterWidgetIndex);
+                    plot_presenter_->show_plot(plot);
+                    ui_->statusBar->showMessage(tr("Dodano nową funkcję"));
+                },
+                [this](){ ui_->stackedWidget->setCurrentIndex(previous_stacked_index_); });
     ff_layout->addWidget(function_form_);
     ff_parent->setLayout(ff_layout);
 
@@ -83,13 +92,11 @@ void MainWindow::setup_view()
     screenshot_form_ = new ScreenshotForm(ui_->frame, plot_presenter_);
     screenshot_form_->raise();
 
-    // font fix for windows
-    #ifdef _WIN32
-    ui_->functionAddButton->setMaximumWidth(60);
-    ui_->plotAddButton->setMaximumWidth(60);
-    ui_->transducerAddButton->setMaximumWidth(77);
-    #endif
-
+    // width constraint for buttons (scale them nicely and cross-platform according to text width)
+    QFontMetrics fm(ui_->functionAddButton->font());
+    ui_->functionAddButton->setMaximumWidth(fm.width(tr("funkcja"))+28);
+    ui_->plotAddButton->setMaximumWidth(fm.width(tr("wykres"))+28);
+    ui_->transducerAddButton->setMaximumWidth(fm.width(tr("przetwornik"))+28);
 }
 
 void MainWindow::init_signals()
@@ -247,6 +254,7 @@ void MainWindow::transducer_to_be_removed(const QModelIndex &parent, int first, 
 void MainWindow::add_plot()
 {
     plot_store_.append(new PlotItem);
+    ui_->statusBar->showMessage(tr("Dodano nowy wykres"));
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -322,7 +330,8 @@ void MainWindow::add_function()
         add_plot();
     }
     function_form_->select_default();
-    ui_->stackedWidget->setCurrentIndex(1);
+    previous_stacked_index_ = PlotPresenterWidgetIndex;
+    ui_->stackedWidget->setCurrentIndex(FunctionFormWidgetIndex);
 
 }
 

@@ -32,7 +32,6 @@ void ItemTreeView::mouseMoveEvent(QMouseEvent *e)
 
 void ItemTreeView::rowsInserted(const QModelIndex &parent, int start, int end)
 {
-    qDebug() << "rows inserted";
     QTreeView::rowsInserted(parent,start,end);
     auto index = this->model()->index(start,0,parent);
     expand(index);

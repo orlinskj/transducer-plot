@@ -24,7 +24,10 @@ int main(int argc, char *argv[])
             running = false;
         }
         catch(const Error& e){
-            QMessageBox::critical(&w,"Błąd",e.what());
+            if (e.type() == Error::Type::Info)
+                QMessageBox::information(&w,QObject::tr("Informacja"),e.what());
+            else
+                QMessageBox::critical(&w,QObject::tr("Błąd"),e.what());
         }
     }
 

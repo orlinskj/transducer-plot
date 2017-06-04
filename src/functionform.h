@@ -9,6 +9,7 @@
 #include "view/plotpresenter.h"
 
 #include <memory>
+#include <functional>
 
 using namespace QtCharts;
 
@@ -21,11 +22,13 @@ class FunctionForm : public QWidget
     Q_OBJECT
 
 public:
-    explicit FunctionForm(
+    FunctionForm(
             QWidget *parent,
             QAbstractItemView* transduder_view,
             QAbstractItemView* plot_view,
-            PlotPresenter* presenter);
+            PlotPresenter* presenter,
+            const std::function<void(PlotItem*)>& add_callback,
+            const std::function<void(void)>& cancel_callback);
     ~FunctionForm();
 
 protected:
@@ -52,6 +55,9 @@ private:
     QAbstractItemView* plot_view_;
     QAbstractItemView* transducer_view_;
     PlotPresenter* presenter_;
+
+    std::function<void(PlotItem*)> add_callback_;
+    std::function<void(void)> cancel_callback_;
 
     QModelIndex domain_index_;
     QModelIndex codomain_index_;

@@ -12,6 +12,7 @@
 #include "io/exportfilehandler.h"
 
 #include "pathfinder.h"
+#include "error.h"
 
 #include <QComboBox>
 #include <QFileDialog>
@@ -93,7 +94,10 @@ TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_mo
             this, &TransducerDialog::export_type_changed);
 
     connect(ui->pathPushButton, &QPushButton::clicked,
-            this, [this](){ PathFinder::show(ui->pathLineEdit, tr("Przetwornik (*.pdf *.csv)")); });
+            this, [this](){
+                PathFinder::show(ui->pathLineEdit,
+                                 ui->exportTypecomboBox->currentIndex() == 0 ? tr("(*.pdf)") : tr("(*.csv)"));
+    });
 
     connect(ui->exportPushButton, &QPushButton::clicked,
             this, &TransducerDialog::export_transducer);
@@ -311,7 +315,7 @@ void TransducerDialog::export_type_changed(int index)
 
     }
     else{
-        qDebug() << "Unrecognized export type index in QComboBox";
+        throw Error(tr("Nieznany typ pliku eksportu.").toStdString());
     }
 }
 

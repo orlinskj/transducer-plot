@@ -39,7 +39,7 @@ ScreenshotForm::ScreenshotForm(QWidget *parent, PlotPresenter* presenter) :
             this, &ScreenshotForm::enable_save_button);
 
     connect(ui->pathPushButton, &QPushButton::clicked,
-            this, [this](){ PathFinder::show(ui->pathLineEdit, tr("Obrazy (*.png)")); });
+            this, [this](){ PathFinder::show(ui->pathLineEdit, tr("Obrazy (*.png *.jpg)")); });
 }
 
 ScreenshotForm::~ScreenshotForm()

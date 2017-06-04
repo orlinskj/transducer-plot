@@ -13,17 +13,22 @@
 #include "view/setitemdelegate.h"
 #include "view/plotpresenter.h"
 
-FunctionForm::FunctionForm(
-        QWidget *parent,
+#include <memory>
+
+FunctionForm::FunctionForm(QWidget *parent,
         QAbstractItemView* transduder_view,
         QAbstractItemView *plot_view,
-        PlotPresenter* presenter) :
+        PlotPresenter* presenter,
+        const std::function<void(PlotItem *)>& add_callback,
+        const std::function<void(void)>& cancel_callback) :
     QWidget(parent),
     ui_(new Ui::FunctionForm),
     preview_(new QChart),
     plot_view_(plot_view),
     transducer_view_(transduder_view),
-    presenter_(presenter)
+    presenter_(presenter),
+    add_callback_(add_callback),
+    cancel_callback_(cancel_callback)
 {
     ui_->setupUi(this);
 
@@ -64,6 +69,9 @@ FunctionForm::FunctionForm(
 
     connect(ui_->addButton, &QPushButton::clicked,
             this, &FunctionForm::add_function);
+
+    connect(ui_->cancelButton, &QPushButton::clicked,
+            this, cancel_callback_);
 }
 
 FunctionForm::~FunctionForm()
@@ -109,16 +117,7 @@ void FunctionForm::add_function()
 
     plot_item->append(new FunctionItem(new Function(transducer,domain,codomain)));
 
-    auto parent = dynamic_cast<QStackedWidget*>(this->parentWidget());
-
-    if (!parent){
-        parent = dynamic_cast<QStackedWidget*>(this->parentWidget()->parentWidget());
-    }
-
-    if (parent){
-        parent->setCurrentIndex(0);
-        presenter_->show_plot(plot_item);
-    }
+    add_callback_(plot_item);
 }
 
 void FunctionForm::update_widgets()

@@ -69,7 +69,6 @@ void SetItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 QSize SetItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     if (index == codomain_index_ || index == domain_index_){
-        qDebug() << "big size for" << index;
         return QSize(0, caption_font_size + 6 + set_type_font_size + 6);
     }
 
