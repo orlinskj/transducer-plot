@@ -40,6 +40,7 @@ class Loader{
 
 public:
     // load a transducer - returns new instance on heap
+    // throws Error
     virtual Transducer* load(const std::string& path);
 
 };

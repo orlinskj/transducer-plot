@@ -37,6 +37,11 @@ void ItemTreeView::rowsInserted(const QModelIndex &parent, int start, int end)
     expand(index);
 }
 
+void ItemTreeView::currentChanged(const QModelIndex &index, const QModelIndex &previous)
+{
+    update_index(index);
+}
+
 void ItemTreeView::update_index(const QModelIndex& index)
 {
     auto row_count = model()->rowCount(index);

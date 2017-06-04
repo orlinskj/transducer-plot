@@ -26,6 +26,7 @@ protected:
     void mousePressEvent(QMouseEvent *e);
     void enterEvent(QEvent *e);
     void leaveEvent(QEvent *e);
+    void currentChanged(const QModelIndex& index, const QModelIndex& previous);
 
     void itemEnterEvent(const QModelIndex& index);
     void itemLeaveEvent(const QModelIndex& index);

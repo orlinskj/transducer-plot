@@ -22,6 +22,7 @@
 #include "transducerdialog.h"
 #include "aboutdialog.h"
 #include "functionform.h"
+#include "error.h"
 //#include "screenshotdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -195,19 +196,8 @@ void MainWindow::add_transducer()
         return;
 
     auto transducer = Loader().load(filename.toStdString());
-    if (transducer)
-    {
-        transducer_model_.append(new TransducerItem(transducer));
-        ui_->statusBar->showMessage(tr("Wczytano plik")+" "+filename);
-    }
-    else
-        ui_->statusBar->showMessage(tr("Nie udało się wczytać pliku ")+" "+filename);
-
-    qDebug() << static_cast<TreeItem&>(transducer_model_).parent();
-    qDebug() << transducer_model_.root();
-    qDebug() << transducer_model_.children_count();
-    qDebug() << transducer_model_.child(0)->parent();
-    qDebug() << transducer_model_.child(0)->children_count();
+    transducer_model_.append(new TransducerItem(transducer));
+    ui_->statusBar->showMessage(tr("Wczytano plik")+" "+filename);
 }
 
 void MainWindow::transducer_to_be_removed(const QModelIndex &parent, int first, int last)
@@ -306,26 +296,6 @@ void MainWindow::show_about_dialog()
 
 void MainWindow::add_function()
 {
-    /*auto selection = ui_->plotView->selectionModel();
-    auto selected = selection->selectedIndexes();
-
-    if(selected.length() == 1)
-    {
-        auto index = selected.at(0);
-        auto item = index.data(TreeItemModel::Role).value<TreeItem*>();
-        PlotItem* plot = nullptr;
-
-        if (auto func = dynamic_cast<FunctionItem*>(item))
-            plot = dynamic_cast<PlotItem*>(func->parent());
-        else if(auto plot_ptr = dynamic_cast<PlotItem*>(item))
-            plot = plot_ptr;
-
-        if (plot)
-        {
-            auto f = new FunctionDialog(this, &transducer_model_, plot);
-            f->show();
-        }
-    }*/
     if (plot_store_.children_count() == 0){
         add_plot();
     }
@@ -349,6 +319,18 @@ void MainWindow::show_plot()
 
 void MainWindow::show_help()
 {
-    if (!QDesktopServices::openUrl(QUrl("user-manual.pdf")))
-        QDesktopServices::openUrl(QUrl("https://github.com/orlinskj/transducer-plot/blob/master/doc/user-manual.md"));
+    QString url = "https://github.com/orlinskj/transducer-plot/blob/master/doc/user-manual.md";
+    bool opened = false;
+
+    if (QDir().exists("user-manual.pdf")){
+        opened = QDesktopServices::openUrl(QUrl("user-manual.pdf"));
+    }
+
+    if (!opened){
+        opened = QDesktopServices::openUrl(QUrl(url));
+    }
+
+    if (!opened){
+        throw Error((tr("Nie udało się otworzyć pomocy, zajrzyj na ")+url).toStdString(),Error::Type::Info);
+    }
 }

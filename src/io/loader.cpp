@@ -7,7 +7,7 @@
 #include <fstream>
 #include <cmath>
 #include "../error.h"
-#include <experimental/filesystem> // as of may June 2017 filesystem in not in ISO C++
+#include <experimental/filesystem>
 
 #include <algorithm>
 #include <functional>

@@ -103,8 +103,7 @@ TransducerDialog::TransducerDialog(QWidget *parent, TreeItemModel* transducer_mo
             this, &TransducerDialog::export_transducer);
 
     // getting first transducer - and set as current if exists
-    if (transducer_model_->rowCount(QModelIndex()))
-        transducer_changed(dynamic_cast<TransducerItem*>(transducer_model_->child(0)));
+    transducer_changed(dynamic_cast<TransducerItem*>(transducer_model_->child(0)));
 
     // triggering model type change
     ui->comboBoxModelType->currentIndexChanged(0);
@@ -205,13 +204,24 @@ void TransducerDialog::set_tab(int tab)
 
 void TransducerDialog::transducer_changed(TransducerItem* t)
 {
-    // reset sets model
     ui->tableView->setModel(nullptr);
-    transducer_table_model_.reset(new TransducerTableProxyModel(t));
-    ui->tableView->setModel(transducer_table_model_.get());
 
-    // change export default filename
-    ui->pathLineEdit->setText(QString::fromStdString(t->to_string()));
+    if (!t){
+        transducer_table_model_.release();
+        ui->pathLineEdit->setText("");
+        ui->exportPushButton->setEnabled(false);
+        return;
+    }
+    else{
+        // reset sets model
+        transducer_table_model_.reset(new TransducerTableProxyModel(t));
+        ui->tableView->setModel(transducer_table_model_.get());
+
+        // change export default filename
+        ui->pathLineEdit->setText(QString::fromStdString(t->to_string()));
+
+        ui->exportPushButton->setEnabled(true);
+    }
 }
 
 void TransducerDialog::recalc_model()
