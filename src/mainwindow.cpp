@@ -21,6 +21,7 @@
 #include "functiondialog.h"
 #include "transducerdialog.h"
 #include "aboutdialog.h"
+#include "functionform.h"
 //#include "screenshotdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -62,6 +63,15 @@ void MainWindow::setup_view()
 
     // plot presenter configuration
     plot_presenter_->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    // function form
+    auto ff_layout = new QHBoxLayout();
+    ff_layout->setMargin(0);
+    ff_layout->setSpacing(0);
+    auto ff_parent = ui_->stackedWidget->widget(FunctionFormWidgetIndex);
+    function_form_ = new FunctionForm(ff_parent,ui_->transducerView, ui_->plotView, plot_presenter_);
+    ff_layout->addWidget(function_form_);
+    ff_parent->setLayout(ff_layout);
 
     // frame for chart view configuration
     QBoxLayout* layout = new QBoxLayout(QBoxLayout::Direction::LeftToRight);
@@ -157,6 +167,7 @@ void MainWindow::plot_view_menu(const QPoint& point)
 
 void MainWindow::plot_view_double_clicked(const QModelIndex& index){
     if (index != QModelIndex()){
+        ui_->stackedWidget->setCurrentIndex(PlotPresenterWidgetIndex);
         auto plot_item = PlotItem::from_qmodelindex(index);
 
         if (plot_item)
@@ -287,7 +298,7 @@ void MainWindow::show_about_dialog()
 
 void MainWindow::add_function()
 {
-    auto selection = ui_->plotView->selectionModel();
+    /*auto selection = ui_->plotView->selectionModel();
     auto selected = selection->selectedIndexes();
 
     if(selected.length() == 1)
@@ -306,7 +317,13 @@ void MainWindow::add_function()
             auto f = new FunctionDialog(this, &transducer_model_, plot);
             f->show();
         }
+    }*/
+    if (plot_store_.children_count() == 0){
+        add_plot();
     }
+    function_form_->select_default();
+    ui_->stackedWidget->setCurrentIndex(1);
+
 }
 
 void MainWindow::show_plot()

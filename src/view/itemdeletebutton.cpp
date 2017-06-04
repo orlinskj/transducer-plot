@@ -4,6 +4,9 @@
 #include <QApplication>
 #include <QDebug>
 
+#include <QSequentialAnimationGroup>
+#include <QPropertyAnimation>
+
 ItemDeleteButton::ItemDeleteButton(QAbstractItemView *view) :
     QPushButton(view), view_(view), mouse_over_(false)
 {
@@ -24,6 +27,12 @@ ItemDeleteButton::ItemDeleteButton(QAbstractItemView *view) :
 
 void ItemDeleteButton::show_for_index(const QModelIndex &index)
 {
+    QPropertyAnimation move_anim(this,"xoffset",this);
+    move_anim.setDuration(200);
+    move_anim.setEasingCurve(QEasingCurve::InOutCubic);
+    move_anim.setStartValue(-100.0);
+    move_anim.setEndValue(0.0);
+
     index_ = index;
     if (index_ != QModelIndex()){
         // moving to wanted position
@@ -31,17 +40,32 @@ void ItemDeleteButton::show_for_index(const QModelIndex &index)
         auto y = (rect.height() - 16) / 2;
 
         // different indentation for first and second level
-        if (index_.parent() == QModelIndex())
+        if (index_.parent() == QModelIndex()){
             this->move(rect.topRight() + QPoint(-16,y));
+        }
         else{
             this->move(rect.topRight() + QPoint(-38,y));
         }
 
         show();
+        move_anim.start();
+
     }
     else{
         hide();
     }
+    repaint();
+}
+
+qreal ItemDeleteButton::xoffset() const
+{
+    return xoffset_;
+}
+
+void ItemDeleteButton::setXoffset(qreal x)
+{
+    xoffset_ = x;
+    //qDebug() << "xoffset =" << x;
     repaint();
 }
 
@@ -71,8 +95,10 @@ void ItemDeleteButton::paintEvent(QPaintEvent *e)
         setIcon(QIcon(":/glyphicons/remove-grey.png"));
     }
 
+    QPoint pos_tmp = this->pos();
+    this->move(pos()+QPoint(xoffset_,0));
     QPushButton::paintEvent(e);
-    QPainter p(this);
+    this->move(pos_tmp);
 }
 
 void ItemDeleteButton::enterEvent(QEvent *event)

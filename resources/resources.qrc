@@ -4,14 +4,10 @@
         <file>icons/transducer-plot.png</file>
         <file>icons/v-rlc.png</file>
         <file>icons/v-set.png</file>
-        <file>glyphicons/glyphicons-512-copy.png</file>
-        <file>glyphicons/glyphicons-738-pictures.png</file>
-        <file>glyphicons/glyphicons-198-remove-circle.png</file>
         <file>glyphicons/glyphicons-444-floppy-disk.png</file>
         <file>icons/bvd-parallel.svg</file>
         <file>icons/bvd-series.svg</file>
         <file>pdf_layout.html</file>
-        <file>glyphicons/glyphicons-208-remove.png</file>
         <file>icons/v-function.png</file>
         <file>icons/v-transducer.png</file>
         <file>glyphicons/remove-white.png</file>
@@ -20,5 +16,10 @@
         <file>glyphicons/eye-small.png</file>
         <file>glyphicons/remove-red.png</file>
         <file>glyphicons/remove-grey.png</file>
+        <file>icons/model.png</file>
+        <file>glyphicons/tabular-data.png</file>
+        <file>glyphicons/plus.png</file>
+        <file>glyphicons/plots.png</file>
+        <file>glyphicons/export.png</file>
     </qresource>
 </RCC>

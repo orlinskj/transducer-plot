@@ -1,9 +1,10 @@
 #include "mainwindow.h"
 #include <QApplication>
 
-#include <QChart>
+#include <QMessageBox>
 
 #include "ui_mainwindow.h"
+#include "error.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,5 +16,17 @@ int main(int argc, char *argv[])
                       QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     app.installTranslator(&qtTranslator);
 
-    return app.exec();
+    bool running = true;
+    int code = 0;
+    while(running){
+        try {
+            code = app.exec();
+            running = false;
+        }
+        catch(const Error& e){
+            QMessageBox::critical(&w,"Błąd",e.what());
+        }
+    }
+
+    return code;
 }

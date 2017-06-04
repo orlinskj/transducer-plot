@@ -60,7 +60,9 @@ SOURCES += \
     src/io/pdfexporthandler.cpp \
     src/view/itemlistview.cpp \
     src/view/itemtreeview.cpp \
-    src/view/itemdeletebutton.cpp
+    src/view/itemdeletebutton.cpp \
+    src/functionform.cpp \
+    src/view/setitemdelegate.cpp
 
 HEADERS += \
     src/model/function.h \
@@ -105,13 +107,16 @@ HEADERS += \
     src/view/itemtreeview.h \
     src/view/itemdeletebutton.h \
     src/utf8/source/utf8.h \
-    src/transducerplotversion.h
+    src/transducerplotversion.h \
+    src/functionform.h \
+    src/view/setitemdelegate.h
 
 FORMS    += src/mainwindow.ui \
     src/functiondialog.ui \
     src/transducerdialog.ui \
     src/aboutdialog.ui \
-    src/screenshotform.ui
+    src/screenshotform.ui \
+    src/functionform.ui
 
 win32-gcc:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/release/
 win32-gcc:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/debug/

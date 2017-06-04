@@ -12,12 +12,18 @@
  */
 class ItemDeleteButton : public QPushButton
 {
+    Q_OBJECT
+    Q_PROPERTY(qreal xoffset READ xoffset WRITE setXoffset)
+
 public:
     ItemDeleteButton(QAbstractItemView* view);
     void show_for_index(const QModelIndex& index);
 
     static constexpr int size = 16;
     static constexpr int icon_size = 8;
+
+    qreal xoffset() const;
+    void setXoffset(qreal x);
 
 protected:
     void paintEvent(QPaintEvent *e);
@@ -28,6 +34,8 @@ protected:
     QAbstractItemView* view_;
     QPersistentModelIndex index_;
     bool mouse_over_;
+
+    qreal xoffset_;
 };
 
 #endif // DELETEPUSHBUTTON_H

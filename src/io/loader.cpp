@@ -223,6 +223,7 @@ Transducer* Loader::load(const std::string& file_path)
                 {
                     // prepare string for atof()
                     replace( token.begin(), token.end(), decimal_point,  '.');
+                    replace( token.begin(), token.end(), ',',  '.');
 
                     if (token_index < values.size())
                     {

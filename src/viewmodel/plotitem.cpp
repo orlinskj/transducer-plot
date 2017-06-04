@@ -15,6 +15,7 @@
 #include "../view/unitaxis.h"
 #include "../view/minmaxlayer.h"
 #include "../viewmodel/treemodel/treeitemmodel.h"
+#include "../error.h"
 
 bool PlotItem::isFuncAdmitanceRing(FunctionItem *func)
 {
@@ -56,9 +57,15 @@ LayerStack& PlotItem::layers()
 
 TreeItem* PlotItem::append(TreeItem* item)
 {
+    auto func_item = dynamic_cast<FunctionItem*>(item);
+
+    auto existing_func = dynamic_cast<FunctionItem*>(this->child(0));
+    if (existing_func && existing_func->value()->domain()->unit().unit() != func_item->value()->domain()->unit().unit()){
+        throw Error(QObject::tr("Nie udało się dodać funkcji. Aplikacja nie obsługuje osi X wykresu z wieloma różnymi jednostkami.").toStdString());
+    }
+
     Qt::AlignmentFlag positions[] = { Qt::AlignLeft, Qt::AlignRight };
 
-    auto func_item = dynamic_cast<FunctionItem*>(item);
     // transfering ownership of Function object to Plot
     this->value()->add_function(func_item->value());
     chart_->setTitle(this->value()->name().c_str());

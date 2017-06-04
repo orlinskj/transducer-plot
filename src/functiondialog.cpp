@@ -70,11 +70,6 @@ void FunctionDialog::on_buttonBox_accepted()
 
     if (transducer && domain && codomain)
     {
-        auto existing_func = dynamic_cast<FunctionItem*>(plot_->child(0));
-        if (existing_func && existing_func->value()->domain()->unit() != domain->value()->unit()){
-            qDebug() << "Multiple units on domain axis are NOT SUPPORTED.";
-            return;
-        }
         auto func = new Function((*transducer)(),(*domain)(),(*codomain)());
         plot_->append(new FunctionItem(func));
     }

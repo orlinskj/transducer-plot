@@ -16,6 +16,7 @@
 #include "view/plotpresenter.h"
 
 #include "screenshotform.h"
+#include "functionform.h"
 
 using namespace QtCharts;
 
@@ -61,6 +62,9 @@ public:
     Ui::MainWindow *ui_;
 private:
 
+    static constexpr int PlotPresenterWidgetIndex = 0;
+    static constexpr int FunctionFormWidgetIndex = 1;
+
     // Transducer model - stores all transducers
     TreeItemModel transducer_model_;
 
@@ -75,6 +79,7 @@ private:
     TransducerDialog* transducer_dialog_;
     AboutDialog* about_dialog_;
     ScreenshotForm* screenshot_form_;
+    FunctionForm* function_form_;
 
     QMenu plot_menu_;
 };

@@ -28,18 +28,14 @@ PlotPresenter::PlotPresenter(PlotStoreItemModel *store) :
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    broom_->set_visibility(false);
-    scene()->addItem(broom_);
-
     //setRenderHint(QPainter::Antialiasing);
     setContentsMargins(0,0,0,0);
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setFocusPolicy(Qt::ClickFocus);
-
     setMouseTracking(true);
+
+    broom_->set_visibility(false);
+    scene()->addItem(broom_);
 
     // plot store signals
     connect(store_, &PlotStoreItemModel::plot_changed,
