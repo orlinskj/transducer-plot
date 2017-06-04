@@ -319,7 +319,7 @@ void MainWindow::show_plot()
 
 void MainWindow::show_help()
 {
-    QString url = "https://github.com/orlinskj/transducer-plot/blob/master/doc/user-manual.md";
+    QString url = "https://github.com/orlinskj/transducer-plot/blob/doc/doc/user-manual.md";
     bool opened = false;
 
     if (QDir().exists("user-manual.pdf")){
