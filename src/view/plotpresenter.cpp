@@ -123,6 +123,13 @@ void PlotPresenter::alter_menu()
             change_to = tr("logarytmiczna");
 
         QString text(QString("\"")+axis->titleText() + "\" na: " + change_to);
+
+        /// TODO: due to a bug, setting logarithmic axis on function whatever->frequency
+        /// crashes program so we prevent such behaviour
+        if (UnitAxis::from_qabstractaxis(axis)->unit() == Unit::Frequency){
+            continue;
+        }
+
         QAction* action = menu_.addAction(text);
         connect(action, &QAction::triggered,
                 this, [axis,this](){

@@ -6,7 +6,6 @@
 #include <regex>
 #include <fstream>
 #include <cmath>
-#include "../error.h"
 #include <experimental/filesystem>
 
 #include <algorithm>
@@ -15,6 +14,10 @@
 #include <string>
 #include <sstream>
 
+#include "../error.h"
+#include "../model/set.h"
+
+// tries to calculate all needed values from other available values
 void complete_sets(std::vector<Set>& sets)
 {
     auto find_set = [&sets](const Unit& u){
@@ -27,24 +30,19 @@ void complete_sets(std::vector<Set>& sets)
         return it != sets.cend();
     };
 
-    auto voltage_it = find_set(Unit::Voltage);
-    auto current_it = find_set(Unit::Current);
-    auto impedance_it = find_set(Unit::Impedance);
-    auto imp_real_it = find_set(Unit::ImpedanceReal);
-    auto imp_imag_it = find_set(Unit::ImpedanceImag);
-    auto admitance_it = find_set(Unit::Admitance);
-    auto phase_angle_it = find_set(Unit::PhaseAngle);
-
     // impedance
-    if (!valid(impedance_it)){
+    if (sets.cend() == find_set(Unit::Impedance)){
         qDebug() << QObject::tr("Impedance set") << " " << QObject::tr("not found") << ". ";
+
+        auto voltage_it = find_set(Unit::Voltage);
+        auto current_it = find_set(Unit::Current);
+
         if (valid(voltage_it) && valid(current_it)){
             auto U = voltage_it->values().cbegin();
             auto I = current_it->values().cbegin();
 
             sets.push_back(Set(Unit::Impedance));
             auto& set = *(sets.rbegin());
-            impedance_it = sets.end() - 1;
 
             while (U != voltage_it->values().cend() && I != current_it->values().cend()){
                 auto val = (*U) / (*I);
@@ -56,18 +54,23 @@ void complete_sets(std::vector<Set>& sets)
         else{
             throw Error(QObject::tr("Nie udało się wyznaczyć zbioru dla impedancji. Brak zbioru dla napięcia i/lub natężenia.").toStdString(), Error::Type::Error);
         }
+
+        sets.back().calc_extremes();
     }
 
     // impedance real part and imag part
-    if (!valid(imp_real_it)){
+    if (sets.cend() == find_set(Unit::ImpedanceReal)){
         qDebug() << QObject::tr("Impedance (real part) set") << " " << QObject::tr("not found") << ". ";
+
+        auto phase_angle_it = find_set(Unit::PhaseAngle);
+        auto impedance_it = find_set(Unit::Impedance);
+
         if (valid(phase_angle_it) && valid(impedance_it)){
             auto Z = impedance_it->values().cbegin();
             auto Th = phase_angle_it->values().cbegin();
 
             sets.push_back(Set(Unit::ImpedanceReal));
             auto& set = *(sets.rbegin());
-            impedance_it = sets.end() - 1;
 
             while (Z != impedance_it->values().cend() && Th != phase_angle_it->values().cend()){
                 auto val = (*Z) * std::cos(*Th);
@@ -79,16 +82,21 @@ void complete_sets(std::vector<Set>& sets)
         else{
             throw Error(QObject::tr("Nie udało się wyznaczyć części rzeczywistej impedancji. Brak zbioru dla kąta fazowego i/lub impedancji.").toStdString(), Error::Type::Error);
         }
+
+        sets.back().calc_extremes();
     }
-    if (!valid(imp_imag_it)){
+    if (sets.cend() == find_set(Unit::ImpedanceImag)){
         qDebug() << QObject::tr("Impedance (imaginary part) set") << " " << QObject::tr("not found") << ". ";
+
+        auto phase_angle_it = find_set(Unit::PhaseAngle);
+        auto impedance_it = find_set(Unit::Impedance);
+
         if (valid(phase_angle_it) && valid(impedance_it)){
             auto Z = impedance_it->values().cbegin();
             auto Th = phase_angle_it->values().cbegin();
 
             sets.push_back(Set(Unit::ImpedanceImag));
             auto& set = *(sets.rbegin());
-            impedance_it = sets.end() - 1;
 
             while (Z != impedance_it->values().cend() && Th != phase_angle_it->values().cend()){
                 auto val = (*Z) * std::sin(*Th);
@@ -100,17 +108,21 @@ void complete_sets(std::vector<Set>& sets)
         else{
             throw Error(QObject::tr("Nie udało się wyznaczyć części urojonej impedancji. Brak zbioru dla kąta fazowego i/lub impedancji.").toStdString(), Error::Type::Error);
         }
+
+        sets.back().calc_extremes();
     }
 
     // admitance
-    if (!valid(admitance_it)){
+    if (sets.cend() == find_set(Unit::Admitance)){
         qInfo() << QObject::tr("Admitance set") << " " << QObject::tr("not found") << ". ";
+
+        auto impedance_it = find_set(Unit::Impedance);
+
         if (valid(impedance_it)){
             auto Z = impedance_it->values().cbegin();
 
             sets.push_back(Set(Unit::Admitance));
             auto& set = *(sets.rbegin());
-            admitance_it = sets.end() - 1;
 
             while(Z != impedance_it->values().cend()){
                 auto val = 1.0 / (*Z);
@@ -121,6 +133,8 @@ void complete_sets(std::vector<Set>& sets)
         else{
             throw Error(QObject::tr("Nie udało się wyznaczyć admitancji. Brak zbioru dla impedancji.").toStdString(), Error::Type::Error);
         }
+
+        sets.back().calc_extremes();
     }
 }
 

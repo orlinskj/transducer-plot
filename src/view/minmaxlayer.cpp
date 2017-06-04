@@ -29,9 +29,10 @@ void MinMaxLayer::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         auto brush = plot_->chart()->legend()->markers(func_item->series()).first()->brush();
 
         painter->fillRect(QRectF(cur, marker_size),brush);
-        //painter->drawRect(QRectF(cur, marker_size));
+
         auto min = std::get<0>(func_item->value()->codomain()->min());
         auto max = std::get<0>(func_item->value()->codomain()->max());
+
         QString range = QString("(") + QString::number(min,'g',8) + QString("; ")
                 + QString::number(max,'g',8) + QString(")");
 
